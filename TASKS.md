@@ -6,17 +6,30 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Fix issues found during testing and confirm the prototype meets its completion criteria.
-- [ ] Define and prioritize improvements based on testing and play feedback.
 - [ ] Explore keyboard and gamepad support for board navigation and placing or removing bulbs after the mouse prototype is validated.
 - [ ] Implement the selected improvements.
 - [ ] Test the improvements and update the project documentation and task list.
+- [ ] Refine the overall appearance and gameplay details.
+  - [ ] Review the current game together and define the refinement scope and priorities.
+  - [ ] Refine visual consistency, typography, colors, spacing, and screen layouts.
+  - [ ] Fix maximized-window and fullscreen layouts so the background expands to fill the available screen area.
+  - [ ] Improve board readability, cell states, cursor behavior, and interaction feedback.
+  - [ ] Make the victory state more noticeable and clearly communicate that the puzzle is solved.
+  - [ ] Remove the informational text below the board, leaving only the action buttons in that area.
+  - [ ] Develop a short tutorial explaining the goal, Akari rules, bulb placement/removal, and X annotations.
+  - [ ] Refine transitions, animations, sound effects, and music balance.
+  - [ ] Adjust agreed gameplay and navigation details based on playtesting feedback.
+  - [ ] Validate the refinements together and update the documentation.
 
 ## In progress
 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Fix issues found during testing and confirm the prototype meets its completion criteria. Completed on 2026-10-24.
+
+- [x] Define and prioritize improvements based on testing and play feedback. Completed on 2026-10-24.
 
 - [x] Test the prototype, covering game rules, generation, controls, and visual clarity. Completed on 2026-10-24.
 
