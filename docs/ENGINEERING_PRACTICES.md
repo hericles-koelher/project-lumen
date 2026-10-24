@@ -4,6 +4,7 @@ This document defines the default standards for code, assets, documentation, and
 
 ## 1. Language and communication
 
+- Keep the workflow interactive. Consult the user whenever a doubt or ambiguity arises instead of silently deciding for them. Ask one focused question at a time, provide a recommendation when useful, and wait for the answer before implementing the dependent decision.
 - Write all repository content in English: source code, identifiers, comments, commit messages, documentation, task entries, user-facing text in the game, and test names.
 - Use clear, idiomatic English. Prefer simple words over clever abbreviations.
 - Use the same term for the same concept throughout the project. Consult the project overview and game rules before introducing domain vocabulary.

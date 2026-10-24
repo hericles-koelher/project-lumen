@@ -24,10 +24,22 @@ This file records decisions that affect architecture, persisted data, or observa
 
 - **Context:** players should encounter puzzles configured by difficulty rather than manually specifying board dimensions and wall counts.
 - **Choice:** define difficulty presets that supply generation parameters. A preset may be selected by the player or assigned to a level; the seed identifies a particular generated board.
-- **Consequence:** resolve a concrete level configuration before invoking the generator. Initial preset values are recorded in `PROTOTYPE_DEFINITION.md`; they require playtesting. Seed policy is recorded in TD-005, and the entry flow remains to be defined.
+- **Consequence:** resolve a concrete level configuration before invoking the generator. Initial preset values are recorded in `PROTOTYPE_DEFINITION.md` and require playtesting. Seed policy is recorded in TD-005. The prototype menu opens one assigned level per difficulty.
 
 ## TD-005 — Explicit per-level seeds independent from level identity
 
 - **Context:** the prototype has one level per difficulty and needs reproducible puzzles that can be replaced individually during tuning.
 - **Choice:** store an explicit seed separately from each level's stable ID, together with its difficulty and generator version. Generate with isolated random state and retain resolved parameters in reproduction reports.
 - **Consequence:** seeds can change without renaming levels. Reproduction requires matching configuration, generator version, and compatible random behavior. Global seed derivation and saving final board definitions are possible later extensions.
+
+## TD-006 — Construct a solution before deriving clues
+
+- **Context:** the prototype needs exact wall counts and valid levels without a general solver.
+- **Choice:** place walls first, then visit shuffled playable cells and add a bulb only to unlit cells. Derive a shuffled subset of wall clues from this solution and validate the final board using the existing game rules.
+- **Consequence:** construction terminates in bounded passes and preserves at least one solution. Difficulty quality and uniqueness are not guaranteed by this method and remain subject to playtesting and future work.
+
+## TD-007 — Number seventy percent of walls, rounded down
+
+- **Context:** the user requested a mixture with fewer numbered walls than the initial 80% proposal.
+- **Choice:** use a 70% ratio rounded down, yielding 3, 7, and 11 numbered walls in Easy, Medium, and Hard respectively.
+- **Consequence:** ratios differ slightly on small boards because wall counts are integers. These initial values can be tuned after playtesting.

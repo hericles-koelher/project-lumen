@@ -20,13 +20,18 @@ Code in [`../src/`](../src/) should grow with actual needs, avoiding unused abst
 
 Difficulty preset and seed policy → resolved level configuration → generator → board definition → initial game state → presentation. Player actions update game state; rules calculate illumination, conflicts, and victory.
 
-## Current fixed-board implementation
+## Current implementation
 
 - `src/core/board_definition.gd`: structural dimensions, wall positions, and clue values. Symbols are `.` for playable cells, `#` for unnumbered walls, and digits 0–4 for numbered walls.
 - `src/core/game_state.gd`: mutable bulb/annotation placement and rule evaluation, independent from scene nodes.
-- `src/levels/easy_fixed.gd`: manually authored 5×5 board with five walls. No seed or generator is used for this intermediate fixture.
+- `src/generation/level_configuration.gd`: validated, resolved generation parameters and reproduction metadata, independent from the board and player state.
+- `src/generation/board_generator.gd`: local seeded randomness, constructive solution, clue derivation, and final validity check.
+- `src/levels/prototype_levels.gd`: stable IDs, preset parameters, and explicit seeds for the three playable levels.
+- `src/levels/easy_fixed.gd`: the original manually authored 5×5 board, retained as a core-test fixture.
 - `src/presentation/main.gd`: menu/game flow, input actions, audio, and rendering updates.
 - `src/presentation/board_cell.gd`: individual cell drawing and mouse events, including hover and conflict indicators.
 - `src/presentation/lumen_theme.gd`: shared colors, typography, and control styling.
 
-After a player action, the controller evaluates the whole small board and refreshes its views. Winning is derived from the rules, not from comparison against a stored bulb arrangement. Procedural generation and its configuration layer will be introduced in their own task.
+Opening a difficulty resolves its catalog configuration, generates and validates a board, and creates a fresh game state. The controller retains configuration metadata but discards the construction solution. Restart resets the existing game state and does not regenerate the board. Cell visuals scale to keep the three board sizes inside the same board frame.
+
+After a player action, the controller evaluates the whole small board and refreshes its views. Winning is derived from the rules, not from comparison against a stored bulb arrangement.

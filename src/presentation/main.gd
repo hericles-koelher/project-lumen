@@ -1,7 +1,8 @@
 extends Control
 
 const State = preload("res://src/core/game_state.gd")
-const FixedLevel = preload("res://src/levels/easy_fixed.gd")
+const Levels = preload("res://src/levels/prototype_levels.gd")
+const Generator = preload("res://src/generation/board_generator.gd")
 const CellView = preload("res://src/presentation/board_cell.gd")
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
 const BACKGROUND = preload("res://assets/backgrounds/menu_concept.png")
@@ -18,6 +19,7 @@ const VICTORY_SOUND = preload("res://assets/audio/sfx/puzzle_solved.wav")
 
 var _state: State
 var _evaluation: Dictionary = {}
+var _current_configuration: Dictionary = {}
 var _cells: Array[Control] = []
 var _screen: CenterContainer
 var _status: Label
@@ -113,6 +115,7 @@ func _button(parent: Node, node_name: String, text: String, action: Callable, di
 func _show_menu() -> void:
 	_state = null
 	_evaluation.clear()
+	_current_configuration.clear()
 	var content := _new_page("Menu", 350)
 	var logo := TextureRect.new()
 	logo.texture = LOGO
@@ -123,16 +126,26 @@ func _show_menu() -> void:
 	content.add_child(logo)
 	_label(content, "Project Lumen", 38)
 	_label(content, "A little light, a little logic.", 18)
-	_button(content, "Easy", "Easy", _open_easy)
-	_button(content, "Medium", "Medium", Callable(), true)
-	_button(content, "Hard", "Hard", Callable(), true)
+	_button(content, "Easy", "Easy", _open_level.bind("easy"))
+	_button(content, "Medium", "Medium", _open_level.bind("medium"))
+	_button(content, "Hard", "Hard", _open_level.bind("hard"))
 	_button(content, "Quit", "Quit", _quit)
 
 
-func _open_easy() -> void:
-	_state = State.new(FixedLevel.create_board())
+func _open_level(difficulty: String) -> void:
+	var configuration = Levels.get_configuration(difficulty)
+	var generated := Generator.generate(configuration)
+	if not generated.ok:
+		push_error("Level generation failed for %s: %s" % [difficulty, generated.error])
+		var error_content := _new_page("LoadError", 540)
+		_label(error_content, "This puzzle could not be loaded.", 26)
+		_label(error_content, "Please return to the menu.", 20)
+		_button(error_content, "BackToMenu", "Back to Menu", _show_menu)
+		return
+	_state = State.new(generated.board)
+	_current_configuration = generated.configuration
 	var content := _new_page("Game", 540)
-	_label(content, "Easy  ·  5 × 5", 30)
+	_label(content, "%s  ·  %d × %d" % [configuration.difficulty, configuration.width, configuration.height], 30)
 	_status = _label(content, "")
 	_status.name = "Status"
 	var board_center := CenterContainer.new()
@@ -153,8 +166,11 @@ func _open_easy() -> void:
 	grid.add_theme_constant_override("h_separation", 5)
 	grid.add_theme_constant_override("v_separation", 5)
 	board_frame.add_child(grid)
+	var longest_side: int = maxi(_state.board.width, _state.board.height)
+	var cell_extent := floorf((400.0 - 5.0 * (longest_side - 1)) / longest_side)
 	for index in range(_state.board.cell_count()):
 		var cell := CellView.new()
+		cell.cell_extent = cell_extent
 		cell.name = "Cell%d" % index
 		cell.cell_index = index
 		cell.wall = _state.board.is_wall(index)

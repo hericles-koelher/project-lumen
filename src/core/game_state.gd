@@ -36,6 +36,15 @@ func toggle_annotation(index: int) -> bool:
 	return true
 
 
+func adjacent_bulb_count(index: int) -> int:
+	var count := 0
+	for direction in DIRECTIONS:
+		var neighbor: Vector2i = board.position_of(index) + direction
+		if board.contains(neighbor) and bulbs[board.index_of(neighbor)]:
+			count += 1
+	return count
+
+
 func evaluate() -> Dictionary:
 	var illuminated := PackedByteArray()
 	var conflicts := PackedByteArray()
@@ -66,11 +75,7 @@ func evaluate() -> Dictionary:
 		var clue := board.clue_at(index)
 		if clue == Board.UNNUMBERED:
 			continue
-		var count := 0
-		for direction in DIRECTIONS:
-			var neighbor: Vector2i = board.position_of(index) + direction
-			if board.contains(neighbor) and bulbs[board.index_of(neighbor)]:
-				count += 1
+		var count := adjacent_bulb_count(index)
 		clue_counts[index] = count
 		if count != clue:
 			all_clues_satisfied = false

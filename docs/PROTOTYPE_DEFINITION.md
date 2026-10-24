@@ -1,6 +1,6 @@
 # Prototype Definition
 
-Status: initial prototype definition approved on 2026-10-24. Implementation and validation are pending. Tuning values may be adjusted after playtesting.
+Status: initial prototype definition and procedural-generation implementation approved on 2026-10-24. The broader prototype test and milestone review remain separate tasks. Tuning values may be adjusted after playtesting.
 
 ## Confirmed foundations
 
@@ -11,17 +11,20 @@ Status: initial prototype definition approved on 2026-10-24. Implementation and 
 - Include three difficulty presets: Easy, Medium, and Hard, with one level per preset in the completed prototype. Initial dimensions and wall counts are defined below and may be adjusted after playtesting.
 - Start implementation with one configuration to validate the core, then add the remaining difficulty presets and their levels.
 - Use predefined difficulty presets to supply generation parameters, including board dimensions and target wall count.
+- Keep a mixture of numbered and unnumbered walls in generated levels. Number 70% of walls, rounded down; use the counts below as initial tuning values.
 - Use a seed to reproduce a particular board for the same resolved configuration and generator version.
 - Give each level an explicit fixed seed, separate from its stable level ID, and record its difficulty and generator version. Use an isolated random source for generation; record resolved parameters for reproduction. See [`PROCEDURAL_GENERATION.md`](PROCEDURAL_GENERATION.md).
 - Write code and repository documentation in English.
 
 ## Difficulty presets
 
-| Preset | Width | Height | Target wall count |
-|---|---|---|---|
-| Easy | 5 | 5 | 5 |
-| Medium | 7 | 7 | 10 |
-| Hard | 9 | 9 | 16 |
+| Preset | Width | Height | Target wall count | Numbered | Unnumbered |
+|---|---|---|---|---|---|
+| Easy | 5 | 5 | 5 | 3 | 2 |
+| Medium | 7 | 7 | 10 | 7 | 3 |
+| Hard | 9 | 9 | 16 | 11 | 5 |
+
+Numbered counts use `floor(target_wall_count × 0.70)`. The resulting proportions are 60% for Easy, 70% for Medium, and 68.75% for Hard.
 
 Easy is the initial configuration used to validate the core. Wall counts include both numbered and unnumbered walls. These starting values keep walls near 20% of each board while increasing board size; they are tuning baselines, not guarantees of solving difficulty. Actual difficulty depends on wall placement and clues and will be assessed through playtesting. The user has delegated the initial dimensions and wall counts and will report desired adjustments during testing.
 

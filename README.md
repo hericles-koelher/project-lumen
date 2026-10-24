@@ -6,7 +6,7 @@ The project starts as a functional prototype with game logic separated from pres
 
 ## Status
 
-A playable fixed-board prototype is available in Godot 4.7.2. Easy opens a 5×5 Akari puzzle with lighting, clue checks, conflict feedback, annotations, restart, menu navigation, victory detection, music, and sound effects. Medium and Hard are disabled in this incremental build; procedural generation is a separate upcoming task.
+A playable prototype is available in Godot 4.7.2 with one reproducibly generated puzzle per difficulty: Easy 5×5, Medium 7×7, and Hard 9×9. It includes lighting, clue checks, conflict feedback, annotations, restart, menu navigation, victory detection, music, and sound effects. Generated boards have at least one valid solution and may have multiple solutions.
 
 ## Run the project
 

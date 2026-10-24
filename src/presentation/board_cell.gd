@@ -9,6 +9,7 @@ const MARK = preload("res://assets/icons/annotation_x.svg")
 const HOVER = preload("res://assets/icons/cell_hover.svg")
 
 var cell_index := 0
+var cell_extent := 76.0
 var wall := false
 var clue := -1
 var bulb := false
@@ -25,7 +26,7 @@ func _ready() -> void:
 	_clue_font.base_font = Visuals.FONT
 	# OpenType axis tags use their four-byte integer representation.
 	_clue_font.variation_opentype = {0x77676874: 650.0}
-	custom_minimum_size = Vector2(76, 76)
+	custom_minimum_size = Vector2(cell_extent, cell_extent)
 	mouse_entered.connect(func() -> void: _hovered = true; queue_redraw())
 	mouse_exited.connect(func() -> void: _hovered = false; queue_redraw())
 
@@ -50,10 +51,11 @@ func _gui_input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size)
+	var corner_radius := mini(11, roundi(size.x * 0.14))
 	var base := Visuals.WALL if wall else (Visuals.SUNLIGHT if illuminated else Visuals.CREAM)
-	draw_style_box(Visuals.box(base, 11), rect)
+	draw_style_box(Visuals.box(base, corner_radius), rect)
 	if wall and clue >= 0:
-		_draw_centered(str(clue), 30, Visuals.WARNING if exceeded else Visuals.CREAM)
+		_draw_centered(str(clue), mini(30, roundi(size.x * 0.43)), Visuals.WARNING if exceeded else Visuals.CREAM)
 	elif not wall:
 		var inset := size * 0.18
 		if bulb:
@@ -63,9 +65,12 @@ func _draw() -> void:
 		if _hovered and interaction_enabled:
 			draw_texture_rect(HOVER, rect, false)
 	if conflict or exceeded:
-		draw_style_box(Visuals.box(Color.TRANSPARENT, 11, Visuals.WARNING, 4), rect.grow(-2))
-		draw_circle(Vector2(size.x - 12, 12), 8, Visuals.WARNING)
-		draw_string(Visuals.FONT, Vector2(size.x - 15, 17), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color.WHITE)
+		var badge_radius := minf(8.0, size.x * 0.12)
+		var badge_center := Vector2(size.x - badge_radius - 4, badge_radius + 4)
+		draw_style_box(Visuals.box(Color.TRANSPARENT, corner_radius, Visuals.WARNING, 3), rect.grow(-1))
+		draw_circle(badge_center, badge_radius, Visuals.WARNING)
+		var badge_font_size := roundi(badge_radius * 1.8)
+		draw_string(_clue_font, badge_center + Vector2(-badge_radius * 0.3, badge_radius * 0.6), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, badge_font_size, Color.WHITE)
 
 
 func _draw_centered(text: String, font_size: int, color: Color) -> void:

@@ -26,6 +26,7 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 - **Git:** Preserve existing work; do not discard user changes. Do not configure or use a remote unless explicitly requested.
 - **Task commits:** Commit completed task changes after the user approves the task. Push only after an explicit user request; task approval alone does not authorize a push.
 - **Task boundaries:** Start each new task only after explicit user permission. A task list defines order, not authorization to advance automatically. Questions about readiness or remaining work are not permission to start implementation. Finish the authorized task and stop for user review.
+- **Interactive decisions:** When a doubt or ambiguity arises, consult the user instead of silently choosing an interpretation. Ask one focused question at a time, explain the concrete choice and your recommendation, and wait for the answer before making dependent changes.
 - **Playtest coordination:** When the user is testing the game, leave manual interaction and usability feedback to them. Do not automate clicks or stop/restart their play session while they are testing; coordinate any necessary interruption first.
 
 ## Repository index
@@ -49,4 +50,4 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 
 ## Current state
 
-The fixed-board prototype is implemented and was approved by the user on 2026-10-24. Easy opens a manually authored 5×5 board; Medium and Hard remain disabled until the separately authorized procedural-generation task. Rules live in `src/core/`, fixed level data in `src/levels/`, and visuals/input in `src/presentation/`. Core checks are in `tests/run_core.gd`; see `tests/README.md`. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.
+The fixed-board prototype and procedural generation were approved on 2026-10-24. All three menu choices open seeded levels with 70% of walls numbered, rounded down. Rules live in `src/core/`, configuration and generation in `src/generation/`, the level catalog in `src/levels/`, and visuals/input in `src/presentation/`. The old fixed level remains a core-test fixture. For isolated checks that do not disturb the user's play session, see `tests/README.md`. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.

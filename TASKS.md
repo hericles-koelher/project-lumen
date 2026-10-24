@@ -6,7 +6,6 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Implement deterministic procedural generation that guarantees at least one valid solution.
 - [ ] Test the prototype, covering game rules, generation, controls, and visual clarity.
 - [ ] Fix issues found during testing and confirm the prototype meets its completion criteria.
 - [ ] Define and prioritize improvements based on testing and play feedback.
@@ -19,6 +18,8 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Implement deterministic procedural generation that guarantees at least one valid solution. Completed on 2026-10-24.
 
 - [x] Implement a playable prototype with a small fixed board and the core Akari rules, integrating the approved assets and mouse hover/cursor states. Completed on 2026-10-24.
 

@@ -11,9 +11,11 @@ var height: int:
 var _width: int
 var _height: int
 var _walls: Dictionary = {}
+var _rows: PackedStringArray
 
 
 func _init(rows: PackedStringArray) -> void:
+	_rows = rows.duplicate()
 	assert(not rows.is_empty(), "A board needs at least one row.")
 	_width = rows[0].length()
 	_height = rows.size()
@@ -57,3 +59,7 @@ func clue_at(index: int) -> int:
 
 func wall_indices() -> Array:
 	return _walls.keys()
+
+
+func to_rows() -> PackedStringArray:
+	return _rows.duplicate()
