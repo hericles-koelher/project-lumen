@@ -6,8 +6,6 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Implement the selected improvements.
-- [ ] Test the improvements and update the project documentation and task list.
 - [ ] Refine the overall appearance and gameplay details.
   - [ ] Review the current game together and define the refinement scope and priorities.
   - [ ] Refine visual consistency, typography, colors, spacing, and screen layouts.
@@ -30,6 +28,7 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
   - [ ] Define the Settings options and which preferences should persist between sessions.
   - [ ] Provide clear Back navigation and support the approved input methods throughout the menu flow.
   - [ ] Validate menu navigation, numbered levels, random generation, and mute/unmute behavior.
+- [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address.
 
 ## In progress
 
