@@ -59,7 +59,14 @@ Easy is the initial configuration used to validate the core. Wall counts include
 - Keep the board grid and overlapping states readable, including annotations on illuminated cells and bulbs in conflict.
 - Use simple provisional visuals; exact colors, shapes, and spacing will be refined during asset prototyping and playtesting.
 
+## Audio and expanded asset planning
+
+- Include the application icon, playable-cell hover feedback, sound effects, and background music in asset planning.
+- Music should be calm, relaxing, instrumental lo-fi, suitable for concentration and seamless looping.
+- Use [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md) for the complete production checklist. Acquisition methods, exact specifications, and final asset choices remain under discussion.
+
 ## Victory flow
+
 
 - On completion, block further board moves and show "Puzzle solved!".
 - Offer Restart and Back to Menu actions. Keep Quit accessible.

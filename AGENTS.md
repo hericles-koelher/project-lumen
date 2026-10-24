@@ -38,6 +38,8 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 | Engineering practices | Required coding and collaboration standards | [`docs/ENGINEERING_PRACTICES.md`](docs/ENGINEERING_PRACTICES.md) |
 | Development plan | Proposed incremental path from setup to prototype | [`docs/DEVELOPMENT_PLAN.md`](docs/DEVELOPMENT_PLAN.md) |
 | Development setup | Godot version, running the project, and MCP plugin connection | [`docs/DEVELOPMENT_SETUP.md`](docs/DEVELOPMENT_SETUP.md) |
+| Asset inventory | Required prototype visuals and optional audio; production decisions | [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) |
+| Asset provenance | Sources, licenses, and status of included assets | [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md) |
 | Task list | Actionable project work, ordered by priority | [`TASKS.md`](TASKS.md) |
 | Prototype definition | Confirmed prototype decisions and open design questions | [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) |
 | Game source | Scripts and scenes, grouped by responsibility | [`src/`](src/) |
