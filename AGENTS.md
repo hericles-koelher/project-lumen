@@ -25,6 +25,8 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 - **Verification:** When behavior changes, describe how to validate it and run relevant available checks. If the engine or a tool is unavailable, state that limitation.
 - **Git:** Preserve existing work; do not discard user changes. Do not configure or use a remote unless explicitly requested.
 - **Task commits:** Commit completed task changes after the user approves the task. Push only after an explicit user request; task approval alone does not authorize a push.
+- **Task boundaries:** Start each new task only after explicit user permission. A task list defines order, not authorization to advance automatically. Questions about readiness or remaining work are not permission to start implementation. Finish the authorized task and stop for user review.
+- **Playtest coordination:** When the user is testing the game, leave manual interaction and usability feedback to them. Do not automate clicks or stop/restart their play session while they are testing; coordinate any necessary interruption first.
 
 ## Repository index
 
@@ -47,4 +49,4 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 
 ## Current state
 
-The Godot 4.7.2 setup is complete, with a runnable title scene and MCP Toolkit 1.0.4 integration. Provisional board visuals, game rules, and playable levels are the next implementation steps. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.
+The fixed-board prototype is implemented and was approved by the user on 2026-10-24. Easy opens a manually authored 5×5 board; Medium and Hard remain disabled until the separately authorized procedural-generation task. Rules live in `src/core/`, fixed level data in `src/levels/`, and visuals/input in `src/presentation/`. Core checks are in `tests/run_core.gd`; see `tests/README.md`. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.

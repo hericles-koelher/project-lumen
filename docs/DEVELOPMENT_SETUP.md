@@ -11,7 +11,7 @@
 
 Import the repository's `project.godot` in the Godot project manager and open it. Press F6 to run the current scene or F5 to run the project. The configured main scene is `src/presentation/main.tscn`.
 
-The initial scene currently displays the project title and subtitle. Difficulty buttons and gameplay will be added during prototype implementation.
+The main menu opens the fixed Easy puzzle. Medium and Hard are disabled until the procedural-generation task is authorized and implemented. Left-click toggles bulbs; right-click toggles X annotations. Restart clears all moves, Back to Menu discards the play session, and Quit exits the game. A correct solution automatically locks the board and displays "Puzzle solved!".
 
 On the current development machine, the editor executable is:
 
@@ -31,4 +31,4 @@ Use the plugin to create and edit scenes, inspect nodes, and start or stop playt
 
 ## Setup validation
 
-On 2026-10-24, the editor authenticated as Godot 4.7.2 through MCP Toolkit 1.0.4. The main scene was created, saved, launched, and stopped through the plugin. Its runtime log contained no errors. Gameplay validation is pending implementation.
+On 2026-10-24, the main scene was opened, configured, and launched through Godot MCP Toolkit 1.0.4 on Godot 4.7.2. The fixed-board prototype was visually inspected, and the user confirmed it was functional. All 23 core checks passed; see [`../tests/README.md`](../tests/README.md). Manual interaction and usability review are being performed by the user.

@@ -1,0 +1,90 @@
+extends SceneTree
+
+const Board = preload("res://src/core/board_definition.gd")
+const State = preload("res://src/core/game_state.gd")
+const FixedLevel = preload("res://src/levels/easy_fixed.gd")
+
+var _failures := 0
+var _checks := 0
+
+
+func _init() -> void:
+	_test_light_and_walls()
+	_test_conflicts_and_removal()
+	_test_clues_at_boundaries()
+	_test_annotations_and_reset()
+	_test_fixed_level()
+	print("Core checks: %d passed, %d failed" % [_checks - _failures, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _expect(condition: bool, description: String) -> void:
+	_checks += 1
+	if not condition:
+		_failures += 1
+		push_error(description)
+
+
+func _test_light_and_walls() -> void:
+	var state := State.new(Board.new(PackedStringArray(["..#.."])))
+	state.toggle_bulb(0)
+	var result := state.evaluate()
+	_expect(result.lit_count == 2, "A wall must stop horizontal illumination.")
+	_expect(not result.illuminated[3], "Light must not pass through a wall.")
+	_expect(not state.toggle_bulb(2), "Walls must reject bulbs.")
+	state.toggle_bulb(4)
+	result = state.evaluate()
+	_expect(result.solved, "Bulbs separated by a wall must not conflict.")
+	var vertical := State.new(Board.new(PackedStringArray([".", ".", "#", "."])))
+	vertical.toggle_bulb(0)
+	_expect(vertical.evaluate().lit_count == 2, "A wall must stop vertical illumination.")
+
+
+func _test_conflicts_and_removal() -> void:
+	var state := State.new(Board.new(PackedStringArray(["..."])))
+	state.toggle_bulb(0)
+	state.toggle_bulb(2)
+	var result := state.evaluate()
+	_expect(result.conflicting_bulbs == 2, "Both bulbs in a shared sight line must be marked.")
+	_expect(not result.solved, "A fully lit board with conflicting bulbs is not solved.")
+	state.toggle_bulb(2)
+	result = state.evaluate()
+	_expect(result.conflicting_bulbs == 0 and result.solved, "Removing a bulb must clear conflicts and reevaluate victory.")
+
+
+func _test_clues_at_boundaries() -> void:
+	var corner := State.new(Board.new(PackedStringArray(["2.", ".."])))
+	corner.toggle_bulb(1)
+	_expect(not corner.evaluate().solved, "An unmet clue must prevent victory.")
+	corner.toggle_bulb(2)
+	_expect(corner.evaluate().solved, "A corner clue must count only its two existing orthogonal neighbors.")
+	var zero := State.new(Board.new(PackedStringArray(["0."])))
+	zero.toggle_bulb(1)
+	_expect(zero.evaluate().exceeded_clues == 1, "A bulb beside a zero clue must be reported immediately.")
+	_expect(not zero.evaluate().solved, "An exceeded clue must prevent victory even when every open cell is lit.")
+
+
+func _test_annotations_and_reset() -> void:
+	var state := State.new(Board.new(PackedStringArray(["..#"])))
+	state.toggle_annotation(0)
+	_expect(state.annotations[0] == 1 and state.evaluate().lit_count == 0, "An annotation must not emit light.")
+	_expect(not state.toggle_annotation(2), "Walls must reject annotations.")
+	state.toggle_bulb(0)
+	_expect(state.annotations[0] == 0 and state.bulbs[0] == 1, "Placing a bulb must replace an annotation.")
+	_expect(not state.toggle_annotation(0), "Right click on a bulb must leave it unchanged.")
+	state.toggle_annotation(1)
+	_expect(state.evaluate().solved, "Annotations must not prevent a valid solution.")
+	state.reset()
+	_expect(state.bulbs.count(1) == 0 and state.annotations.count(1) == 0, "Restart must clear bulbs and annotations.")
+	_expect(not state.evaluate().solved, "Restart must clear the solved state.")
+
+
+func _test_fixed_level() -> void:
+	var state := State.new(FixedLevel.create_board())
+	_expect(state.board.width == 5 and state.board.height == 5, "The Easy fixture must be 5 by 5.")
+	_expect(state.board.wall_indices().size() == 5, "The Easy fixture must contain five walls.")
+	for index in [0, 7, 11, 14, 22]:
+		state.toggle_bulb(index)
+	var result := state.evaluate()
+	_expect(result.lit_count == 20, "The known fixture solution must illuminate all twenty playable cells.")
+	_expect(result.solved, "The fixed board must accept a solution satisfying the rules.")

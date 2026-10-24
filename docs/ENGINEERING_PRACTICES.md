@@ -66,6 +66,7 @@ This document defines the default standards for code, assets, documentation, and
 
 ## 6. Testing and verification
 
+- Coordinate testing with the user. When they take over manual playtesting, stop automated UI input and avoid restarting or stopping their running game. Focus on isolated core checks and incorporate their visual and usability feedback.
 - For each behavior change, identify the key rule or user-visible outcome that should hold.
 - Test domain rules independently from scene presentation when practical.
 - Cover boundary cases for illumination, wall blocking, adjacent clue counts, conflicting bulbs, and win detection as those systems are implemented.
@@ -80,10 +81,12 @@ This document defines the default standards for code, assets, documentation, and
 - Keep `AGENTS.md` concise: it is the entry point and repository map. Put detailed standards and design explanations in the linked documents.
 - Add durable architectural or behavioral choices to `docs/TECHNICAL_DECISIONS.md`, including context, choice, and consequences.
 - Maintain `TASKS.md` as the actionable project backlog. Keep tasks specific enough to be started and verified.
+- Keep checklist entries concise: describe the task, its status, and an optional completion date or document link. Put reasoning, test results, review notes, and progress reports in the relevant documentation or chat instead of task entries.
 - Use relative links between repository documents and check that links point to existing files when changing the index.
 
 ## 8. Change and Git discipline
 
+- Start each new task only after explicit user permission. Do not interpret task order, approval of a previous task, or a question about readiness as authorization to advance. Complete the authorized task and stop for user review.
 - Inspect the working tree before editing. Preserve unrelated user changes and avoid overwriting files without reading them.
 - Keep changes scoped to the active task. Do not mix unrelated cleanup or formatting into a feature change.
 - After the user approves a completed task, commit its changes in a small, reviewable commit. Write commit messages in English and describe the outcome.

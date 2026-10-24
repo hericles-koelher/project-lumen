@@ -6,7 +6,6 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Implement a playable prototype with a small fixed board and the core Akari rules, integrating the approved assets and mouse hover/cursor states.
 - [ ] Implement deterministic procedural generation that guarantees at least one valid solution.
 - [ ] Test the prototype, covering game rules, generation, controls, and visual clarity.
 - [ ] Fix issues found during testing and confirm the prototype meets its completion criteria.
@@ -20,6 +19,8 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Implement a playable prototype with a small fixed board and the core Akari rules, integrating the approved assets and mouse hover/cursor states. Completed on 2026-10-24.
 
 - [x] Prepare the prototype visual and audio assets, including board symbols, mouse cursors, hover indicator, typography, music, and sound effects. The user approved the visual direction and selected the music. See [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) and [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md). In-game integration remains part of prototype implementation. Completed on 2026-10-24.
 

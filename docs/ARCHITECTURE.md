@@ -19,3 +19,14 @@ Code in [`../src/`](../src/) should grow with actual needs, avoiding unused abst
 ## Data flow
 
 Difficulty preset and seed policy → resolved level configuration → generator → board definition → initial game state → presentation. Player actions update game state; rules calculate illumination, conflicts, and victory.
+
+## Current fixed-board implementation
+
+- `src/core/board_definition.gd`: structural dimensions, wall positions, and clue values. Symbols are `.` for playable cells, `#` for unnumbered walls, and digits 0–4 for numbered walls.
+- `src/core/game_state.gd`: mutable bulb/annotation placement and rule evaluation, independent from scene nodes.
+- `src/levels/easy_fixed.gd`: manually authored 5×5 board with five walls. No seed or generator is used for this intermediate fixture.
+- `src/presentation/main.gd`: menu/game flow, input actions, audio, and rendering updates.
+- `src/presentation/board_cell.gd`: individual cell drawing and mouse events, including hover and conflict indicators.
+- `src/presentation/lumen_theme.gd`: shared colors, typography, and control styling.
+
+After a player action, the controller evaluates the whole small board and refreshes its views. Winning is derived from the rules, not from comparison against a stored bulb arrangement. Procedural generation and its configuration layer will be introduced in their own task.

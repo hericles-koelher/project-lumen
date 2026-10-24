@@ -1,0 +1,245 @@
+extends Control
+
+const State = preload("res://src/core/game_state.gd")
+const FixedLevel = preload("res://src/levels/easy_fixed.gd")
+const CellView = preload("res://src/presentation/board_cell.gd")
+const Visuals = preload("res://src/presentation/lumen_theme.gd")
+const BACKGROUND = preload("res://assets/backgrounds/menu_concept.png")
+const LOGO = preload("res://assets/branding/project_lumen_icon_concept.png")
+const ARROW_TEXTURE = preload("res://assets/icons/cursor_arrow.svg")
+const HAND_TEXTURE = preload("res://assets/icons/cursor_clickable.svg")
+const MUSIC = preload("res://assets/audio/music/our_morning_coffee.mp3")
+const PLACE_SOUND = preload("res://assets/audio/sfx/bulb_place.wav")
+const REMOVE_SOUND = preload("res://assets/audio/sfx/bulb_remove.wav")
+const MARK_SOUND = preload("res://assets/audio/sfx/annotation_toggle.wav")
+const CLICK_SOUND = preload("res://assets/audio/sfx/button_click.wav")
+const WARNING_SOUND = preload("res://assets/audio/sfx/rule_warning.wav")
+const VICTORY_SOUND = preload("res://assets/audio/sfx/puzzle_solved.wav")
+
+var _state: State
+var _evaluation: Dictionary = {}
+var _cells: Array[Control] = []
+var _screen: CenterContainer
+var _status: Label
+var _warning: Label
+var _victory: Label
+var _music: AudioStreamPlayer
+var _action_audio: AudioStreamPlayer
+var _feedback_audio: AudioStreamPlayer
+
+
+func _ready() -> void:
+	theme = Visuals.create_theme()
+	Input.set_custom_mouse_cursor(ARROW_TEXTURE, Input.CURSOR_ARROW, Vector2(8, 5))
+	Input.set_custom_mouse_cursor(HAND_TEXTURE, Input.CURSOR_POINTING_HAND, Vector2(16, 5))
+	_create_audio()
+	_create_backdrop()
+	_screen = CenterContainer.new()
+	_screen.name = "Screen"
+	add_child(_screen)
+	_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_show_menu()
+
+
+func _create_audio() -> void:
+	_music = AudioStreamPlayer.new()
+	_music.name = "Music"
+	var stream := MUSIC.duplicate() as AudioStreamMP3
+	stream.loop = true
+	_music.stream = stream
+	_music.volume_db = -21.0
+	add_child(_music)
+	_music.play()
+	_action_audio = AudioStreamPlayer.new()
+	_action_audio.name = "ActionAudio"
+	add_child(_action_audio)
+	_feedback_audio = AudioStreamPlayer.new()
+	_feedback_audio.name = "FeedbackAudio"
+	add_child(_feedback_audio)
+
+
+func _create_backdrop() -> void:
+	var backdrop := TextureRect.new()
+	backdrop.name = "Backdrop"
+	backdrop.texture = BACKGROUND
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(backdrop)
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+
+func _new_page(page_name: String, min_width: float) -> VBoxContainer:
+	for child in _screen.get_children():
+		_screen.remove_child(child)
+		child.queue_free()
+	_cells.clear()
+	var panel := PanelContainer.new()
+	panel.name = page_name
+	panel.custom_minimum_size.x = min_width
+	panel.add_theme_stylebox_override("panel", Visuals.box(Color(0.965, 0.937, 0.875, 0.96), 24, Visuals.INK, 2))
+	_screen.add_child(panel)
+	var content := VBoxContainer.new()
+	content.name = "Content"
+	content.add_theme_constant_override("separation", 12)
+	panel.add_child(content)
+	return content
+
+
+func _label(parent: Node, text: String, font_size: int = 20) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", font_size)
+	parent.add_child(label)
+	return label
+
+
+func _button(parent: Node, node_name: String, text: String, action: Callable, disabled: bool = false) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.text = text
+	button.disabled = disabled
+	button.custom_minimum_size.y = 48
+	button.mouse_default_cursor_shape = Control.CURSOR_ARROW if disabled else Control.CURSOR_POINTING_HAND
+	button.pressed.connect(func() -> void:
+		_play(_action_audio, CLICK_SOUND)
+		action.call()
+	)
+	parent.add_child(button)
+	return button
+
+
+func _show_menu() -> void:
+	_state = null
+	_evaluation.clear()
+	var content := _new_page("Menu", 350)
+	var logo := TextureRect.new()
+	logo.texture = LOGO
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.custom_minimum_size = Vector2(110, 100)
+	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(logo)
+	_label(content, "Project Lumen", 38)
+	_label(content, "A little light, a little logic.", 18)
+	_button(content, "Easy", "Easy", _open_easy)
+	_button(content, "Medium", "Medium", Callable(), true)
+	_button(content, "Hard", "Hard", Callable(), true)
+	_button(content, "Quit", "Quit", _quit)
+
+
+func _open_easy() -> void:
+	_state = State.new(FixedLevel.create_board())
+	var content := _new_page("Game", 540)
+	_label(content, "Easy  ·  5 × 5", 30)
+	_status = _label(content, "")
+	_status.name = "Status"
+	var board_center := CenterContainer.new()
+	board_center.name = "BoardCenter"
+	content.add_child(board_center)
+	var board_frame := PanelContainer.new()
+	board_frame.name = "BoardFrame"
+	var frame_style := Visuals.box(Visuals.INK, 18)
+	frame_style.content_margin_left = 10
+	frame_style.content_margin_right = 10
+	frame_style.content_margin_top = 10
+	frame_style.content_margin_bottom = 10
+	board_frame.add_theme_stylebox_override("panel", frame_style)
+	board_center.add_child(board_frame)
+	var grid := GridContainer.new()
+	grid.name = "Board"
+	grid.columns = _state.board.width
+	grid.add_theme_constant_override("h_separation", 5)
+	grid.add_theme_constant_override("v_separation", 5)
+	board_frame.add_child(grid)
+	for index in range(_state.board.cell_count()):
+		var cell := CellView.new()
+		cell.name = "Cell%d" % index
+		cell.cell_index = index
+		cell.wall = _state.board.is_wall(index)
+		cell.clue = _state.board.clue_at(index)
+		cell.primary_clicked.connect(_on_primary_click)
+		cell.secondary_clicked.connect(_on_secondary_click)
+		grid.add_child(cell)
+		_cells.append(cell)
+	_warning = _label(content, "", 18)
+	_warning.name = "Warning"
+	_label(content, "Left click: bulb on/off  ·  Right click: mark X", 17)
+	_victory = _label(content, "Puzzle solved!", 30)
+	_victory.name = "Victory"
+	var actions := HBoxContainer.new()
+	actions.name = "Actions"
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions.add_theme_constant_override("separation", 10)
+	content.add_child(actions)
+	_button(actions, "Restart", "Restart", _restart)
+	_button(actions, "BackToMenu", "Back to Menu", _show_menu)
+	_button(actions, "Quit", "Quit", _quit)
+	_refresh_board()
+
+
+func _on_primary_click(index: int) -> void:
+	if _evaluation.get("solved", false):
+		return
+	var removing := bool(_state.bulbs[index])
+	var previous_violations := _violation_count()
+	if _state.toggle_bulb(index):
+		_play(_action_audio, REMOVE_SOUND if removing else PLACE_SOUND)
+		_refresh_board()
+		_play_rule_feedback(previous_violations)
+
+
+func _on_secondary_click(index: int) -> void:
+	if _evaluation.get("solved", false):
+		return
+	if _state.toggle_annotation(index):
+		_play(_action_audio, MARK_SOUND)
+		_refresh_board()
+
+
+func _refresh_board() -> void:
+	_evaluation = _state.evaluate()
+	for index in range(_cells.size()):
+		var cell = _cells[index]
+		cell.bulb = bool(_state.bulbs[index])
+		cell.marked = bool(_state.annotations[index])
+		cell.illuminated = bool(_evaluation.illuminated[index])
+		cell.conflict = bool(_evaluation.conflicts[index])
+		cell.exceeded = cell.wall and cell.clue >= 0 and _evaluation.clue_counts.get(index, 0) > cell.clue
+		cell.interaction_enabled = not _evaluation.solved
+		cell.refresh()
+	_status.text = "%d / %d cells lit" % [_evaluation.lit_count, _evaluation.playable_count]
+	_victory.visible = _evaluation.solved
+	if _violation_count() > 0:
+		_warning.text = "%d bulbs in conflict  ·  %d exceeded clues" % [_evaluation.conflicting_bulbs, _evaluation.exceeded_clues]
+		_warning.add_theme_color_override("font_color", Visuals.WARNING)
+	else:
+		_warning.text = "Light every cell and satisfy the numbered walls."
+		_warning.add_theme_color_override("font_color", Visuals.INK)
+
+
+func _violation_count() -> int:
+	return int(_evaluation.get("conflicting_bulbs", 0)) + int(_evaluation.get("exceeded_clues", 0))
+
+
+func _play_rule_feedback(previous_violations: int) -> void:
+	if _evaluation.solved:
+		_play(_feedback_audio, VICTORY_SOUND)
+	elif _violation_count() > previous_violations:
+		_play(_feedback_audio, WARNING_SOUND)
+
+
+func _restart() -> void:
+	_state.reset()
+	_feedback_audio.stop()
+	_refresh_board()
+
+
+func _play(player: AudioStreamPlayer, stream: AudioStream) -> void:
+	player.stream = stream
+	player.play()
+
+
+func _quit() -> void:
+	get_tree().quit()
