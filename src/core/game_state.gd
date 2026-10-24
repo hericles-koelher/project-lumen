@@ -30,9 +30,13 @@ func toggle_bulb(index: int) -> bool:
 
 
 func toggle_annotation(index: int) -> bool:
-	if not board.is_playable(index) or bulbs[index]:
+	if not board.is_playable(index):
 		return false
-	annotations[index] = 0 if annotations[index] else 1
+	if bulbs[index]:
+		bulbs[index] = 0
+		annotations[index] = 1
+	else:
+		annotations[index] = 0 if annotations[index] else 1
 	return true
 
 

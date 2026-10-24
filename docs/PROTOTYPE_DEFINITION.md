@@ -1,13 +1,13 @@
 # Prototype Definition
 
-Status: initial prototype definition and procedural-generation implementation approved on 2026-10-24. The broader prototype test and milestone review remain separate tasks. Tuning values may be adjusted after playtesting.
+Status: the prototype, procedural generation, keyboard controls, and Xbox controls were tested and approved on 2026-10-24. Bulb-to-X replacement was also approved. Further appearance and gameplay refinements remain in the task list. Tuning values may be adjusted after playtesting.
 
 ## Confirmed foundations
 
 - Build a small 2D Akari game in Godot with simple provisional visuals.
 - Separate game rules from presentation, and level configuration from board definition and mutable game state.
 - Generate boards with at least one valid solution; multiple solutions are initially acceptable.
-- Target PC with mouse input for the first prototype.
+- Target PC with mouse, keyboard, and standardized gamepad input. See [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md) for bindings and navigation.
 - Include three difficulty presets: Easy, Medium, and Hard, with one level per preset in the completed prototype. Initial dimensions and wall counts are defined below and may be adjusted after playtesting.
 - Start implementation with one configuration to validate the core, then add the remaining difficulty presets and their levels.
 - Use predefined difficulty presets to supply generation parameters, including board dimensions and target wall count.
@@ -40,7 +40,7 @@ Easy is the initial configuration used to validate the core. Wall counts include
 - Walls cannot contain bulbs.
 - Provide a Restart button that removes all player-placed bulbs and resets derived illumination and conflicts while preserving the current board definition, clues, and level seed.
 - Allow bulb placements that create rule violations; players can correct them by removing bulbs.
-- Right-click a playable cell without a bulb to toggle a visible no-bulb annotation. This is a player note, not a restriction enforced by the rules.
+- Right-click a playable cell to toggle a visible no-bulb annotation. If a bulb is present, replace it with the annotation in one action. This is a player note, not a restriction enforced by the rules.
 - Left-clicking an annotated cell removes its annotation and places a bulb in a single action.
 - Annotations do not affect illumination, clue counts, or victory checks. Store them in mutable game state, separately from the board definition.
 - Restart also clears all annotations, and the solved-state input lock applies to annotations as well.
@@ -102,7 +102,7 @@ The prototype milestone is complete only after the following outcomes have been 
 
 - Easy, Medium, and Hard each open their assigned level with the agreed dimensions and target wall count.
 - Each level is reproducible from its resolved configuration, fixed seed, and generator version, and has at least one solution satisfying all Akari rules. Multiple solutions remain acceptable.
-- Left-click bulb placement and removal, right-click annotation toggling, and replacing annotations with bulbs behave as specified.
+- Left-click bulb placement and removal, right-click annotation toggling, and replacing annotations with bulbs or bulbs with annotations behave as specified across the supported input methods.
 - Illumination, bulb conflicts, exceeded clues, and victory detection update correctly after every board-state change, including restart.
 - Provisional visuals clearly distinguish cells, walls, clues, bulbs, illumination, annotations, and conflicts.
 - Solving a puzzle shows "Puzzle solved!" and locks board interaction; Restart restores a clean, playable instance of the same puzzle.
@@ -111,8 +111,8 @@ The prototype milestone is complete only after the following outcomes have been 
 
 Approving this definition completes the planning task, not the playable prototype milestone.
 
-## Future evolution
+## Input evolution
 
 - Keyboard navigation and actions were implemented and approved after user playtesting on 2026-10-24; see [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md) for the agreed bindings and focus behavior.
-- Support gamepad navigation across the board and placing or removing bulbs.
-- Keep player actions separate from mouse-specific handling so these input methods can be added without changing game rules. Exact bindings and navigation behavior are deferred.
+- Gamepad navigation and actions were approved after Xbox playtesting on 2026-10-24, including D-pad/left stick, A/X actions, and B/Escape Back shortcuts. Bulb-to-X replacement was also tested and approved on that date.
+- Keep player actions independent of input devices. The current bindings and navigation behavior are specified in [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md); physical compatibility with generic controllers remains to be tested.

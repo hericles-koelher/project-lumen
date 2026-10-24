@@ -13,6 +13,7 @@ func _init() -> void:
 	_test_conflicts_and_removal()
 	_test_clues_at_boundaries()
 	_test_annotations_and_reset()
+	_test_annotation_replaces_conflicting_bulb()
 	_test_fixed_level()
 	print("Core checks: %d passed, %d failed" % [_checks - _failures, _failures])
 	quit(0 if _failures == 0 else 1)
@@ -71,12 +72,29 @@ func _test_annotations_and_reset() -> void:
 	_expect(not state.toggle_annotation(2), "Walls must reject annotations.")
 	state.toggle_bulb(0)
 	_expect(state.annotations[0] == 0 and state.bulbs[0] == 1, "Placing a bulb must replace an annotation.")
-	_expect(not state.toggle_annotation(0), "Right click on a bulb must leave it unchanged.")
+	_expect(state.toggle_annotation(0), "An annotation action on a bulb must change the cell.")
+	_expect(state.bulbs[0] == 0 and state.annotations[0] == 1, "The annotation action must replace a bulb with X atomically.")
+	_expect(state.evaluate().lit_count == 0, "Replacing the last bulb must remove its illumination.")
+	state.toggle_annotation(0)
+	_expect(state.annotations[0] == 0, "Repeating the annotation action must remove X.")
+	state.toggle_bulb(0)
 	state.toggle_annotation(1)
 	_expect(state.evaluate().solved, "Annotations must not prevent a valid solution.")
 	state.reset()
 	_expect(state.bulbs.count(1) == 0 and state.annotations.count(1) == 0, "Restart must clear bulbs and annotations.")
 	_expect(not state.evaluate().solved, "Restart must clear the solved state.")
+
+
+func _test_annotation_replaces_conflicting_bulb() -> void:
+	var state := State.new(Board.new(PackedStringArray(["0.."])))
+	state.toggle_bulb(1)
+	state.toggle_bulb(2)
+	var result := state.evaluate()
+	_expect(result.conflicting_bulbs == 2 and result.exceeded_clues == 1, "The fixture must start with a bulb conflict and an exceeded clue.")
+	state.toggle_annotation(1)
+	result = state.evaluate()
+	_expect(result.conflicting_bulbs == 0 and result.exceeded_clues == 0, "Replacing a bulb with X must update conflicts and adjacent clues.")
+	_expect(result.solved, "An annotation replacement that completes the puzzle must trigger victory.")
 
 
 func _test_fixed_level() -> void:

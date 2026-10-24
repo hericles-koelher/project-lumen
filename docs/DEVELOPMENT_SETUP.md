@@ -11,7 +11,7 @@
 
 Import the repository's `project.godot` in the Godot project manager and open it. Press F6 to run the current scene or F5 to run the project. The configured main scene is `src/presentation/main.tscn`.
 
-The menu opens one seeded puzzle per difficulty: Easy 5×5, Medium 7×7, and Hard 9×9. Each level always uses its catalog seed and configuration; reopening it reproduces the same puzzle with a clean player state. Left-click toggles bulbs; right-click toggles X annotations. Restart clears all moves without regenerating the board, Back to Menu discards the play session, and Quit exits the game. A correct solution automatically locks the board and displays "Puzzle solved!".
+The menu opens one seeded puzzle per difficulty: Easy 5×5, Medium 7×7, and Hard 9×9. Each level always uses its catalog seed and configuration; reopening it reproduces the same puzzle with a clean player state. Left-click toggles bulbs; right-click toggles X annotations. Either action replaces the other symbol when present. Keyboard controls use arrows/WASD, Space for bulbs, X for annotations, and Enter/Space for buttons. Gamepad controls use the D-pad/left stick, A for bulbs/confirmation, and X for annotations. Escape or B returns to the menu during gameplay and does not quit from the main menu. See [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md) for focus transitions and complete interaction behavior. Restart clears all moves without regenerating the board, Back to Menu discards the play session, and Quit exits the game. A correct solution automatically locks the board and displays "Puzzle solved!".
 
 On the current development machine, the editor executable is:
 
@@ -31,4 +31,4 @@ Use the plugin to create and edit scenes, inspect nodes, and start or stop playt
 
 ## Setup validation
 
-On 2026-10-24, the main scene was opened, configured, and launched through Godot MCP Toolkit 1.0.4 on Godot 4.7.2. The user confirmed the fixed-board prototype was functional. The procedural implementation passes 281 generation checks and all 23 existing core checks; its main script also passes the plugin's compile check. Manual review of the generated puzzles and larger layouts is pending with the user. See [`../tests/README.md`](../tests/README.md) for isolated checks.
+On 2026-10-24, the main scene was opened, configured, and launched through Godot MCP Toolkit 1.0.4 on Godot 4.7.2. The user confirmed the fixed-board prototype was functional. The user also tested and approved generated puzzles, keyboard controls, Xbox controls, and bulb-to-X replacement. The isolated suites pass 407 checks: 29 core, 281 generation, 50 keyboard/navigation, and 47 synthetic gamepad checks. The updated gameplay scripts pass the plugin's compile checks. Generic controller hardware remains untested. See [`../tests/README.md`](../tests/README.md) for isolated checks.

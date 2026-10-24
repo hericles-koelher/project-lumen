@@ -6,7 +6,6 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Adapt the approved keyboard interaction to gamepad after keyboard playtesting.
 - [ ] Implement the selected improvements.
 - [ ] Test the improvements and update the project documentation and task list.
 - [ ] Refine the overall appearance and gameplay details.
@@ -37,6 +36,8 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Adapt the approved keyboard interaction to gamepad, add the B/Esc Back shortcut, and support replacing a bulb with X across input methods. Completed on 2026-10-24.
 
 - [x] Implement and validate keyboard navigation and gameplay actions. Completed on 2026-10-24.
 

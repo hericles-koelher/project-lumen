@@ -31,9 +31,13 @@ Difficulty preset and seed policy → resolved level configuration → generator
 - `src/presentation/main.gd`: menu/game flow, input actions, audio, and rendering updates.
 - `src/presentation/board_cell.gd`: individual cell drawing and mouse events, including hover and conflict indicators.
 - `src/presentation/lumen_theme.gd`: shared colors, typography, and control styling.
-- `src/input/keyboard_bindings.gd`: named keyboard actions installed into Godot's InputMap; later input methods can target the same actions.
+- `src/input/input_bindings.gd`: named keyboard and standardized gamepad actions installed into Godot's InputMap.
 - `src/input/board_navigation.gd`: input-independent selection and directional transitions between board cells and the button row.
+- `src/input/gamepad_state.gd`: per-device D-pad/left-stick state and a stable cardinal direction.
+- `src/input/direction_repeat.gd`: bounded held-direction repeat, independent from frame timing and scene focus.
 
 Opening a difficulty resolves its catalog configuration, generates and validates a board, and creates a fresh game state. The controller retains configuration metadata but discards the construction solution. Restart resets the existing game state and does not regenerate the board. Cell visuals scale to keep the three board sizes inside the same board frame.
+
+Bulb and annotation actions replace each other in a single state mutation. Walls reject both actions, and the presentation blocks board changes after victory. Mouse, keyboard, and gamepad share these actions and navigation handlers; see [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md).
 
 After a player action, the controller evaluates the whole small board and refreshes its views. Winning is derived from the rules, not from comparison against a stored bulb arrangement.

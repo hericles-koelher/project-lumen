@@ -1,6 +1,6 @@
 extends SceneTree
 
-const Keyboard = preload("res://src/input/keyboard_bindings.gd")
+const Keyboard = preload("res://src/input/input_bindings.gd")
 const Navigation = preload("res://src/input/board_navigation.gd")
 const FixedLevel = preload("res://src/levels/easy_fixed.gd")
 const State = preload("res://src/core/game_state.gd")

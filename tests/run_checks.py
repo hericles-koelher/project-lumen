@@ -17,6 +17,7 @@ def main() -> int:
     repository = Path(__file__).resolve().parents[1]
     work = repository / "work"
     work.mkdir(exist_ok=True)
+    (work / ".gdignore").touch()
     with tempfile.TemporaryDirectory(prefix="isolated-checks-", dir=work) as directory:
         project = Path(directory)
         (project / "project.godot").write_text(
@@ -25,7 +26,7 @@ def main() -> int:
         )
         for folder in ("src", "tests", "assets"):
             (project / folder).symlink_to(repository / folder, target_is_directory=True)
-        for script in ("run_core.gd", "run_generation.gd", "run_input.gd"):
+        for script in ("run_core.gd", "run_generation.gd", "run_input.gd", "run_gamepad.gd"):
             result = subprocess.run(
                 [args.godot, "--headless", "--path", str(project), "--script", f"res://tests/{script}"],
                 check=False,

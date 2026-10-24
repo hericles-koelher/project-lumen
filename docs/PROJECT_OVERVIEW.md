@@ -11,11 +11,11 @@ Build a small, playable prototype with a readable board, basic interaction, veri
 ## Initial scope
 
 - Represent walls, numbered walls, empty cells, and bulbs.
-- Allow players to place and remove bulbs.
+- Allow players to place and remove bulbs and X annotations using mouse, keyboard, or gamepad; either action replaces the other symbol when present.
 - Calculate illumination and detect bulb conflicts.
 - Check numbered clues and the win condition.
 - Generate a level from width, height, target wall count, and seed, ensuring at least one valid solution.
-- Resolve generation parameters from predefined difficulty presets, either selected by the player or assigned to a level. Exact presets and the prototype's entry flow remain to be defined.
+- Resolve generation parameters from predefined difficulty presets, either selected by the player or assigned to a level. The approved presets and entry flow are recorded in [`PROTOTYPE_DEFINITION.md`](PROTOTYPE_DEFINITION.md).
 - Allow multiple solutions in the first version.
 
 ## Out of scope for the first version

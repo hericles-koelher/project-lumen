@@ -3,8 +3,10 @@ extends Control
 const State = preload("res://src/core/game_state.gd")
 const Levels = preload("res://src/levels/prototype_levels.gd")
 const Generator = preload("res://src/generation/board_generator.gd")
-const Keyboard = preload("res://src/input/keyboard_bindings.gd")
+const Bindings = preload("res://src/input/input_bindings.gd")
 const Navigation = preload("res://src/input/board_navigation.gd")
+const GamepadState = preload("res://src/input/gamepad_state.gd")
+const DirectionRepeat = preload("res://src/input/direction_repeat.gd")
 const CellView = preload("res://src/presentation/board_cell.gd")
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
 const BACKGROUND = preload("res://assets/backgrounds/menu_concept.png")
@@ -34,10 +36,17 @@ var _navigation: Navigation
 var _board_focus: PanelContainer
 var _game_buttons: Array[Button] = []
 var _menu_buttons: Array[Button] = []
+var _page_name := ""
+var _gamepad := GamepadState.new()
+var _direction_repeat := DirectionRepeat.new()
 
 
 func _ready() -> void:
-	Keyboard.install()
+	Bindings.install()
+	Input.ignore_joypad_on_unfocused_application = true
+	Input.joy_connection_changed.connect(_on_gamepad_connection_changed)
+	for device in Input.get_connected_joypads():
+		_on_gamepad_connection_changed(device, true)
 	theme = Visuals.create_theme()
 	Input.set_custom_mouse_cursor(ARROW_TEXTURE, Input.CURSOR_ARROW, Vector2(8, 5))
 	Input.set_custom_mouse_cursor(HAND_TEXTURE, Input.CURSOR_POINTING_HAND, Vector2(16, 5))
@@ -79,6 +88,9 @@ func _create_backdrop() -> void:
 
 
 func _new_page(page_name: String, min_width: float) -> VBoxContainer:
+	_page_name = page_name
+	_gamepad.reset()
+	_direction_repeat.reset()
 	for child in _screen.get_children():
 		_screen.remove_child(child)
 		child.queue_free()
@@ -201,7 +213,7 @@ func _open_level(difficulty: String) -> void:
 		_cells.append(cell)
 	_warning = _label(content, "", 18)
 	_warning.name = "Warning"
-	_label(content, "Mouse: left / right click  ·  Keyboard: Space / X", 17)
+	_label(content, "Mouse: left / right click  ·  Keyboard: Space / X\nGamepad: A / X  ·  Back: Esc / B", 17)
 	_victory = _label(content, "Puzzle solved!", 30)
 	_victory.name = "Victory"
 	var actions := HBoxContainer.new()
@@ -217,50 +229,100 @@ func _open_level(difficulty: String) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		# Consume controller events before native UI handling to prevent duplicate movement.
+		get_viewport().set_input_as_handled()
+		if not get_window().has_focus():
+			return
+		if _gamepad.handle_direction_event(event):
+			return
+		if event is InputEventJoypadButton and event.pressed:
+			_dispatch_action(event, false)
+		return
 	if not event is InputEventKey or not event.pressed:
 		return
+	var direction := Bindings.direction_for(event)
+	if direction != Vector2i.ZERO:
+		if _navigate(direction):
+			get_viewport().set_input_as_handled()
+	else:
+		_dispatch_action(event, event.echo)
+
+
+func _process(delta: float) -> void:
+	if not get_window().has_focus():
+		return
+	# Sample both analog axes once per frame, avoiding two moves from a diagonal update.
+	var direction := _direction_repeat.advance(_gamepad.direction(), delta)
+	if direction != Vector2i.ZERO:
+		_navigate(direction)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and _gamepad != null:
+		_gamepad.reset()
+		_direction_repeat.reset()
+
+
+func _on_gamepad_connection_changed(device: int, connected: bool) -> void:
+	if connected:
+		print("Gamepad connected: %s (standard mapping: %s)" % [Input.get_joy_name(device), Input.is_joy_known(device)])
+	else:
+		_gamepad.remove_device(device)
+		_direction_repeat.reset()
+
+
+func _navigate(direction: Vector2i) -> bool:
 	var focused := get_viewport().gui_get_focus_owner()
-	var direction := Keyboard.direction_for(event)
 	if _navigation != null and focused == _board_focus:
-		if direction != Vector2i.ZERO:
-			_navigation.move(direction, _nearest_button_below())
+		_navigation.move(direction, _nearest_button_below())
+		_sync_navigation_focus()
+	elif focused in _game_buttons:
+		if direction != Vector2i.UP or not _evaluation.get("solved", false):
+			_navigation.select_button(_game_buttons.find(focused))
+			_navigation.move(direction)
 			_sync_navigation_focus()
-		elif Keyboard.pressed(event, "lumen_bulb", true):
-			if not event.echo:
+	elif focused in _menu_buttons:
+		var index := clampi(_menu_buttons.find(focused) + direction.y, 0, _menu_buttons.size() - 1)
+		_menu_buttons[index].grab_focus()
+	else:
+		return false
+	return true
+
+
+func _dispatch_action(event: InputEvent, repeated: bool) -> void:
+	if Bindings.pressed(event, "lumen_back", true):
+		get_viewport().set_input_as_handled()
+		if not repeated:
+			_go_back()
+		return
+	var focused := get_viewport().gui_get_focus_owner()
+	if _navigation != null and focused == _board_focus:
+		if Bindings.pressed(event, "lumen_bulb", true):
+			if not repeated:
 				_on_primary_click(_navigation.selected_cell)
-		elif Keyboard.pressed(event, "lumen_annotation", true):
-			if not event.echo:
+		elif Bindings.pressed(event, "lumen_annotation", true):
+			if not repeated:
 				_on_secondary_click(_navigation.selected_cell)
 		else:
 			return
-	elif focused in _game_buttons:
-		if direction != Vector2i.ZERO:
-			if direction != Vector2i.UP or not _evaluation.get("solved", false):
-				_navigation.select_button(_game_buttons.find(focused))
-				_navigation.move(direction)
-				_sync_navigation_focus()
-		elif Keyboard.pressed(event, "lumen_activate", true):
-			# Consume before changing screens, so the same key cannot affect the next page.
-			get_viewport().set_input_as_handled()
-			if not event.echo:
-				focused.emit_signal("pressed")
+	elif focused in _game_buttons or focused in _menu_buttons:
+		if not Bindings.pressed(event, "lumen_activate", true):
 			return
-		else:
-			return
-	elif focused in _menu_buttons:
-		if direction != Vector2i.ZERO:
-			var index := clampi(_menu_buttons.find(focused) + direction.y, 0, _menu_buttons.size() - 1)
-			_menu_buttons[index].grab_focus()
-		elif Keyboard.pressed(event, "lumen_activate", true):
-			get_viewport().set_input_as_handled()
-			if not event.echo:
-				focused.emit_signal("pressed")
-			return
-		else:
-			return
+		# Consume before changing pages, so this press cannot activate the new screen too.
+		get_viewport().set_input_as_handled()
+		if not repeated:
+			focused.emit_signal("pressed")
+		return
 	else:
 		return
 	get_viewport().set_input_as_handled()
+
+
+func _go_back() -> void:
+	if _page_name != "Menu":
+		_play(_action_audio, CLICK_SOUND)
+		_show_menu()
 
 
 func _nearest_button_below() -> int:
@@ -332,13 +394,19 @@ func _on_primary_click(index: int) -> void:
 func _on_secondary_click(index: int) -> void:
 	if _evaluation.get("solved", false):
 		return
+	var previous_violations := _violation_count()
 	if _state.toggle_annotation(index):
 		_play(_action_audio, MARK_SOUND)
 		_refresh_board()
+		_play_rule_feedback(previous_violations)
 
 
 func _refresh_board() -> void:
+	var was_solved: bool = _evaluation.get("solved", false)
 	_evaluation = _state.evaluate()
+	if _evaluation.solved and not was_solved:
+		_gamepad.reset()
+		_direction_repeat.reset()
 	for index in range(_cells.size()):
 		var cell = _cells[index]
 		cell.bulb = bool(_state.bulbs[index])
@@ -375,6 +443,8 @@ func _play_rule_feedback(previous_violations: int) -> void:
 
 
 func _restart() -> void:
+	_gamepad.reset()
+	_direction_repeat.reset()
 	_state.reset()
 	_feedback_audio.stop()
 	_refresh_board()
