@@ -5,6 +5,10 @@ extends Control
 signal primary_clicked(index: int)
 ## Emitted when the secondary clicked event occurs.
 signal secondary_clicked(index: int)
+## Emitted when the pointer enters this cell, allowing the board to choose pointer selection.
+signal pointer_entered(index: int)
+## Emitted when the pointer leaves this cell so navigation focus can resume its highlight.
+signal pointer_exited(index: int)
 
 ## Shared palette and style helpers used to draw the cell.
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
@@ -12,7 +16,7 @@ const Visuals = preload("res://src/presentation/lumen_theme.gd")
 const BULB = preload("res://assets/icons/bulb.svg")
 ## X annotation illustration drawn inside a cell.
 const MARK = preload("res://assets/icons/annotation_x.svg")
-## Overlay illustration shown while the pointer hovers over a cell.
+## Shared highlight illustration for pointer hover and keyboard selection.
 const HOVER = preload("res://assets/icons/cell_hover.svg")
 
 ## Row-major index represented by this cell view.
@@ -35,8 +39,10 @@ var conflict := false
 var exceeded := false
 ## Whether this cell currently accepts mouse actions.
 var interaction_enabled := true
-## Whether this cell displays the keyboard focus outline.
+## Whether keyboard navigation currently selects this cell.
 var keyboard_selected := false
+## Whether pointer hover is the active source for the shared cell marker.
+var pointer_selection_active := false
 ## Whether the pointer is currently over this cell.
 var _hovered := false
 ## Font variation used for clue numbers and warning badges.
@@ -49,8 +55,23 @@ func _ready() -> void:
 	# OpenType axis tags use their four-byte integer representation.
 	_clue_font.variation_opentype = {0x77676874: 650.0}
 	custom_minimum_size = Vector2(cell_extent, cell_extent)
-	mouse_entered.connect(func() -> void: _hovered = true; queue_redraw())
-	mouse_exited.connect(func() -> void: _hovered = false; queue_redraw())
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+
+
+## Makes this cell the pointer selection when the pointer enters it.
+func _on_mouse_entered() -> void:
+	_hovered = true
+	if not wall and interaction_enabled:
+		pointer_entered.emit(cell_index)
+	queue_redraw()
+
+
+## Clears pointer hover and notifies the board that pointer selection has ended.
+func _on_mouse_exited() -> void:
+	_hovered = false
+	pointer_exited.emit(cell_index)
+	queue_redraw()
 
 
 ## Updates this cell view after its displayed state or interaction changes.
@@ -87,12 +108,8 @@ func _draw() -> void:
 			draw_texture_rect(BULB, Rect2(inset, size - inset * 2), false)
 		elif marked:
 			draw_texture_rect(MARK, Rect2(inset, size - inset * 2), false)
-		if _hovered and interaction_enabled:
-			draw_texture_rect(HOVER, rect, false)
-	if keyboard_selected and interaction_enabled:
-		# Draw focus before warnings so conflicts retain their red border and badge.
-		draw_style_box(Visuals.box(Color.TRANSPARENT, corner_radius, Visuals.INK, 4), rect.grow(-1))
-		draw_style_box(Visuals.box(Color.TRANSPARENT, maxi(2, corner_radius - 2), Color.WHITE, 2), rect.grow(-4))
+	if (keyboard_selected or (_hovered and pointer_selection_active)) and interaction_enabled:
+		draw_texture_rect(HOVER, rect, false)
 	if conflict or exceeded:
 		var badge_radius := minf(8.0, size.x * 0.12)
 		var badge_center := Vector2(size.x - badge_radius - 4, badge_radius + 4)

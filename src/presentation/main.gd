@@ -78,6 +78,8 @@ var _page_name := ""
 var _gamepad := GamepadState.new()
 ## Held-direction repeat timer for gamepad navigation.
 var _direction_repeat := DirectionRepeat.new()
+## Whether pointer hover, rather than focused navigation, controls the cell selector.
+var _pointer_selection_active := false
 
 
 ## Initializes this node after it enters the scene tree.
@@ -219,7 +221,11 @@ func _open_level(difficulty: String) -> void:
 	_state = State.new(generated.board)
 	_current_configuration = generated.configuration
 	var content := _new_page("Game", 540)
-	_navigation = Navigation.new(_state.board.width, _state.board.height, 3)
+	_pointer_selection_active = false
+	var selectable_cells := PackedByteArray()
+	for index in range(_state.board.cell_count()):
+		selectable_cells.append(int(_state.board.is_playable(index)))
+	_navigation = Navigation.new(_state.board.width, _state.board.height, 3, selectable_cells)
 	_label(content, "%s  ·  %d × %d" % [configuration.difficulty, configuration.width, configuration.height], 30)
 	_status = _label(content, "")
 	_status.name = "Status"
@@ -256,6 +262,8 @@ func _open_level(difficulty: String) -> void:
 		cell.clue = _state.board.clue_at(index)
 		cell.primary_clicked.connect(_on_mouse_primary)
 		cell.secondary_clicked.connect(_on_mouse_secondary)
+		cell.pointer_entered.connect(_on_cell_pointer_entered)
+		cell.pointer_exited.connect(_on_cell_pointer_exited)
 		grid.add_child(cell)
 		_cells.append(cell)
 	_warning = _label(content, "", 18)
@@ -325,6 +333,7 @@ func _on_gamepad_connection_changed(device: int, connected: bool) -> void:
 
 ## Moves the current board, button, or menu focus in the requested direction.
 func _navigate(direction: Vector2i) -> bool:
+	_pointer_selection_active = false
 	var focused := get_viewport().gui_get_focus_owner()
 	if _navigation != null and focused == _board_focus:
 		_navigation.move(direction, _nearest_button_below())
@@ -351,6 +360,9 @@ func _dispatch_action(event: InputEvent, repeated: bool) -> void:
 		return
 	var focused := get_viewport().gui_get_focus_owner()
 	if _navigation != null and focused == _board_focus:
+		if Bindings.pressed(event, "lumen_bulb", true) or Bindings.pressed(event, "lumen_annotation", true):
+			_pointer_selection_active = false
+			_refresh_selection()
 		if Bindings.pressed(event, "lumen_bulb", true):
 			if not repeated:
 				_on_primary_click(_navigation.selected_cell)
@@ -412,17 +424,33 @@ func _on_focus_changed() -> void:
 	_refresh_selection()
 
 
-## Updates the visible board selection outline from current GUI focus.
+## Updates the single shared cell marker from input source and current focus.
 func _refresh_selection() -> void:
-	var show_selection := _navigation != null and get_viewport().gui_get_focus_owner() == _board_focus
+	var show_selection := _navigation != null and not _pointer_selection_active and get_viewport().gui_get_focus_owner() == _board_focus
 	for index in range(_cells.size()):
 		var cell = _cells[index]
 		cell.keyboard_selected = show_selection and index == _navigation.selected_cell
+		cell.pointer_selection_active = _pointer_selection_active
 		cell.queue_redraw()
+
+
+## Synchronizes the remembered cell with pointer hover and shows its shared marker.
+func _on_cell_pointer_entered(index: int) -> void:
+	_pointer_selection_active = true
+	if _navigation != null and not _evaluation.get("solved", false):
+		_navigation.select_cell(index)
+	_refresh_selection()
+
+
+## Restores focus-based highlighting after the pointer leaves the board cells.
+func _on_cell_pointer_exited(_index: int) -> void:
+	_pointer_selection_active = false
+	_refresh_selection()
 
 
 ## Stores a clicked cell as the current selection while the puzzle is active.
 func _select_mouse_cell(index: int) -> void:
+	_pointer_selection_active = true
 	if not _evaluation.get("solved", false):
 		_navigation.select_cell(index)
 		_board_focus.grab_focus()

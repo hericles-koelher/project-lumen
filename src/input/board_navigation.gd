@@ -11,14 +11,18 @@ var _width: int
 var _height: int
 ## Number of action buttons reachable below the board.
 var _button_count: int
+## Per-cell flags used to skip walls during directional navigation.
+var _selectable_cells := PackedByteArray()
 
 
-## Creates a navigation model for the supplied board dimensions and button count.
-func _init(width: int, height: int, button_count: int) -> void:
+## Creates a focus model; empty selectable-cell flags treat every board cell as selectable.
+func _init(width: int, height: int, button_count: int, selectable_cells: PackedByteArray = PackedByteArray()) -> void:
 	assert(width > 0 and height > 0 and button_count > 0)
+	assert(selectable_cells.is_empty() or selectable_cells.size() == width * height)
 	_width = width
 	_height = height
 	_button_count = button_count
+	_selectable_cells = selectable_cells.duplicate()
 
 
 ## Returns whether focus currently belongs to a board cell.
@@ -37,8 +41,10 @@ func select_button(index: int) -> void:
 	selected_button = clampi(index, 0, _button_count - 1)
 
 
-## Moves focus one step while respecting board and button-row boundaries.
+## Moves focus to the next selectable cell or button without wrapping around.
 func move(direction: Vector2i, button_below: int = 0) -> void:
+	if direction == Vector2i.ZERO or absi(direction.x) + absi(direction.y) != 1:
+		return
 	if not is_on_board():
 		if direction == Vector2i.UP:
 			selected_button = -1
@@ -50,6 +56,15 @@ func move(direction: Vector2i, button_below: int = 0) -> void:
 	if direction == Vector2i.DOWN and y == _height - 1:
 		select_button(button_below)
 		return
-	x = clampi(x + direction.x, 0, _width - 1)
-	y = clampi(y + direction.y, 0, _height - 1)
-	selected_cell = y * _width + x
+	var candidate := Vector2i(x, y) + direction
+	while candidate.x >= 0 and candidate.y >= 0 and candidate.x < _width and candidate.y < _height:
+		var candidate_index := candidate.y * _width + candidate.x
+		if _is_selectable(candidate_index):
+			selected_cell = candidate_index
+			return
+		candidate += direction
+
+
+## Returns whether the row-major cell is permitted as a navigation target.
+func _is_selectable(index: int) -> bool:
+	return _selectable_cells.is_empty() or bool(_selectable_cells[index])

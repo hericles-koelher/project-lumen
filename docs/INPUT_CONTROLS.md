@@ -31,16 +31,16 @@ Status: keyboard and Xbox interaction were tested and approved by the user on 20
 
 ## Board selection
 
-- The selection moves one cell at a time and may pass over walls, including numbered walls.
-- Selecting a wall is allowed, but bulb and annotation actions have no effect on it.
+- Keyboard and gamepad navigation skip walls in the chosen direction and stop at the next playable cell. If no playable cell remains in that direction, the move is ignored.
+- Bulb and annotation actions have no effect on walls.
 - Navigation does not wrap to the opposite board edge.
 - Directional navigation may leave the board for adjacent interface controls. Moving down from the bottom row transfers focus to the buttons below the board.
 - At edges with no adjacent focus target, the selection stays in place.
 - In the bottom button row, left/right moves between buttons and up returns to the last selected board cell. Arrow keys and WASD use the same directional behavior.
-- Opening a level selects its top-left cell and gives the board keyboard focus. A visible inner/outer outline identifies the selected cell, including when it is a wall.
+- Opening a level selects its top-left cell and gives the board keyboard focus. A yellow corner marker identifies the active cell selection. Keyboard/gamepad focus and playable-cell pointer hover share this marker; only one input source displays it at a time.
 - Leaving the board downward focuses the button nearest the selected cell's horizontal position. The cell is remembered while navigating the button row.
-- The cell outline is visible only while the board has focus. Focused buttons use the existing theme's focus border.
-- Clicking a playable cell synchronizes the remembered selection and returns focus to the board. Mouse hover alone does not move the keyboard selection.
+- The focus marker is visible only while the board has focus and pointer hover is not the active selector. Focused buttons use the existing theme's focus border.
+- Clicking a playable cell synchronizes the remembered selection and returns focus to the board. Mouse hover moves the shared selection and becomes its single visible marker, so keyboard/gamepad navigation resumes from the hovered cell.
 - Restart restores board focus at the remembered cell. Opening a level from the menu starts at the top-left cell again.
 - Victory disables board actions and moves board focus to Restart. Button navigation remains available; up does not return to the locked board until restarting.
 
