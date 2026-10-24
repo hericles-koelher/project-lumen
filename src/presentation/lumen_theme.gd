@@ -32,8 +32,10 @@ static func create_theme() -> Theme:
 	result.default_font_size = 20
 	result.set_color("font_color", "Label", INK)
 	result.set_color("font_color", "Button", INK)
+	result.set_color("font_focus_color", "Button", INK)
 	result.set_color("font_hover_color", "Button", INK)
 	result.set_color("font_pressed_color", "Button", INK)
+	result.set_color("font_hover_pressed_color", "Button", INK)
 	result.set_color("font_disabled_color", "Button", Color("7e8790"))
 	result.set_stylebox("normal", "Button", box(CREAM, 14, INK, 2))
 	result.set_stylebox("hover", "Button", box(SUNLIGHT, 14, INK, 2))

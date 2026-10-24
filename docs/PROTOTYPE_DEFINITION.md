@@ -113,6 +113,6 @@ Approving this definition completes the planning task, not the playable prototyp
 
 ## Future evolution
 
-- Support keyboard navigation across the board and placing or removing bulbs.
+- Keyboard navigation and actions were implemented and approved after user playtesting on 2026-10-24; see [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md) for the agreed bindings and focus behavior.
 - Support gamepad navigation across the board and placing or removing bulbs.
 - Keep player actions separate from mouse-specific handling so these input methods can be added without changing game rules. Exact bindings and navigation behavior are deferred.

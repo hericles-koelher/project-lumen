@@ -6,7 +6,7 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Explore keyboard and gamepad support for board navigation and placing or removing bulbs after the mouse prototype is validated.
+- [ ] Adapt the approved keyboard interaction to gamepad after keyboard playtesting.
 - [ ] Implement the selected improvements.
 - [ ] Test the improvements and update the project documentation and task list.
 - [ ] Refine the overall appearance and gameplay details.
@@ -20,12 +20,25 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
   - [ ] Refine transitions, animations, sound effects, and music balance.
   - [ ] Adjust agreed gameplay and navigation details based on playtesting feedback.
   - [ ] Validate the refinements together and update the documentation.
+- [ ] Refine the menu structure and level-selection flow.
+  - [ ] Create a main menu with Start Game, Settings, and Quit options.
+  - [ ] Add a separate, clearly visible mute/unmute shortcut in a corner of the main menu.
+  - [ ] Make Start Game open a difficulty-selection screen with Easy, Medium, and Hard.
+  - [ ] After difficulty selection, open a level-selection screen with Level 1 through Level 10.
+  - [ ] Define ten reproducible levels per difficulty, each with its own stable ID and explicit seed.
+  - [ ] Add a Random Level option that generates a new puzzle using the selected difficulty's parameters.
+  - [ ] Define seed handling, replay, and restart behavior for random levels.
+  - [ ] Define the Settings options and which preferences should persist between sessions.
+  - [ ] Provide clear Back navigation and support the approved input methods throughout the menu flow.
+  - [ ] Validate menu navigation, numbered levels, random generation, and mute/unmute behavior.
 
 ## In progress
 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Implement and validate keyboard navigation and gameplay actions. Completed on 2026-10-24.
 
 - [x] Fix issues found during testing and confirm the prototype meets its completion criteria. Completed on 2026-10-24.
 

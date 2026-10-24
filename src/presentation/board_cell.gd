@@ -18,6 +18,7 @@ var illuminated := false
 var conflict := false
 var exceeded := false
 var interaction_enabled := true
+var keyboard_selected := false
 var _hovered := false
 var _clue_font := FontVariation.new()
 
@@ -64,6 +65,10 @@ func _draw() -> void:
 			draw_texture_rect(MARK, Rect2(inset, size - inset * 2), false)
 		if _hovered and interaction_enabled:
 			draw_texture_rect(HOVER, rect, false)
+	if keyboard_selected and interaction_enabled:
+		# Draw focus before warnings so conflicts retain their red border and badge.
+		draw_style_box(Visuals.box(Color.TRANSPARENT, corner_radius, Visuals.INK, 4), rect.grow(-1))
+		draw_style_box(Visuals.box(Color.TRANSPARENT, maxi(2, corner_radius - 2), Color.WHITE, 2), rect.grow(-4))
 	if conflict or exceeded:
 		var badge_radius := minf(8.0, size.x * 0.12)
 		var badge_center := Vector2(size.x - badge_radius - 4, badge_radius + 4)

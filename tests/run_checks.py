@@ -25,7 +25,7 @@ def main() -> int:
         )
         for folder in ("src", "tests", "assets"):
             (project / folder).symlink_to(repository / folder, target_is_directory=True)
-        for script in ("run_core.gd", "run_generation.gd"):
+        for script in ("run_core.gd", "run_generation.gd", "run_input.gd"):
             result = subprocess.run(
                 [args.godot, "--headless", "--path", str(project), "--script", f"res://tests/{script}"],
                 check=False,

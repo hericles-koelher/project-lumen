@@ -3,6 +3,8 @@ extends Control
 const State = preload("res://src/core/game_state.gd")
 const Levels = preload("res://src/levels/prototype_levels.gd")
 const Generator = preload("res://src/generation/board_generator.gd")
+const Keyboard = preload("res://src/input/keyboard_bindings.gd")
+const Navigation = preload("res://src/input/board_navigation.gd")
 const CellView = preload("res://src/presentation/board_cell.gd")
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
 const BACKGROUND = preload("res://assets/backgrounds/menu_concept.png")
@@ -28,9 +30,14 @@ var _victory: Label
 var _music: AudioStreamPlayer
 var _action_audio: AudioStreamPlayer
 var _feedback_audio: AudioStreamPlayer
+var _navigation: Navigation
+var _board_focus: PanelContainer
+var _game_buttons: Array[Button] = []
+var _menu_buttons: Array[Button] = []
 
 
 func _ready() -> void:
+	Keyboard.install()
 	theme = Visuals.create_theme()
 	Input.set_custom_mouse_cursor(ARROW_TEXTURE, Input.CURSOR_ARROW, Vector2(8, 5))
 	Input.set_custom_mouse_cursor(HAND_TEXTURE, Input.CURSOR_POINTING_HAND, Vector2(16, 5))
@@ -76,6 +83,10 @@ func _new_page(page_name: String, min_width: float) -> VBoxContainer:
 		_screen.remove_child(child)
 		child.queue_free()
 	_cells.clear()
+	_game_buttons.clear()
+	_menu_buttons.clear()
+	_board_focus = null
+	_navigation = null
 	var panel := PanelContainer.new()
 	panel.name = page_name
 	panel.custom_minimum_size.x = min_width
@@ -109,6 +120,8 @@ func _button(parent: Node, node_name: String, text: String, action: Callable, di
 		action.call()
 	)
 	parent.add_child(button)
+	button.focus_entered.connect(_on_focus_changed)
+	button.focus_exited.connect(_refresh_selection)
 	return button
 
 
@@ -126,10 +139,11 @@ func _show_menu() -> void:
 	content.add_child(logo)
 	_label(content, "Project Lumen", 38)
 	_label(content, "A little light, a little logic.", 18)
-	_button(content, "Easy", "Easy", _open_level.bind("easy"))
-	_button(content, "Medium", "Medium", _open_level.bind("medium"))
-	_button(content, "Hard", "Hard", _open_level.bind("hard"))
-	_button(content, "Quit", "Quit", _quit)
+	_menu_buttons.append(_button(content, "Easy", "Easy", _open_level.bind("easy")))
+	_menu_buttons.append(_button(content, "Medium", "Medium", _open_level.bind("medium")))
+	_menu_buttons.append(_button(content, "Hard", "Hard", _open_level.bind("hard")))
+	_menu_buttons.append(_button(content, "Quit", "Quit", _quit))
+	_menu_buttons[0].call_deferred("grab_focus")
 
 
 func _open_level(difficulty: String) -> void:
@@ -140,11 +154,13 @@ func _open_level(difficulty: String) -> void:
 		var error_content := _new_page("LoadError", 540)
 		_label(error_content, "This puzzle could not be loaded.", 26)
 		_label(error_content, "Please return to the menu.", 20)
-		_button(error_content, "BackToMenu", "Back to Menu", _show_menu)
+		_menu_buttons.append(_button(error_content, "BackToMenu", "Back to Menu", _show_menu))
+		_menu_buttons[0].call_deferred("grab_focus")
 		return
 	_state = State.new(generated.board)
 	_current_configuration = generated.configuration
 	var content := _new_page("Game", 540)
+	_navigation = Navigation.new(_state.board.width, _state.board.height, 3)
 	_label(content, "%s  ·  %d × %d" % [configuration.difficulty, configuration.width, configuration.height], 30)
 	_status = _label(content, "")
 	_status.name = "Status"
@@ -153,6 +169,10 @@ func _open_level(difficulty: String) -> void:
 	content.add_child(board_center)
 	var board_frame := PanelContainer.new()
 	board_frame.name = "BoardFrame"
+	_board_focus = board_frame
+	board_frame.focus_mode = Control.FOCUS_ALL
+	board_frame.focus_entered.connect(_on_focus_changed)
+	board_frame.focus_exited.connect(_refresh_selection)
 	var frame_style := Visuals.box(Visuals.INK, 18)
 	frame_style.content_margin_left = 10
 	frame_style.content_margin_right = 10
@@ -175,13 +195,13 @@ func _open_level(difficulty: String) -> void:
 		cell.cell_index = index
 		cell.wall = _state.board.is_wall(index)
 		cell.clue = _state.board.clue_at(index)
-		cell.primary_clicked.connect(_on_primary_click)
-		cell.secondary_clicked.connect(_on_secondary_click)
+		cell.primary_clicked.connect(_on_mouse_primary)
+		cell.secondary_clicked.connect(_on_mouse_secondary)
 		grid.add_child(cell)
 		_cells.append(cell)
 	_warning = _label(content, "", 18)
 	_warning.name = "Warning"
-	_label(content, "Left click: bulb on/off  ·  Right click: mark X", 17)
+	_label(content, "Mouse: left / right click  ·  Keyboard: Space / X", 17)
 	_victory = _label(content, "Puzzle solved!", 30)
 	_victory.name = "Victory"
 	var actions := HBoxContainer.new()
@@ -189,10 +209,113 @@ func _open_level(difficulty: String) -> void:
 	actions.alignment = BoxContainer.ALIGNMENT_CENTER
 	actions.add_theme_constant_override("separation", 10)
 	content.add_child(actions)
-	_button(actions, "Restart", "Restart", _restart)
-	_button(actions, "BackToMenu", "Back to Menu", _show_menu)
-	_button(actions, "Quit", "Quit", _quit)
+	_game_buttons.append(_button(actions, "Restart", "Restart", _restart))
+	_game_buttons.append(_button(actions, "BackToMenu", "Back to Menu", _show_menu))
+	_game_buttons.append(_button(actions, "Quit", "Quit", _quit))
 	_refresh_board()
+	_board_focus.call_deferred("grab_focus")
+
+
+func _input(event: InputEvent) -> void:
+	if not event is InputEventKey or not event.pressed:
+		return
+	var focused := get_viewport().gui_get_focus_owner()
+	var direction := Keyboard.direction_for(event)
+	if _navigation != null and focused == _board_focus:
+		if direction != Vector2i.ZERO:
+			_navigation.move(direction, _nearest_button_below())
+			_sync_navigation_focus()
+		elif Keyboard.pressed(event, "lumen_bulb", true):
+			if not event.echo:
+				_on_primary_click(_navigation.selected_cell)
+		elif Keyboard.pressed(event, "lumen_annotation", true):
+			if not event.echo:
+				_on_secondary_click(_navigation.selected_cell)
+		else:
+			return
+	elif focused in _game_buttons:
+		if direction != Vector2i.ZERO:
+			if direction != Vector2i.UP or not _evaluation.get("solved", false):
+				_navigation.select_button(_game_buttons.find(focused))
+				_navigation.move(direction)
+				_sync_navigation_focus()
+		elif Keyboard.pressed(event, "lumen_activate", true):
+			# Consume before changing screens, so the same key cannot affect the next page.
+			get_viewport().set_input_as_handled()
+			if not event.echo:
+				focused.emit_signal("pressed")
+			return
+		else:
+			return
+	elif focused in _menu_buttons:
+		if direction != Vector2i.ZERO:
+			var index := clampi(_menu_buttons.find(focused) + direction.y, 0, _menu_buttons.size() - 1)
+			_menu_buttons[index].grab_focus()
+		elif Keyboard.pressed(event, "lumen_activate", true):
+			get_viewport().set_input_as_handled()
+			if not event.echo:
+				focused.emit_signal("pressed")
+			return
+		else:
+			return
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
+
+func _nearest_button_below() -> int:
+	var selected_x := _cells[_navigation.selected_cell].get_global_rect().get_center().x
+	var closest := 0
+	var distance := INF
+	for index in range(_game_buttons.size()):
+		var candidate := absf(_game_buttons[index].get_global_rect().get_center().x - selected_x)
+		if candidate < distance:
+			distance = candidate
+			closest = index
+	return closest
+
+
+func _sync_navigation_focus() -> void:
+	if _navigation.is_on_board():
+		_board_focus.grab_focus()
+	else:
+		_game_buttons[_navigation.selected_button].grab_focus()
+	_refresh_selection()
+
+
+func _on_focus_changed() -> void:
+	var focused := get_viewport().gui_get_focus_owner()
+	if _navigation != null:
+		if focused == _board_focus:
+			_navigation.select_cell(_navigation.selected_cell)
+		elif focused in _game_buttons:
+			_navigation.select_button(_game_buttons.find(focused))
+	_refresh_selection()
+
+
+func _refresh_selection() -> void:
+	var show_selection := _navigation != null and get_viewport().gui_get_focus_owner() == _board_focus
+	for index in range(_cells.size()):
+		var cell = _cells[index]
+		cell.keyboard_selected = show_selection and index == _navigation.selected_cell
+		cell.queue_redraw()
+
+
+func _select_mouse_cell(index: int) -> void:
+	if not _evaluation.get("solved", false):
+		_navigation.select_cell(index)
+		_board_focus.grab_focus()
+		_refresh_selection()
+
+
+func _on_mouse_primary(index: int) -> void:
+	_select_mouse_cell(index)
+	_on_primary_click(index)
+
+
+func _on_mouse_secondary(index: int) -> void:
+	_select_mouse_cell(index)
+	_on_secondary_click(index)
 
 
 func _on_primary_click(index: int) -> void:
@@ -233,6 +356,11 @@ func _refresh_board() -> void:
 	else:
 		_warning.text = "Light every cell and satisfy the numbered walls."
 		_warning.add_theme_color_override("font_color", Visuals.INK)
+	var board_had_focus := get_viewport().gui_get_focus_owner() == _board_focus
+	_board_focus.focus_mode = Control.FOCUS_NONE if _evaluation.solved else Control.FOCUS_ALL
+	if _evaluation.solved and board_had_focus:
+		_game_buttons[0].grab_focus()
+	_refresh_selection()
 
 
 func _violation_count() -> int:
@@ -250,6 +378,8 @@ func _restart() -> void:
 	_state.reset()
 	_feedback_audio.stop()
 	_refresh_board()
+	_navigation.select_cell(_navigation.selected_cell)
+	_sync_navigation_focus()
 
 
 func _play(player: AudioStreamPlayer, stream: AudioStream) -> void:

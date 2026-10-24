@@ -31,6 +31,8 @@ Difficulty preset and seed policy → resolved level configuration → generator
 - `src/presentation/main.gd`: menu/game flow, input actions, audio, and rendering updates.
 - `src/presentation/board_cell.gd`: individual cell drawing and mouse events, including hover and conflict indicators.
 - `src/presentation/lumen_theme.gd`: shared colors, typography, and control styling.
+- `src/input/keyboard_bindings.gd`: named keyboard actions installed into Godot's InputMap; later input methods can target the same actions.
+- `src/input/board_navigation.gd`: input-independent selection and directional transitions between board cells and the button row.
 
 Opening a difficulty resolves its catalog configuration, generates and validates a board, and creates a fresh game state. The controller retains configuration metadata but discards the construction solution. Restart resets the existing game state and does not regenerate the board. Cell visuals scale to keep the three board sizes inside the same board frame.
 

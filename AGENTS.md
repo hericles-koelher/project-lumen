@@ -45,9 +45,10 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 | Asset provenance | Sources, licenses, and status of included assets | [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md) |
 | Task list | Actionable project work, ordered by priority | [`TASKS.md`](TASKS.md) |
 | Prototype definition | Confirmed prototype decisions and open design questions | [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) |
+| Input controls | Mouse behavior, keyboard decisions, and later gamepad adaptation | [`docs/INPUT_CONTROLS.md`](docs/INPUT_CONTROLS.md) |
 | Game source | Scripts and scenes, grouped by responsibility | [`src/`](src/) |
 | Verification | Automated tests or repeatable validation procedures as they are added | [`tests/`](tests/) |
 
 ## Current state
 
-The fixed-board prototype and procedural generation were approved on 2026-10-24. All three menu choices open seeded levels with 70% of walls numbered, rounded down. Rules live in `src/core/`, configuration and generation in `src/generation/`, the level catalog in `src/levels/`, and visuals/input in `src/presentation/`. The old fixed level remains a core-test fixture. For isolated checks that do not disturb the user's play session, see `tests/README.md`. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.
+The fixed-board prototype, procedural generation, and keyboard interaction were approved on 2026-10-24. Gamepad support is being planned with the user; do not implement it before that discussion is complete and the user authorizes implementation. All three menu choices open seeded levels with 70% of walls numbered, rounded down. Rules live in `src/core/`, configuration/generation in `src/generation/`, selection and bindings in `src/input/`, the level catalog in `src/levels/`, and views/controller in `src/presentation/`. For isolated checks, see `tests/README.md`; for controls, see `docs/INPUT_CONTROLS.md`. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.
