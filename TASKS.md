@@ -6,7 +6,6 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 
 ## To do
 
-- [ ] Set up the Godot project and document the chosen engine version and how to run it.
 - [ ] Prototype visual assets and board feedback, including empty cells, walls, bulbs, lighting, and conflicts.
 - [ ] Implement a playable prototype with a small fixed board and the core Akari rules.
 - [ ] Implement deterministic procedural generation that guarantees at least one valid solution.
@@ -22,6 +21,8 @@ Tasks are intentionally broad at this stage. Break them into smaller steps when 
 No tasks currently in progress.
 
 ## Done
+
+- [x] Set up the Godot project and document the chosen engine version and how to run it. Godot 4.7.2 and MCP Toolkit 1.0.4; main scene launched successfully through the plugin. See [`docs/DEVELOPMENT_SETUP.md`](docs/DEVELOPMENT_SETUP.md). Completed on 2026-10-24.
 
 - [x] Define the prototype details: scope, target platform, controls, game flow, difficulty presets, seed policy, and completion criteria. See [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md). Completed on 2026-10-24.
 

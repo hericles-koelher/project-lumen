@@ -86,9 +86,9 @@ This document defines the default standards for code, assets, documentation, and
 
 - Inspect the working tree before editing. Preserve unrelated user changes and avoid overwriting files without reading them.
 - Keep changes scoped to the active task. Do not mix unrelated cleanup or formatting into a feature change.
-- Prefer small, reviewable commits when commits are requested; write commit messages in English and describe the outcome.
+- After the user approves a completed task, commit its changes in a small, reviewable commit. Write commit messages in English and describe the outcome.
 - Never force-push, rewrite shared history, discard user changes, or configure/use a remote unless the user explicitly asks.
-- Do not commit unless asked. Leave the working tree in a state the user can inspect.
+- Keep completed task changes available for review until the user approves them, then commit. Task approval authorizes the commit, not a push. Push only after an explicit user request.
 
 ## 9. When a guideline needs an exception
 

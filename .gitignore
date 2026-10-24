@@ -10,3 +10,7 @@
 Thumbs.db
 *.swp
 *.tmp
+
+# Local MCP client configuration and scratch files
+/.mcp.json
+/work/

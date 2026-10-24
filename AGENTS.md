@@ -24,6 +24,7 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 - **Scope:** Do not add dependencies, art systems, menus, or unrequested features unless the current step needs them.
 - **Verification:** When behavior changes, describe how to validate it and run relevant available checks. If the engine or a tool is unavailable, state that limitation.
 - **Git:** Preserve existing work; do not discard user changes. Do not configure or use a remote unless explicitly requested.
+- **Task commits:** Commit completed task changes after the user approves the task. Push only after an explicit user request; task approval alone does not authorize a push.
 
 ## Repository index
 
@@ -36,6 +37,7 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 | Technical decisions | Important technical decisions and their rationale | [`docs/TECHNICAL_DECISIONS.md`](docs/TECHNICAL_DECISIONS.md) |
 | Engineering practices | Required coding and collaboration standards | [`docs/ENGINEERING_PRACTICES.md`](docs/ENGINEERING_PRACTICES.md) |
 | Development plan | Proposed incremental path from setup to prototype | [`docs/DEVELOPMENT_PLAN.md`](docs/DEVELOPMENT_PLAN.md) |
+| Development setup | Godot version, running the project, and MCP plugin connection | [`docs/DEVELOPMENT_SETUP.md`](docs/DEVELOPMENT_SETUP.md) |
 | Task list | Actionable project work, ordered by priority | [`TASKS.md`](TASKS.md) |
 | Prototype definition | Confirmed prototype decisions and open design questions | [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) |
 | Game source | Scripts and scenes, grouped by responsibility | [`src/`](src/) |
@@ -43,4 +45,4 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 
 ## Current state
 
-The repository is in its initial setup stage. Documentation defines the project direction; game scenes, scripts, and tests will be implemented in later steps.
+The Godot 4.7.2 setup is complete, with a runnable title scene and MCP Toolkit 1.0.4 integration. Provisional board visuals, game rules, and playable levels are the next implementation steps. Treat `addons/godot_mcp_toolkit/` as third-party code and preserve its license and attributions.
