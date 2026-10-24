@@ -1,12 +1,14 @@
 # Project Lumen — UI and Celebration Asset Brief
 
-Status: production brief prepared on 2026-10-24. Functional requirements below are confirmed; the replacement menu/button art direction and the final celebration effect still require user review. This document describes planned work, not implemented features.
+Status: on 2026-10-24 the user selected B — Quiet Ink and warm sparkles for the victory animation. The visual-direction checkpoint is complete; produce and integrate the matching reusable assets, then review the delivered result with the user.
+
+Concept review: [`Soft Sage / Quiet Ink comparison`](concepts/ui_direction_comparison_v1.png) proposes two menu/button directions and small celebration alternatives. Generated with `image_gen.imagegen` on 2026-10-24; the tool did not expose its rendering model or effort. The user selected its Quiet Ink button/menu direction and Sparkles motif. This sheet is a mockup, not production exports. Decorative additions in the mockup are proposals, not new requirements; keep the established bulb, books, plants, and evening-light theme without introducing unrelated characters.
 
 ## Handoff to the producing model
 
 Create a coordinated interface asset set for a small PC Akari puzzle game in Godot. The intended mood is simple, elegant, cute, calm, and welcoming. The user dislikes the current prominent white menu card and the current button treatment. Propose a better menu composition and a new reusable button design before producing the complete set.
 
-The user must be consulted before asset production begins so they can switch the execution model. Preparing this brief does not authorize generation, replacement of assets, or changes to game behavior.
+The user has approved Quiet Ink and sparkles and authorized continuation. Keep the selected ink/navy surfaces, warm cream text, restrained amber outlines, freestanding menu composition, and finite light celebration. Keep game rules and board symbols unchanged.
 
 Start with concept mockups and a component/state sheet. After the user approves a direction, deliver the reusable assets and integration specifications. Keep text and interactive elements separate from background illustrations.
 
@@ -64,7 +66,7 @@ Layouts must support mouse, keyboard, and gamepad focus. Fullscreen/maximized ba
 | UI-10 | Input reference glyphs | Keyboard arrows, W/A/S/D, Space, X, Enter, Escape; mouse left/right buttons; gamepad D-pad, left stick, bottom/A, left/X, right/B. Provide neutral position cues alongside Xbox labels so generic controllers remain understandable. Keep text editable. |
 | UI-11 | Tutorial composition | Page layout, navigation/page indicators, Skip treatment, and miniature board illustrations described below. Reuse board symbols where possible. |
 | UI-12 | Victory surface and dimmer | A centered celebratory composition with a flexible action area and a separate dimming treatment. Show the solved board behind it. Match the new menu/button family without reintroducing the disliked white-card presentation as a default. |
-| FX-01 | Victory confetti OR simple fireworks | Concept options first; final effect components for the approved option. Transparent, isolated particle pieces or a small burst animation; no full-screen baked background. See motion specifications. |
+| FX-01 | Warm victory sparkles | Approved light-themed sparkle pieces for a finite native animation. Transparent, isolated particle pieces or a small burst animation; no full-screen baked background. See motion specifications. |
 
 ## Tutorial illustration content
 
@@ -83,7 +85,7 @@ The tutorial appears automatically on the first launch, is marked as seen when o
 
 ### Confirmed behavior
 
-Ordinary screen changes should have simple transitions. Victory should receive a more noticeable interface animation, such as confetti or simple fireworks, while keeping the solved board and panel readable.
+Ordinary screen changes use simple transitions. Victory uses a finite warm sparkle animation, keeping the solved board and panel readable. Confetti is not selected.
 
 ### Proposed production constraints — review with the user
 
