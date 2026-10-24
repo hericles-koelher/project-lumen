@@ -1,8 +1,11 @@
 extends RefCounted
+## Provides the fixed seeded configurations used by the playable prototype.
 
+## Level-configuration type returned by the catalog.
 const Configuration = preload("res://src/generation/level_configuration.gd")
 
 
+## Returns the seeded configuration for a supported difficulty, or null.
 static func get_configuration(difficulty: String) -> Configuration:
 	match difficulty:
 		"easy":

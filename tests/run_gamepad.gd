@@ -1,13 +1,20 @@
 extends SceneTree
+## Checks standardized gamepad bindings, device state, and direction repeat behavior.
 
+## Standardized keyboard and gamepad action mapping under test.
 const Bindings = preload("res://src/input/input_bindings.gd")
+## Per-device gamepad direction tracker under test.
 const Pad = preload("res://src/input/gamepad_state.gd")
+## Held-direction repeat model under test.
 const Repeat = preload("res://src/input/direction_repeat.gd")
 
+## Number of assertions evaluated by this standalone check runner.
 var _checks := 0
+## Number of failed assertions in this standalone check runner.
 var _failures := 0
 
 
+## Runs gamepad mapping and state checks, then exits with a failure status when needed.
 func _init() -> void:
 	Bindings.install()
 	_test_actions()
@@ -18,6 +25,7 @@ func _init() -> void:
 	quit(0 if _failures == 0 else 1)
 
 
+## Records a failed check when the supplied condition is false.
 func _expect(condition: bool, message: String) -> void:
 	_checks += 1
 	if not condition:
@@ -25,6 +33,7 @@ func _expect(condition: bool, message: String) -> void:
 		push_error(message)
 
 
+## Creates a synthetic gamepad button event for a device.
 func _button(button: JoyButton, pressed: bool = true, device: int = 2) -> InputEventJoypadButton:
 	var event := InputEventJoypadButton.new()
 	event.device = device
@@ -33,6 +42,7 @@ func _button(button: JoyButton, pressed: bool = true, device: int = 2) -> InputE
 	return event
 
 
+## Creates a synthetic gamepad axis event for a device.
 func _motion(axis: JoyAxis, value: float, device: int = 2) -> InputEventJoypadMotion:
 	var event := InputEventJoypadMotion.new()
 	event.device = device
@@ -41,6 +51,7 @@ func _motion(axis: JoyAxis, value: float, device: int = 2) -> InputEventJoypadMo
 	return event
 
 
+## Checks standardized input action mappings.
 func _test_actions() -> void:
 	for device in [0, 2, 7]:
 		_expect(Bindings.pressed(_button(JOY_BUTTON_A, true, device), "lumen_bulb"), "A must map to bulbs on every device index.")
@@ -57,6 +68,7 @@ func _test_actions() -> void:
 	_expect(Bindings.pressed(escape, "lumen_back"), "Escape and B must share the Back action.")
 
 
+## Checks D-pad navigation and active-device handling.
 func _test_dpad_and_devices() -> void:
 	var pad := Pad.new()
 	_expect(pad.direction() == Vector2i.ZERO, "No controller input must produce no movement.")
@@ -79,6 +91,7 @@ func _test_dpad_and_devices() -> void:
 	_expect(pad.direction() == Vector2i.ZERO, "Resetting for focus loss or a screen change must stop movement.")
 
 
+## Checks stick deadzone and cardinal direction resolution.
 func _test_stick() -> void:
 	_expect(Pad.stick_direction(Vector2(0.29, 0.0)) == Vector2i.ZERO, "Small horizontal drift must fall inside the deadzone.")
 	_expect(Pad.stick_direction(Vector2(0.21, 0.21)) == Vector2i.ZERO, "The deadzone must be circular.")
@@ -100,6 +113,7 @@ func _test_stick() -> void:
 	_expect(pad.direction() == Vector2i.ZERO, "Returning the stick to neutral must stop movement.")
 
 
+## Checks initial movement and timed repeat behavior.
 func _test_repeat() -> void:
 	var repeat := Repeat.new()
 	_expect(repeat.advance(Vector2i.RIGHT, 0.0) == Vector2i.RIGHT, "A new direction must move once immediately.")

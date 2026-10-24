@@ -1,13 +1,20 @@
 extends SceneTree
+## Checks board rules, player actions, and state reset behavior.
 
+## Board-definition type used by the rule checks.
 const Board = preload("res://src/core/board_definition.gd")
+## Game-state type whose Akari rules are under test.
 const State = preload("res://src/core/game_state.gd")
+## Factory for the manually authored test fixture.
 const FixedLevel = preload("res://src/levels/easy_fixed.gd")
 
+## Number of failed assertions in this standalone check runner.
 var _failures := 0
+## Number of assertions evaluated by this standalone check runner.
 var _checks := 0
 
 
+## Runs each core rule check and exits with a failure status when needed.
 func _init() -> void:
 	_test_light_and_walls()
 	_test_conflicts_and_removal()
@@ -19,6 +26,7 @@ func _init() -> void:
 	quit(0 if _failures == 0 else 1)
 
 
+## Records a failed check when the supplied condition is false.
 func _expect(condition: bool, description: String) -> void:
 	_checks += 1
 	if not condition:
@@ -26,6 +34,7 @@ func _expect(condition: bool, description: String) -> void:
 		push_error(description)
 
 
+## Checks illumination propagation and wall blocking.
 func _test_light_and_walls() -> void:
 	var state := State.new(Board.new(PackedStringArray(["..#.."])))
 	state.toggle_bulb(0)
@@ -41,6 +50,7 @@ func _test_light_and_walls() -> void:
 	_expect(vertical.evaluate().lit_count == 2, "A wall must stop vertical illumination.")
 
 
+## Checks bulb conflicts and the effect of removing a bulb.
 func _test_conflicts_and_removal() -> void:
 	var state := State.new(Board.new(PackedStringArray(["..."])))
 	state.toggle_bulb(0)
@@ -53,6 +63,7 @@ func _test_conflicts_and_removal() -> void:
 	_expect(result.conflicting_bulbs == 0 and result.solved, "Removing a bulb must clear conflicts and reevaluate victory.")
 
 
+## Checks clue counting at board edges and corners.
 func _test_clues_at_boundaries() -> void:
 	var corner := State.new(Board.new(PackedStringArray(["2.", ".."])))
 	corner.toggle_bulb(1)
@@ -65,6 +76,7 @@ func _test_clues_at_boundaries() -> void:
 	_expect(not zero.evaluate().solved, "An exceeded clue must prevent victory even when every open cell is lit.")
 
 
+## Checks annotation toggling and clean state reset.
 func _test_annotations_and_reset() -> void:
 	var state := State.new(Board.new(PackedStringArray(["..#"])))
 	state.toggle_annotation(0)
@@ -85,6 +97,7 @@ func _test_annotations_and_reset() -> void:
 	_expect(not state.evaluate().solved, "Restart must clear the solved state.")
 
 
+## Checks that an annotation replaces a bulb and updates derived state.
 func _test_annotation_replaces_conflicting_bulb() -> void:
 	var state := State.new(Board.new(PackedStringArray(["0.."])))
 	state.toggle_bulb(1)
@@ -97,6 +110,7 @@ func _test_annotation_replaces_conflicting_bulb() -> void:
 	_expect(result.solved, "An annotation replacement that completes the puzzle must trigger victory.")
 
 
+## Checks the manually authored board fixture.
 func _test_fixed_level() -> void:
 	var state := State.new(FixedLevel.create_board())
 	_expect(state.board.width == 5 and state.board.height == 5, "The Easy fixture must be 5 by 5.")

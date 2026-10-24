@@ -1,46 +1,86 @@
 extends Control
+## Builds the prototype interface and coordinates input, game state, feedback, and audio.
 
+## Game-state type used for the active puzzle.
 const State = preload("res://src/core/game_state.gd")
+## Catalog of fixed difficulty configurations.
 const Levels = preload("res://src/levels/prototype_levels.gd")
+## Procedural board generator used to open a level.
 const Generator = preload("res://src/generation/board_generator.gd")
+## Shared keyboard and gamepad action mappings.
 const Bindings = preload("res://src/input/input_bindings.gd")
+## Input-independent model for board and button focus.
 const Navigation = preload("res://src/input/board_navigation.gd")
+## Per-device gamepad direction tracker.
 const GamepadState = preload("res://src/input/gamepad_state.gd")
+## Timer model for held gamepad navigation.
 const DirectionRepeat = preload("res://src/input/direction_repeat.gd")
+## Control used to draw and interact with one board cell.
 const CellView = preload("res://src/presentation/board_cell.gd")
+## Palette and theme factory shared by the interface.
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
+## Background illustration displayed behind each screen.
 const BACKGROUND = preload("res://assets/backgrounds/menu_concept.png")
+## Project logo displayed on the main menu.
 const LOGO = preload("res://assets/branding/project_lumen_icon_concept.png")
+## Custom cursor image for ordinary pointer areas.
 const ARROW_TEXTURE = preload("res://assets/icons/cursor_arrow.svg")
+## Custom cursor image for clickable cells and buttons.
 const HAND_TEXTURE = preload("res://assets/icons/cursor_clickable.svg")
+## Background music stream played while the game is open.
 const MUSIC = preload("res://assets/audio/music/our_morning_coffee.mp3")
+## Sound played when a bulb is placed.
 const PLACE_SOUND = preload("res://assets/audio/sfx/bulb_place.wav")
+## Sound played when a bulb is removed.
 const REMOVE_SOUND = preload("res://assets/audio/sfx/bulb_remove.wav")
+## Sound played when an X annotation is toggled.
 const MARK_SOUND = preload("res://assets/audio/sfx/annotation_toggle.wav")
+## Sound played when an interface button is activated.
 const CLICK_SOUND = preload("res://assets/audio/sfx/button_click.wav")
+## Sound played when an action increases rule violations.
 const WARNING_SOUND = preload("res://assets/audio/sfx/rule_warning.wav")
+## Sound played when the puzzle is solved.
 const VICTORY_SOUND = preload("res://assets/audio/sfx/puzzle_solved.wav")
 
+## Mutable puzzle state, or null while no level is open.
 var _state: State
+## Most recent derived lighting, clue, conflict, and victory data.
 var _evaluation: Dictionary = {}
+## Reproduction metadata for the currently open puzzle.
 var _current_configuration: Dictionary = {}
+## Cell controls in row-major board order.
 var _cells: Array[Control] = []
+## Centered container whose child is the active menu or game page.
 var _screen: CenterContainer
+## Label displaying the current lit-cell count.
 var _status: Label
+## Label displaying rule guidance or current violations.
 var _warning: Label
+## Label shown after all Akari rules are satisfied.
 var _victory: Label
+## Audio player for the looping background track.
 var _music: AudioStreamPlayer
+## Audio player for button and board-action sounds.
 var _action_audio: AudioStreamPlayer
+## Audio player for warning and victory sounds.
 var _feedback_audio: AudioStreamPlayer
+## Current board and action-button selection model.
 var _navigation: Navigation
+## Focusable container representing board navigation focus.
 var _board_focus: PanelContainer
+## Action buttons shown below the active board.
 var _game_buttons: Array[Button] = []
+## Buttons currently shown on the menu or error page.
 var _menu_buttons: Array[Button] = []
+## Name of the active page, used by Back navigation.
 var _page_name := ""
+## Tracked directional state from connected controllers.
 var _gamepad := GamepadState.new()
+## Held-direction repeat timer for gamepad navigation.
 var _direction_repeat := DirectionRepeat.new()
 
 
+## Initializes this node after it enters the scene tree.
 func _ready() -> void:
 	Bindings.install()
 	Input.ignore_joypad_on_unfocused_application = true
@@ -59,6 +99,7 @@ func _ready() -> void:
 	_show_menu()
 
 
+## Creates and configures the background music and feedback audio players.
 func _create_audio() -> void:
 	_music = AudioStreamPlayer.new()
 	_music.name = "Music"
@@ -76,6 +117,7 @@ func _create_audio() -> void:
 	add_child(_feedback_audio)
 
 
+## Adds a full-rect background image behind the current screen.
 func _create_backdrop() -> void:
 	var backdrop := TextureRect.new()
 	backdrop.name = "Backdrop"
@@ -87,6 +129,7 @@ func _create_backdrop() -> void:
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
+## Replaces the current screen content and creates a centered page container.
 func _new_page(page_name: String, min_width: float) -> VBoxContainer:
 	_page_name = page_name
 	_gamepad.reset()
@@ -111,6 +154,7 @@ func _new_page(page_name: String, min_width: float) -> VBoxContainer:
 	return content
 
 
+## Creates a centered label with the requested text size.
 func _label(parent: Node, text: String, font_size: int = 20) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -120,6 +164,7 @@ func _label(parent: Node, text: String, font_size: int = 20) -> Label:
 	return label
 
 
+## Creates a styled button that plays its click sound before invoking its action.
 func _button(parent: Node, node_name: String, text: String, action: Callable, disabled: bool = false) -> Button:
 	var button := Button.new()
 	button.name = node_name
@@ -137,6 +182,7 @@ func _button(parent: Node, node_name: String, text: String, action: Callable, di
 	return button
 
 
+## Creates the difficulty menu and clears the active puzzle session.
 func _show_menu() -> void:
 	_state = null
 	_evaluation.clear()
@@ -158,6 +204,7 @@ func _show_menu() -> void:
 	_menu_buttons[0].call_deferred("grab_focus")
 
 
+## Generates the selected difficulty level and creates its board interface.
 func _open_level(difficulty: String) -> void:
 	var configuration = Levels.get_configuration(difficulty)
 	var generated := Generator.generate(configuration)
@@ -228,6 +275,7 @@ func _open_level(difficulty: String) -> void:
 	_board_focus.call_deferred("grab_focus")
 
 
+## Routes keyboard and gamepad events to the shared navigation and action handlers.
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		# Consume controller events before native UI handling to prevent duplicate movement.
@@ -249,6 +297,7 @@ func _input(event: InputEvent) -> void:
 		_dispatch_action(event, event.echo)
 
 
+## Updates frame-based input behavior while the game window is focused.
 func _process(delta: float) -> void:
 	if not get_window().has_focus():
 		return
@@ -258,12 +307,14 @@ func _process(delta: float) -> void:
 		_navigate(direction)
 
 
+## Clears held gamepad movement when the application loses focus.
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and _gamepad != null:
 		_gamepad.reset()
 		_direction_repeat.reset()
 
 
+## Updates directional state when a gamepad connects or disconnects.
 func _on_gamepad_connection_changed(device: int, connected: bool) -> void:
 	if connected:
 		print("Gamepad connected: %s (standard mapping: %s)" % [Input.get_joy_name(device), Input.is_joy_known(device)])
@@ -272,6 +323,7 @@ func _on_gamepad_connection_changed(device: int, connected: bool) -> void:
 		_direction_repeat.reset()
 
 
+## Moves the current board, button, or menu focus in the requested direction.
 func _navigate(direction: Vector2i) -> bool:
 	var focused := get_viewport().gui_get_focus_owner()
 	if _navigation != null and focused == _board_focus:
@@ -290,6 +342,7 @@ func _navigate(direction: Vector2i) -> bool:
 	return true
 
 
+## Routes a pressed action to Back, board interaction, or focused-button activation.
 func _dispatch_action(event: InputEvent, repeated: bool) -> void:
 	if Bindings.pressed(event, "lumen_back", true):
 		get_viewport().set_input_as_handled()
@@ -319,12 +372,14 @@ func _dispatch_action(event: InputEvent, repeated: bool) -> void:
 	get_viewport().set_input_as_handled()
 
 
+## Returns from gameplay or an error screen to the main menu.
 func _go_back() -> void:
 	if _page_name != "Menu":
 		_play(_action_audio, CLICK_SOUND)
 		_show_menu()
 
 
+## Finds the action button horizontally nearest to the selected board cell.
 func _nearest_button_below() -> int:
 	var selected_x := _cells[_navigation.selected_cell].get_global_rect().get_center().x
 	var closest := 0
@@ -337,6 +392,7 @@ func _nearest_button_below() -> int:
 	return closest
 
 
+## Applies the navigation model selection to Godot GUI focus.
 func _sync_navigation_focus() -> void:
 	if _navigation.is_on_board():
 		_board_focus.grab_focus()
@@ -345,6 +401,7 @@ func _sync_navigation_focus() -> void:
 	_refresh_selection()
 
 
+## Synchronizes the navigation model when GUI focus changes.
 func _on_focus_changed() -> void:
 	var focused := get_viewport().gui_get_focus_owner()
 	if _navigation != null:
@@ -355,6 +412,7 @@ func _on_focus_changed() -> void:
 	_refresh_selection()
 
 
+## Updates the visible board selection outline from current GUI focus.
 func _refresh_selection() -> void:
 	var show_selection := _navigation != null and get_viewport().gui_get_focus_owner() == _board_focus
 	for index in range(_cells.size()):
@@ -363,6 +421,7 @@ func _refresh_selection() -> void:
 		cell.queue_redraw()
 
 
+## Stores a clicked cell as the current selection while the puzzle is active.
 func _select_mouse_cell(index: int) -> void:
 	if not _evaluation.get("solved", false):
 		_navigation.select_cell(index)
@@ -370,16 +429,19 @@ func _select_mouse_cell(index: int) -> void:
 		_refresh_selection()
 
 
+## Selects a clicked cell and applies its primary action.
 func _on_mouse_primary(index: int) -> void:
 	_select_mouse_cell(index)
 	_on_primary_click(index)
 
 
+## Selects a clicked cell and applies its annotation action.
 func _on_mouse_secondary(index: int) -> void:
 	_select_mouse_cell(index)
 	_on_secondary_click(index)
 
 
+## Toggles a bulb and refreshes state and rule feedback.
 func _on_primary_click(index: int) -> void:
 	if _evaluation.get("solved", false):
 		return
@@ -391,6 +453,7 @@ func _on_primary_click(index: int) -> void:
 		_play_rule_feedback(previous_violations)
 
 
+## Toggles an annotation and refreshes state and rule feedback.
 func _on_secondary_click(index: int) -> void:
 	if _evaluation.get("solved", false):
 		return
@@ -401,6 +464,7 @@ func _on_secondary_click(index: int) -> void:
 		_play_rule_feedback(previous_violations)
 
 
+## Reevaluates the puzzle and updates all cell visuals and victory controls.
 func _refresh_board() -> void:
 	var was_solved: bool = _evaluation.get("solved", false)
 	_evaluation = _state.evaluate()
@@ -431,10 +495,12 @@ func _refresh_board() -> void:
 	_refresh_selection()
 
 
+## Returns the combined number of bulb conflicts and exceeded clues.
 func _violation_count() -> int:
 	return int(_evaluation.get("conflicting_bulbs", 0)) + int(_evaluation.get("exceeded_clues", 0))
 
 
+## Plays victory audio or a warning when the violation count increases.
 func _play_rule_feedback(previous_violations: int) -> void:
 	if _evaluation.solved:
 		_play(_feedback_audio, VICTORY_SOUND)
@@ -442,6 +508,7 @@ func _play_rule_feedback(previous_violations: int) -> void:
 		_play(_feedback_audio, WARNING_SOUND)
 
 
+## Resets the puzzle while keeping its board and restoring board navigation.
 func _restart() -> void:
 	_gamepad.reset()
 	_direction_repeat.reset()
@@ -452,10 +519,12 @@ func _restart() -> void:
 	_sync_navigation_focus()
 
 
+## Plays the supplied audio stream on the specified audio player.
 func _play(player: AudioStreamPlayer, stream: AudioStream) -> void:
 	player.stream = stream
 	player.play()
 
 
+## Closes the running game.
 func _quit() -> void:
 	get_tree().quit()

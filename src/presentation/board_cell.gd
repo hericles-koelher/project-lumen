@@ -1,28 +1,49 @@
 extends Control
+## Draws one board cell and emits mouse actions for playable cells.
 
+## Emitted when the primary clicked event occurs.
 signal primary_clicked(index: int)
+## Emitted when the secondary clicked event occurs.
 signal secondary_clicked(index: int)
 
+## Shared palette and style helpers used to draw the cell.
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
+## Bulb illustration drawn inside a cell.
 const BULB = preload("res://assets/icons/bulb.svg")
+## X annotation illustration drawn inside a cell.
 const MARK = preload("res://assets/icons/annotation_x.svg")
+## Overlay illustration shown while the pointer hovers over a cell.
 const HOVER = preload("res://assets/icons/cell_hover.svg")
 
+## Row-major index represented by this cell view.
 var cell_index := 0
+## Width and height assigned to this square cell view.
 var cell_extent := 76.0
+## Whether this cell is a wall.
 var wall := false
+## Numbered-wall clue, or -1 for a playable or unnumbered cell.
 var clue := -1
+## Whether a bulb is placed in this playable cell.
 var bulb := false
+## Whether this playable cell shows an X annotation.
 var marked := false
+## Whether a bulb illuminates this cell.
 var illuminated := false
+## Whether a bulb in this cell conflicts with another bulb.
 var conflict := false
+## Whether this numbered wall currently has too many adjacent bulbs.
 var exceeded := false
+## Whether this cell currently accepts mouse actions.
 var interaction_enabled := true
+## Whether this cell displays the keyboard focus outline.
 var keyboard_selected := false
+## Whether the pointer is currently over this cell.
 var _hovered := false
+## Font variation used for clue numbers and warning badges.
 var _clue_font := FontVariation.new()
 
 
+## Initializes this node after it enters the scene tree.
 func _ready() -> void:
 	_clue_font.base_font = Visuals.FONT
 	# OpenType axis tags use their four-byte integer representation.
@@ -32,11 +53,13 @@ func _ready() -> void:
 	mouse_exited.connect(func() -> void: _hovered = false; queue_redraw())
 
 
+## Updates this cell view after its displayed state or interaction changes.
 func refresh() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if interaction_enabled and not wall else Control.CURSOR_ARROW
 	queue_redraw()
 
 
+## Emits the appropriate mouse action when a playable cell is clicked.
 func _gui_input(event: InputEvent) -> void:
 	if wall or not interaction_enabled or not event is InputEventMouseButton:
 		return
@@ -50,6 +73,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 
+## Draws the cell surface, its contents, and the current interaction indicators.
 func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size)
 	var corner_radius := mini(11, roundi(size.x * 0.14))
@@ -78,6 +102,7 @@ func _draw() -> void:
 		draw_string(_clue_font, badge_center + Vector2(-badge_radius * 0.3, badge_radius * 0.6), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, badge_font_size, Color.WHITE)
 
 
+## Draws text centered within this cell.
 func _draw_centered(text: String, font_size: int, color: Color) -> void:
 	var extent: Vector2 = _clue_font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
 	var baseline: float = (size.y + _clue_font.get_ascent(font_size) - _clue_font.get_descent(font_size)) * 0.5

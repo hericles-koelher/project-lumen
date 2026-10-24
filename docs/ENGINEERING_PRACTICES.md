@@ -8,7 +8,9 @@ This document defines the default standards for code, assets, documentation, and
 - Write all repository content in English: source code, identifiers, comments, commit messages, documentation, task entries, user-facing text in the game, and test names.
 - Use clear, idiomatic English. Prefer simple words over clever abbreviations.
 - Use the same term for the same concept throughout the project. Consult the project overview and game rules before introducing domain vocabulary.
-- Comments explain intent, constraints, or non-obvious trade-offs. Do not narrate code that is already clear.
+- Document GDScript code comprehensively for readers unfamiliar with the project. Use `##` documentation comments for every script, class, signal, enum, constant, variable, and function, including private/internal members. Explain purpose and relevant behavior; for functions, document parameters, return values, and side effects when they are not obvious from the signature.
+- Place a script description at the top of the file and each member description immediately above its declaration, following GDScript documentation-comment syntax. Keep the wording accurate and update it with behavior changes.
+- Use regular `#` comments for local reasoning, constraints, or non-obvious trade-offs that do not belong in API documentation. Documentation should add context rather than merely paraphrase a clear name or repeat the implementation.
 
 ## 2. Core principles
 

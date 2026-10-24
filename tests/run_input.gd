@@ -1,14 +1,22 @@
 extends SceneTree
+## Checks keyboard bindings, board navigation, and input-independent cell actions.
 
+## Input binding type used to inspect named keyboard actions.
 const Keyboard = preload("res://src/input/input_bindings.gd")
+## Board and button focus model exercised by these checks.
 const Navigation = preload("res://src/input/board_navigation.gd")
+## Factory for the manually authored board fixture.
 const FixedLevel = preload("res://src/levels/easy_fixed.gd")
+## Game-state type used to confirm that actions remain device-independent.
 const State = preload("res://src/core/game_state.gd")
 
+## Number of assertions evaluated by this standalone check runner.
 var _checks := 0
+## Number of failed assertions in this standalone check runner.
 var _failures := 0
 
 
+## Runs keyboard and navigation checks and exits with a failure status when needed.
 func _init() -> void:
 	_test_bindings()
 	for size in [5, 7, 9]:
@@ -18,6 +26,7 @@ func _init() -> void:
 	quit(0 if _failures == 0 else 1)
 
 
+## Records a failed check when the supplied condition is false.
 func _expect(condition: bool, message: String) -> void:
 	_checks += 1
 	if not condition:
@@ -25,6 +34,7 @@ func _expect(condition: bool, message: String) -> void:
 		push_error(message)
 
 
+## Creates a keyboard event for a key and optional repeat state.
 func _event(key: Key, repeated: bool = false) -> InputEventKey:
 	var event := InputEventKey.new()
 	event.keycode = key
@@ -34,6 +44,7 @@ func _event(key: Key, repeated: bool = false) -> InputEventKey:
 	return event
 
 
+## Checks keyboard and gamepad action mappings.
 func _test_bindings() -> void:
 	Keyboard.install()
 	var directions := {
@@ -60,6 +71,7 @@ func _test_bindings() -> void:
 	_expect(InputMap.action_get_events("lumen_left").size() == before, "Installing bindings twice must not duplicate events.")
 
 
+## Checks focus movement for a board of the requested size.
 func _test_navigation(size: int) -> void:
 	var navigation := Navigation.new(size, size, 3)
 	_expect(navigation.selected_cell == 0 and navigation.is_on_board(), "A level must start at its top-left cell.")
@@ -89,6 +101,7 @@ func _test_navigation(size: int) -> void:
 	_expect(navigation.selected_cell == 1, "Movement must advance exactly one cell.")
 
 
+## Checks that wall cells reject bulb and annotation actions.
 func _test_wall_actions() -> void:
 	var state := State.new(FixedLevel.create_board())
 	var navigation := Navigation.new(5, 5, 3)

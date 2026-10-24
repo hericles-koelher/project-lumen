@@ -1,20 +1,29 @@
 extends RefCounted
+## Tracks directional input from connected gamepads and resolves it to one cardinal direction.
 
+## Input bindings used to apply the configured left-stick deadzone.
 const Bindings = preload("res://src/input/input_bindings.gd")
+## Standardized D-pad button identifiers accepted as directional input.
 const DPAD := [JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_DOWN]
+## Margin that stabilizes left-stick direction near a diagonal.
 const AXIS_SWITCH_MARGIN := 0.10
 
+## Directional button and stick state keyed by gamepad device ID.
 var _devices: Dictionary = {}
+## Device whose intentional directional input currently controls navigation.
 var _active_device := -1
+## Previous stick direction used to stabilize axis selection.
 var _last_stick_direction := Vector2i.ZERO
 
 
+## Clears all tracked devices and the active direction.
 func reset() -> void:
 	_devices.clear()
 	_active_device = -1
 	_last_stick_direction = Vector2i.ZERO
 
 
+## Forgets a disconnected gamepad and clears its active direction if needed.
 func remove_device(device: int) -> void:
 	_devices.erase(device)
 	if _active_device == device:
@@ -22,6 +31,7 @@ func remove_device(device: int) -> void:
 		_last_stick_direction = Vector2i.ZERO
 
 
+## Updates per-device directional state from a D-pad or left-stick event.
 func handle_direction_event(event: InputEvent) -> bool:
 	var is_dpad: bool = event is InputEventJoypadButton and event.button_index in DPAD
 	var is_stick: bool = event is InputEventJoypadMotion and event.axis in [JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y]
@@ -46,6 +56,7 @@ func handle_direction_event(event: InputEvent) -> bool:
 	return true
 
 
+## Returns the active gamepad direction as a single cardinal vector.
 func direction() -> Vector2i:
 	if not _devices.has(_active_device):
 		return Vector2i.ZERO
@@ -57,6 +68,7 @@ func direction() -> Vector2i:
 	return _last_stick_direction
 
 
+## Converts a stick vector to a stable cardinal direction using the configured deadzone.
 static func stick_direction(stick: Vector2, previous: Vector2i = Vector2i.ZERO) -> Vector2i:
 	if stick.length() <= Bindings.STICK_DEADZONE:
 		return Vector2i.ZERO
@@ -70,11 +82,13 @@ static func stick_direction(stick: Vector2, previous: Vector2i = Vector2i.ZERO) 
 	return Vector2i(0, int(signf(stick.y)))
 
 
+## Resolves pressed D-pad buttons to one cardinal direction.
 static func _dpad_direction(buttons: Dictionary) -> Vector2i:
 	var x := int(buttons.get(JOY_BUTTON_DPAD_RIGHT, false)) - int(buttons.get(JOY_BUTTON_DPAD_LEFT, false))
 	var y := int(buttons.get(JOY_BUTTON_DPAD_DOWN, false)) - int(buttons.get(JOY_BUTTON_DPAD_UP, false))
 	return Vector2i(0, y) if y != 0 else Vector2i(x, 0)
 
 
+## Returns whether a device currently provides intentional directional input.
 static func _device_has_direction(device: Dictionary) -> bool:
 	return _dpad_direction(device.buttons) != Vector2i.ZERO or device.stick.length() > Bindings.STICK_DEADZONE

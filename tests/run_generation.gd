@@ -1,14 +1,22 @@
 extends SceneTree
+## Checks level configuration, deterministic generation, and solution validity.
 
+## Procedural generator exercised by these checks.
 const Generator = preload("res://src/generation/board_generator.gd")
+## Level configuration type used to construct test inputs.
 const Configuration = preload("res://src/generation/level_configuration.gd")
+## Catalog of the three prototype difficulty presets.
 const Levels = preload("res://src/levels/prototype_levels.gd")
+## Rule evaluator used to verify generated solution witnesses.
 const State = preload("res://src/core/game_state.gd")
 
+## Number of assertions evaluated by this standalone check runner.
 var _checks := 0
+## Number of failed assertions in this standalone check runner.
 var _failures := 0
 
 
+## Runs generation checks and exits with a failure status when needed.
 func _init() -> void:
 	_test_presets()
 	_test_seed_batch()
@@ -17,6 +25,7 @@ func _init() -> void:
 	quit(0 if _failures == 0 else 1)
 
 
+## Records a failed check when the supplied condition is false.
 func _expect(condition: bool, message: String) -> void:
 	_checks += 1
 	if not condition:
@@ -24,6 +33,7 @@ func _expect(condition: bool, message: String) -> void:
 		push_error(message)
 
 
+## Checks the supported level presets and their resolved generation parameters.
 func _test_presets() -> void:
 	var expected_counts := {"easy": 3, "medium": 7, "hard": 11}
 	for difficulty in expected_counts:
@@ -52,6 +62,7 @@ func _test_presets() -> void:
 		_expect(first.board.to_rows()[0] != "changed", "Exported rows must not mutate the board definition.")
 
 
+## Checks deterministic generation and valid solutions across multiple seeds.
 func _test_seed_batch() -> void:
 	for difficulty in ["easy", "medium", "hard"]:
 		var fingerprints: Dictionary = {}
@@ -66,6 +77,7 @@ func _test_seed_batch() -> void:
 		_expect(fingerprints.size() > 1, "Changing seeds should produce board variety within a preset.")
 
 
+## Returns whether the generator witness solves the generated board.
 func _witness_solves(generated: Dictionary) -> bool:
 	var state := State.new(generated.board)
 	for index in generated.solution:
@@ -77,6 +89,7 @@ func _witness_solves(generated: Dictionary) -> bool:
 	return solved and state.board.to_rows() == rows_before
 
 
+## Checks that invalid level configurations are rejected.
 func _test_invalid_configuration() -> void:
 	_expect(not Generator.generate(null).ok, "A missing configuration must fail explicitly.")
 	var cases := ["dimensions", "wall_count", "wall_mix", "ratio", "nan_ratio", "too_few_clues", "version"]

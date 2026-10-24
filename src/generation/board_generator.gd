@@ -1,11 +1,17 @@
 extends RefCounted
+## Builds deterministic boards with a verified valid solution from a level configuration.
 
+## Board-definition type used to create generated layouts.
 const Board = preload("res://src/core/board_definition.gd")
+## Game-state type used to construct and verify a solution.
 const State = preload("res://src/core/game_state.gd")
+## Validated parameters and seed used by the generator.
 const Configuration = preload("res://src/generation/level_configuration.gd")
+## Generator version used to keep seeded board reproduction explicit.
 const VERSION := 1
 
 
+## Generates a reproducible board and validates its constructed solution.
 static func generate(configuration: Configuration) -> Dictionary:
 	if configuration == null:
 		return _failure("A level configuration is required.")
@@ -57,6 +63,7 @@ static func generate(configuration: Configuration) -> Dictionary:
 	}
 
 
+## Shuffles the supplied values using the provided seeded random generator.
 static func _shuffle(values: Array, random: RandomNumberGenerator) -> void:
 	for index in range(values.size() - 1, 0, -1):
 		var other := random.randi_range(0, index)
@@ -65,6 +72,7 @@ static func _shuffle(values: Array, random: RandomNumberGenerator) -> void:
 		values[other] = temporary
 
 
+## Converts a flat row-major symbol array into board rows.
 static func _to_rows(symbols: PackedStringArray, width: int, height: int) -> PackedStringArray:
 	var rows := PackedStringArray()
 	for y in range(height):
@@ -75,5 +83,6 @@ static func _to_rows(symbols: PackedStringArray, width: int, height: int) -> Pac
 	return rows
 
 
+## Builds the standard failed-generation result with an explanatory message.
 static func _failure(message: String) -> Dictionary:
 	return {"ok": false, "error": message}

@@ -1,15 +1,25 @@
 extends RefCounted
+## Defines the shared visual palette, typography, and reusable control styles.
 
+## The variable Nunito font used throughout the interface.
 const FONT = preload("res://assets/fonts/Nunito-Variable.ttf")
+## Dark foreground color used for text and board framing.
 const INK := Color("192943")
+## Base fill color for wall cells.
 const WALL := Color("31445d")
+## Light base fill color for playable cells and panels.
 const CREAM := Color("f6efdf")
+## Accent color used for pressed controls.
 const SAGE := Color("91aa91")
+## Fill color used for illuminated cells and hovered controls.
 const SUNLIGHT := Color("f5c85b")
+## Accent color used for keyboard focus.
 const CORAL := Color("e98268")
+## Color used for rule violations and warning indicators.
 const WARNING := Color("d9534f")
 
 
+## Creates a rounded style box with the requested fill and optional border.
 static func box(color: Color, radius: int = 14, border: Color = Color.TRANSPARENT, thickness: int = 0) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = color
@@ -23,6 +33,7 @@ static func box(color: Color, radius: int = 14, border: Color = Color.TRANSPAREN
 	return style
 
 
+## Builds the shared Godot theme from the project palette and font.
 static func create_theme() -> Theme:
 	var result := Theme.new()
 	var body_font := FontVariation.new()

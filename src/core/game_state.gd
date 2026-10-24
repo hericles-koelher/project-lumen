@@ -1,14 +1,21 @@
 class_name LumenGameState
 extends RefCounted
+## Stores player placements and evaluates Akari rules for a board.
 
+## Board-definition script used for the typed board reference.
 const Board = preload("res://src/core/board_definition.gd")
+## The four orthogonal directions used for clue and light calculations.
 const DIRECTIONS := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 
+## Board definition whose layout this state evaluates.
 var board: Board
+## Per-cell flags indicating which playable cells contain bulbs.
 var bulbs := PackedByteArray()
+## Per-cell flags indicating which playable cells contain X annotations.
 var annotations := PackedByteArray()
 
 
+## Creates empty bulb and annotation arrays sized to the supplied board.
 func _init(definition: Board) -> void:
 	board = definition
 	bulbs.resize(board.cell_count())
@@ -16,11 +23,13 @@ func _init(definition: Board) -> void:
 	reset()
 
 
+## Clears all bulbs and annotations from the current game state.
 func reset() -> void:
 	bulbs.fill(0)
 	annotations.fill(0)
 
 
+## Toggles a bulb on a playable cell and clears any annotation there.
 func toggle_bulb(index: int) -> bool:
 	if not board.is_playable(index):
 		return false
@@ -29,6 +38,7 @@ func toggle_bulb(index: int) -> bool:
 	return true
 
 
+## Toggles an X annotation, replacing a bulb when one occupies the cell.
 func toggle_annotation(index: int) -> bool:
 	if not board.is_playable(index):
 		return false
@@ -40,6 +50,7 @@ func toggle_annotation(index: int) -> bool:
 	return true
 
 
+## Counts bulbs in the four orthogonally adjacent cells.
 func adjacent_bulb_count(index: int) -> int:
 	var count := 0
 	for direction in DIRECTIONS:
@@ -49,6 +60,7 @@ func adjacent_bulb_count(index: int) -> int:
 	return count
 
 
+## Calculates illumination, conflicts, clue counts, and whether the board is solved.
 func evaluate() -> Dictionary:
 	var illuminated := PackedByteArray()
 	var conflicts := PackedByteArray()

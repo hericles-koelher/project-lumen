@@ -1,5 +1,7 @@
 extends RefCounted
+## Defines and installs the keyboard and standardized gamepad actions used by the game.
 
+## Physical keyboard keys assigned to each named game action.
 const BINDINGS := {
 	"lumen_left": [KEY_LEFT, KEY_A],
 	"lumen_right": [KEY_RIGHT, KEY_D],
@@ -11,6 +13,7 @@ const BINDINGS := {
 	"lumen_back": [KEY_ESCAPE],
 }
 
+## Standard gamepad buttons assigned to each named action.
 const GAMEPAD_BUTTONS := {
 	"lumen_left": JOY_BUTTON_DPAD_LEFT,
 	"lumen_right": JOY_BUTTON_DPAD_RIGHT,
@@ -22,6 +25,7 @@ const GAMEPAD_BUTTONS := {
 	"lumen_back": JOY_BUTTON_B,
 }
 
+## Left-stick axis directions assigned to navigation actions.
 const GAMEPAD_AXES := {
 	"lumen_left": [JOY_AXIS_LEFT_X, -1.0],
 	"lumen_right": [JOY_AXIS_LEFT_X, 1.0],
@@ -29,9 +33,11 @@ const GAMEPAD_AXES := {
 	"lumen_down": [JOY_AXIS_LEFT_Y, 1.0],
 }
 
+## Minimum left-stick magnitude treated as intentional input.
 const STICK_DEADZONE := 0.30
 
 
+## Installs missing keyboard and gamepad events into Godot InputMap actions.
 static func install() -> void:
 	for action in BINDINGS:
 		if not InputMap.has_action(action):
@@ -57,6 +63,7 @@ static func install() -> void:
 			InputMap.action_add_event(action, event)
 
 
+## Returns the cardinal direction represented by a pressed navigation event.
 static func direction_for(event: InputEvent) -> Vector2i:
 	if pressed(event, "lumen_left", true):
 		return Vector2i.LEFT
@@ -69,5 +76,6 @@ static func direction_for(event: InputEvent) -> Vector2i:
 	return Vector2i.ZERO
 
 
+## Returns whether an input event activates the named action.
 static func pressed(event: InputEvent, action: StringName, allow_repeat: bool = false) -> bool:
 	return event.is_action_pressed(action, allow_repeat, true)

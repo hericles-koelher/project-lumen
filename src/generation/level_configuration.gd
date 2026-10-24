@@ -1,19 +1,31 @@
 class_name LumenLevelConfiguration
 extends RefCounted
+## Holds and validates the parameters needed to reproduce a generated level.
 
+## Maximum supported width or height for generated boards.
 const MAX_DIMENSION := 64
+## Maximum supported number of generated board cells.
 const MAX_CELL_COUNT := 4096
 
+## Stable identifier for this level.
 var level_id: String
+## Human-readable difficulty assigned to this level.
 var difficulty: String
+## Number of columns in the generated board.
 var width: int
+## Number of rows in the generated board.
 var height: int
+## Exact number of walls requested for this board.
 var target_wall_count: int
+## Explicit seed used to reproduce the generated board.
 var level_seed: int
+## Fraction used to derive the numbered-wall target.
 var numbered_wall_ratio := 0.7
+## Generator version used to reproduce this level.
 var generator_version := 1
 
 
+## Stores the stable identity, difficulty, dimensions, wall target, and seed.
 func _init(identifier: String, difficulty_name: String, board_width: int, board_height: int, walls: int, seed_value: int) -> void:
 	level_id = identifier
 	difficulty = difficulty_name
@@ -23,10 +35,12 @@ func _init(identifier: String, difficulty_name: String, board_width: int, board_
 	level_seed = seed_value
 
 
+## Returns the configured number of numbered walls, rounded down.
 func numbered_wall_count() -> int:
 	return floori(target_wall_count * numbered_wall_ratio)
 
 
+## Returns an error message when configuration values are invalid, or an empty string.
 func validation_error() -> String:
 	if level_id.is_empty() or difficulty.is_empty():
 		return "Level identity and difficulty must be provided."
@@ -43,6 +57,7 @@ func validation_error() -> String:
 	return ""
 
 
+## Returns the level parameters and generator version as reproduction metadata.
 func to_dictionary() -> Dictionary:
 	return {
 		"level_id": level_id,
