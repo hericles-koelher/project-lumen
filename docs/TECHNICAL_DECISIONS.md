@@ -24,12 +24,12 @@ This file records decisions that affect architecture, persisted data, or observa
 
 - **Context:** players should encounter puzzles configured by difficulty rather than manually specifying board dimensions and wall counts.
 - **Choice:** define difficulty presets that supply generation parameters. A preset may be selected by the player or assigned to a level; the seed identifies a particular generated board.
-- **Consequence:** resolve a concrete level configuration before invoking the generator. Initial preset values are recorded in `PROTOTYPE_DEFINITION.md` and require playtesting. Seed policy is recorded in TD-005. The prototype menu opens one assigned level per difficulty.
+- **Consequence:** resolve a concrete level configuration before invoking the generator. Initial preset values are recorded in `PROTOTYPE_DEFINITION.md` and require playtesting. Seed policy is recorded in TD-005. The catalog registers ten fixed levels per difficulty and defines progression order. Each level has a stable ID and an explicit seed.
 
 ## TD-005 — Explicit per-level seeds independent from level identity
 
-- **Context:** the prototype has one level per difficulty and needs reproducible puzzles that can be replaced individually during tuning.
-- **Choice:** store an explicit seed separately from each level's stable ID, together with its difficulty and generator version. Generate with isolated random state and retain resolved parameters in reproduction reports.
+- **Context:** the game needs reproducible numbered puzzles that can be tuned individually, plus a separate temporary random mode.
+- **Choice:** store an explicit seed separately from each level's stable ID, together with its difficulty and generator version. Generate with isolated random state and retain resolved parameters in reproduction metadata. Random mode draws a difficulty uniformly and uses a temporary in-memory seed.
 - **Consequence:** seeds can change without renaming levels. Reproduction requires matching configuration, generator version, and compatible random behavior. Global seed derivation and saving final board definitions are possible later extensions.
 
 ## TD-006 — Construct a solution before deriving clues

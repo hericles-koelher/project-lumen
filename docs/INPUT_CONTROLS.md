@@ -10,15 +10,17 @@ Status: keyboard and Xbox interaction were tested and approved by the user on 20
 - Route all input methods through the same gameplay actions and rule evaluation.
 - The annotation action replaces an existing bulb with X in one step, for right-click, keyboard X, and gamepad X. Repeating it removes X. This updates lighting, clues, conflicts, and victory like any other board change.
 
-## Confirmed keyboard bindings
+## Keyboard and menu bindings
 
 | Action | Keys |
 |---|---|
-| Move the board selection | Arrow keys or WASD |
+| Move board selection or menu focus | Arrow keys or WASD |
 | Place or remove a bulb in the selected cell | Space |
 | Add or remove an X annotation in the selected cell | X |
 | Activate the focused interface button | Enter or Space |
-| Back to the previous screen | Escape |
+| Return from a submenu to its parent | Escape |
+| Exit gameplay or victory to the main menu | Escape |
+| Ignore Back at the main menu | Escape |
 
 ## Confirmed gamepad bindings
 
@@ -27,7 +29,7 @@ Status: keyboard and Xbox interaction were tested and approved by the user on 20
 | Move selection and menu focus | D-pad or left stick |
 | Place/remove a bulb; confirm a focused button | Bottom face button / A |
 | Toggle X annotation | Left face button / X |
-| Back to the previous screen | Right face button / B |
+| Return from a submenu to its parent; exit gameplay/victory to main menu | Right face button / B |
 
 ## Board selection
 
@@ -42,14 +44,24 @@ Status: keyboard and Xbox interaction were tested and approved by the user on 20
 - The focus marker is visible only while the board has focus and pointer hover is not the active selector. Focused buttons use the existing theme's focus border.
 - Clicking a playable cell synchronizes the remembered selection and returns focus to the board. Mouse hover moves the shared selection and becomes its single visible marker, so keyboard/gamepad navigation resumes from the hovered cell.
 - Restart restores board focus at the remembered cell. Opening a level from the menu starts at the top-left cell again.
-- Victory disables board actions and moves board focus to Restart. Button navigation remains available; up does not return to the locked board until restarting.
+- Victory disables board actions and opens a centered action panel. Focus moves to its first available action; button navigation remains available, and up cannot return to the locked board until restarting.
 
 ## Interface navigation
 
-- The initial menu focuses Easy. Up/down or W/S moves through the current vertical menu without wrapping.
+- The main menu focuses Start Game. Directional input moves through the current screen without wrapping. Start Game opens difficulty selection; each difficulty opens its numbered levels. Random Level starts a session immediately.
 - Enter or Space activates the focused button once per key press. Held activation keys do not repeatedly activate buttons or toggle bulbs/annotations.
 - Held directional keys may repeat movement using keyboard repeat events.
 - Native Tab focus traversal remains available, but directional navigation is the main agreed flow.
+
+## Menu flow and preferences
+
+- Main menu: Start Game, Settings, Tutorial, Quit, and a corner shortcut that globally mutes/unmutes audio.
+- Difficulty selection includes every registered difficulty and Random Level at the same level.
+- Numbered levels are selected from Level 1 through Level 10 for each difficulty. Next Level advances through catalog order and crosses to the next difficulty after Level 10.
+- Settings contains music volume, windowed/fullscreen mode, and a read-only Controls tab. No remapping or separate sound-effects slider is provided.
+- Preferences saved locally: music volume, global mute, display mode, and whether the tutorial has opened. Puzzle progress and random seeds are never saved.
+- The first launch opens the tutorial and immediately records it as seen. Skip and completion return to the main menu; Tutorial in the menu opens it again from page one.
+- Random Level chooses uniformly from registered difficulties. Restart preserves the active board and hidden seed; New Random Level draws again. Leaving to the menu discards the active session.
 
 ## Implementation
 
@@ -64,7 +76,7 @@ Status: keyboard and Xbox interaction were tested and approved by the user on 20
 
 - Reuse the existing named actions, navigation model, focus transitions, and gameplay handlers.
 - Confirmed navigation: D-pad and left stick. The agreed action layout uses the bottom face button (Xbox A) for bulbs/confirmation and the left face button (Xbox X) for annotations.
-- The right face button (Xbox B) and keyboard Escape return to the previous screen; during gameplay they perform Back to Menu. At the main menu they do not quit the game.
+- The right face button (Xbox B) and keyboard Escape return from a submenu to its parent. During gameplay and victory they always exit to the main menu, discarding the session. At the main menu they do nothing; Quit is a separate menu action.
 - Confirmed held-direction repeat: move once immediately, wait 0.30 seconds, then repeat one step every 0.12 seconds. These are initial tuning values. Bulb/annotation buttons still activate once per press.
 - Confirmed left-stick behavior: ignore input within a 0.30 deadzone and convert the strongest axis into a single cardinal direction. Diagonal tilt never moves diagonally across cells. The deadzone is an initial tuning value.
 - A small 0.10 axis-switch margin stabilizes direction near diagonals, so tiny hardware jitter does not cause rapid direction changes. Both analog axes are sampled together once per frame.

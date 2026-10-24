@@ -6,7 +6,7 @@ Game rules and data should be understandable and verifiable without depending on
 
 ## Conceptual layers
 
-1. **Level configuration:** concrete generation parameters, initially width, height, target wall count, and seed. Resolve these from a predefined difficulty preset selected by the player or assigned to a level, together with the chosen seed policy.
+1. **Level catalog and configuration:** an ordered catalog stores stable difficulty IDs, generation parameters, and ten fixed seeds per difficulty. It resolves numbered levels and progression targets; random sessions use a selected preset plus a temporary seed.
 2. **Board definition:** dimensions and immutable structural content, such as empty cells and numbered or unnumbered walls.
 3. **Game state:** mutable player choices and derived data needed to evaluate the current situation.
 4. **Presentation:** Godot scenes and controls that draw the board and translate input into game actions.
@@ -22,13 +22,16 @@ Difficulty preset and seed policy → resolved level configuration → generator
 
 ## Current implementation
 
+- `src/levels/prototype_levels.gd` is the ordered difficulty catalog used by the difficulty menu, uniform random selection, numbered-level selection, and cross-difficulty progression. Each current difficulty contains ten fixed seed entries.
+- `src/presentation/player_preferences.gd` loads and saves music volume, global mute, fullscreen mode, and tutorial-seen state under `user://player_settings.cfg`. It does not store puzzle state or random seeds.
+
 - `src/core/board_definition.gd`: structural dimensions, wall positions, and clue values. Symbols are `.` for playable cells, `#` for unnumbered walls, and digits 0–4 for numbered walls.
 - `src/core/game_state.gd`: mutable bulb/annotation placement and rule evaluation, independent from scene nodes.
 - `src/generation/level_configuration.gd`: validated, resolved generation parameters and reproduction metadata, independent from the board and player state.
 - `src/generation/board_generator.gd`: local seeded randomness, constructive solution, clue derivation, and final validity check.
-- `src/levels/prototype_levels.gd`: stable IDs, preset parameters, and explicit seeds for the three playable levels.
+- `src/levels/prototype_levels.gd`: stable difficulty IDs, preset parameters, and explicit seeds for ten levels in each of three difficulties.
 - `src/levels/easy_fixed.gd`: the original manually authored 5×5 board, retained as a core-test fixture.
-- `src/presentation/main.gd`: menu/game flow, input actions, audio, and rendering updates.
+- `src/presentation/main.gd`: main menu, difficulty/level selection, settings, tutorial, gameplay, victory flow, audio, input routing, and responsive rendering.
 - `src/presentation/board_cell.gd`: individual cell drawing and mouse events, including hover and conflict indicators.
 - `src/presentation/lumen_theme.gd`: shared colors, typography, and control styling.
 - `src/input/input_bindings.gd`: named keyboard and standardized gamepad actions installed into Godot's InputMap.
@@ -36,7 +39,7 @@ Difficulty preset and seed policy → resolved level configuration → generator
 - `src/input/gamepad_state.gd`: per-device D-pad/left-stick state and a stable cardinal direction.
 - `src/input/direction_repeat.gd`: bounded held-direction repeat, independent from frame timing and scene focus.
 
-Opening a difficulty resolves its catalog configuration, generates and validates a board, and creates a fresh game state. The controller retains configuration metadata but discards the construction solution. Restart resets the existing game state and does not regenerate the board. Cell visuals scale to keep the three board sizes inside the same board frame.
+Opening a numbered level resolves its fixed catalog configuration; random selection chooses a registered difficulty and creates a temporary seed. Both paths generate and validate a board and create a fresh game state. The controller retains active configuration metadata but discards the construction solution. Random configuration is memory-only and is cleared on return to the main menu. Restart resets the existing game state and does not regenerate the board. Cell visuals scale to keep the three board sizes inside the same board frame.
 
 Bulb and annotation actions replace each other in a single state mutation. Walls reject both actions, and the presentation blocks board changes after victory. Mouse, keyboard, and gamepad share these actions and navigation handlers; see [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md).
 

@@ -1,6 +1,8 @@
 # Prototype Asset Inventory
 
-Status: initial asset set approved on 2026-10-24. In-game visual and audio integration, loop transition review, and tuning remain part of prototype implementation.
+Status: initial asset set approved and integrated on 2026-10-24. Menu/button redesign, tutorial-specific artwork, and a victory celebration await the user-approved production checkpoint; see [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
+
+For the next menu/button redesign, tutorial UI, and victory celebration, see [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md). That brief records planned requirements and production proposals; the original inventory below describes the prototype baseline.
 
 This inventory covers the approved prototype. An asset may be a reusable Godot theme, drawn shape, text element, or imported file; each visual state does not require a separate image. The user prefers generated images in a consistent style and describes the desired presentation as simple, elegant, and cute.
 
@@ -25,10 +27,10 @@ Compose cell backgrounds, symbols, and warning styling so their combinations rem
 | Button theme | Shared normal, hover, pressed, and disabled appearances; readable labels |
 | Typography | Font or built-in font configuration for title, buttons, difficulty labels, clues, and victory message |
 | Project title | Text treatment for Project Lumen; a custom illustrated logo is unnecessary for the prototype |
-| Gameplay labels | Current difficulty label and a short mouse-controls legend |
-| Victory presentation | "Puzzle solved!" message and a panel or overlay that leaves Restart, Back to Menu, and Quit accessible |
+| Gameplay labels | Current difficulty and level identity above the board; informational text below the board is removed |
+| Victory presentation | Centered "Puzzle solved!" panel over the completed, slightly dimmed board; actions depend on numbered or random mode |
 
-Button labels: Easy, Medium, Hard, Restart, Back to Menu, and Quit. Reuse a single button theme rather than producing six separate button images. The controls legend explains existing actions; it does not provide puzzle hints.
+Button labels include Start Game, Settings, Tutorial, Quit, Random Level, numbered levels, Next Level, New Random Level, Restart, and Exit to Menu. Reuse a single button theme rather than producing six separate button images. The controls legend explains existing actions; it does not provide puzzle hints.
 
 ## Expanded scope
 
@@ -56,12 +58,12 @@ On 2026-10-24, the user requested a comprehensive inventory including the previo
 
 - Main menu and gameplay backgrounds, sharing resources where practical.
 - Difficulty-selection layout and gameplay header showing the active difficulty.
-- Button styling for normal, hover, pressed, disabled, and focus states. Focus styling does not introduce keyboard board navigation into the prototype.
+- Button styling for normal, hover, pressed, disabled, and focus states. Focus styling must remain readable for keyboard and gamepad navigation across menus and board actions.
 - Restart, Back to Menu, Quit, and victory icons, if used alongside text labels.
 - Left- and right-mouse-button symbols and a short English controls legend.
 - Victory panel and backdrop that preserve visibility of the solved board and its available actions.
 - Consistent margins, alignment, and sizing across the menu, gameplay, and victory presentation.
-- Standard system cursor as the baseline; assess a matching custom pointer during acquisition.
+- Use the approved custom arrow and pointing-hand cursors, and keep their sizes, hotspots, and contrast consistent.
 
 ## Motion and visual feedback
 
