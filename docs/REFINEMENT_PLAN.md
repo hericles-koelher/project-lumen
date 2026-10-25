@@ -1,8 +1,8 @@
 # Project Lumen — Refinement Execution Plan
 
-Status: implementation underway on 2026-10-24. The functional menu, level catalog, preferences, tutorial, session flow, victory actions, responsive background, and basic screen fades are implemented; automated checks pass. Manual user review and the gated visual-asset work remain. This plan covers the appearance/gameplay refinements and the menu/level-flow refinements in [`../TASKS.md`](../TASKS.md). External playtesting is a later, separate milestone.
+Status: implementation packages 1–9 are delivered, including the registered difficulty catalog, preferences, responsive layout, menus, session flow, victory progression, tutorial, generated visual assets, and Quiet Ink integration. Package 10's automated checks and documentation are current; 731 checks pass. The user's final playthrough and approval of the integrated build remain open in [`../TASKS.md`](../TASKS.md). Sharing a build with an external tester is a separate later task.
 
-The confirmed behavior below comes from user decisions. Implementation details may be resolved autonomously within this scope. New visual production requires consulting the user so they can switch the execution model and approve the direction described in [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
+The confirmed behavior below comes from user decisions. Implementation details may be resolved autonomously within this scope. The user completed the visual checkpoint and selected Quiet Ink (B) with warm sparkles. Follow the approved direction described in [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
 
 ## 1. Goals and preserved foundations
 
@@ -11,7 +11,7 @@ The confirmed behavior below comes from user decisions. Implementation details m
 - Save player preferences and first-launch tutorial state while continuing to discard puzzle sessions on exit.
 - Improve resizing, victory feedback, interface consistency, and visual clarity through the approved replacement assets.
 - Preserve the Akari rules, constructive generator validity, multiple-solution policy, explicit seeds/generator version, and separation of configuration, board definition, and mutable game state.
-- Preserve mouse/keyboard/gamepad actions, the shared cell marker, synchronized input selection, wall-skipping navigation, and board-to-button focus transitions.
+- Preserve mouse/keyboard/gamepad actions, the shared cell marker, synchronized input selection, one-cell navigation through walls, and board-to-button focus transitions.
 - Keep all first-party code, comments, documentation, labels, and commit messages in English. Document new and changed GDScript declarations according to [`ENGINEERING_PRACTICES.md`](ENGINEERING_PRACTICES.md).
 
 ## 2. Confirmed screen flow
@@ -29,7 +29,7 @@ The confirmed behavior below comes from user decisions. Implementation details m
 | Tutorial from menu | Open the tutorial from its beginning for review. |
 | Exit to Menu during gameplay or victory | Return to the main menu, discarding all moves, board-session state, and the temporary random seed. Escape and gamepad B perform the same action. |
 
-Ordinary menu Back navigation returns to the parent screen. At the main menu, Escape/B does not quit. During a puzzle or its victory panel, Exit to Menu always goes directly to the main menu. Quit is available from the main menu; gameplay offers Restart and Exit to Menu.
+Ordinary menu Back navigation returns to the parent screen. Settings tabs belong to one screen: Back, Escape, and B from either tab return directly to the main menu. At the main menu, Escape/B does not quit. During a puzzle or its victory panel, Exit to Menu always goes directly to the main menu. Quit is available from the main menu; gameplay offers Restart and Exit to Menu.
 
 ## 3. Work packages and execution order
 
@@ -134,7 +134,7 @@ The packages below divide the two parent tasks into reviewable changes. They def
 - Build a short paginated tutorial with illustrated miniature boards and concise English text.
 - Cover the goal, orthogonal lighting and wall blocking, numbered/zero clues, bulb conflicts, bulb placement/removal, X notes, replacement between bulb/X, and the win condition.
 - Use correct Akari examples and the same board symbols as gameplay. Reuse components where possible; request new illustrative assets through Package 8.
-- Provide previous/next navigation, a page indicator, and Skip. Finish and Skip lead to the main menu; revisiting from the main menu starts at the first page.
+- Keep one fixed-size card sized for the step with the most content, replacing only its inner content as the player advances. Provide a page indicator, Next/Done, and Skip; revisiting from the main menu starts at the first page.
 - On a first launch, open the tutorial and persist the seen flag immediately. Do not wait for completion or Skip. Later launches go directly to the main menu even if the first tutorial was interrupted.
 - Support the approved input methods and ensure tutorial navigation cannot accidentally place bulbs in the underlying game.
 
@@ -149,7 +149,7 @@ The packages below divide the two parent tasks into reviewable changes. They def
 **Work**
 
 - Present concepts for menus and buttons that replace the disliked prominent white-card treatment and current button style.
-- Agree on composition, palette/font changes if any, icon treatment, state styling, and the victory celebration choice: confetti or simple fireworks.
+- Agree on composition, palette/font changes if any, icon treatment, state styling, and the selected warm sparkle victory celebration.
 - Cover all planned screens and reusable components: menu/difficulty/level controls, Settings tabs/slider/selectors, mute icons, control glyphs, tutorial diagrams/navigation, and victory surface/effect components.
 - Review concepts before bulk production. Deliver separate reusable artwork, required button/focus states, size/stretch guidance, and a manifest rather than only flattened screen mockups.
 - Preserve first-party sources and third-party licenses/provenance when adopted assets are reused or replaced.
@@ -164,9 +164,9 @@ The packages below divide the two parent tasks into reviewable changes. They def
 
 - Integrate approved art across menus, gameplay controls, tutorial, Settings, and victory. Apply shared theme/font/spacing rules and verify readable labels in every focus/hover/pressed/disabled state.
 - Add simple ordinary screen transitions using native animation where suitable. Choose restrained timings and easing during implementation without delaying controls or puzzle feedback.
-- Add interface animation and the approved finite victory effect. Keep confetti/fireworks from hiding the board's result or panel actions; effects do not intercept input or delay progression.
+- Add interface animation and the approved finite victory effect. Keep sparkles from hiding the board's result or panel actions; effects do not intercept input or delay progression.
 - Keep the background adaptive to window changes and avoid stretching decorative corners or baked text.
-- Review board readability, overlapping states, marker centering, input handoff, and cursor feedback; make specific corrections supported by the approved direction and playtesting feedback.
+- Review board readability, overlapping states, marker centering, input handoff, and cursor feedback; the shared wall-selectable marker and three-second mouse-idle visibility behavior are implemented.
 - Balance the existing music/effects and preserve music continuity between screens. Do not add a new soundtrack or extra sound-production task without an agreed need.
 
 **Dependencies:** Packages 3–8 and the approved asset family.
@@ -177,18 +177,18 @@ The packages below divide the two parent tasks into reviewable changes. They def
 
 **Work**
 
-- Update outdated automated checks when behavior changes, especially old assumptions that directional navigation lands on walls. Keep domain/input checks isolated from the user's running play session.
+- Update outdated automated checks when behavior changes, including the restored behavior where directional navigation lands on walls without allowing bulb or note placement. Keep domain/input checks isolated from the user's running play session.
 - Verify catalog reproduction, next-level/next-difficulty boundaries, inclusion of newly registered difficulties, random restart/replacement, and session disposal.
 - Verify preference loading/saving, global mute/restored volume, display mode, tutorial seen-on-open, and clean first/subsequent launch paths.
-- Check all UI states through the implemented focus model. Leave manual visual/gamepad playtesting to the user and coordinate before stopping or restarting an active play session.
+- Automated checks cover menu/tutorial focus, session transitions, and focus behavior. Leave the final manual visual/gamepad playthrough to the user; coordinate before stopping or restarting an active play session.
 - Address concrete issues reported during review within the agreed scope; ask about changes that introduce new design decisions.
-- Update current behavior documents, architecture/source maps, setup instructions, controls, asset inventory/manifest, and task status so completed features are distinguishable from remaining plans.
+- Update current behavior documents, architecture/source maps, setup instructions, controls, asset inventory/manifest, task status, and the README screenshot gallery so delivered features are distinguishable from remaining review.
 - Keep `TASKS.md` concise; retain implementation reasoning and review results in the relevant documents or chat.
 - After approval of each completed package/task, create a coherent English commit. Push only when explicitly requested.
 
 **Dependencies:** validate each package locally as it is completed; final end-to-end review follows Package 9.
 
-**Done when:** relevant automated checks pass, the user approves manual behavior/presentation, documentation describes the delivered game, and approved work is committed.
+**Status:** 731 automated checks pass and current behavior documents are updated. The user still needs to complete the manual playthrough and approve the integrated build before this package and its parent tasks can be closed.
 
 ## 4. Later milestone — External playtest
 
@@ -204,8 +204,8 @@ This remains after the two refinement tasks. It is planned here for completeness
 
 ## 5. Collaboration boundaries and next checkpoint
 
-- This document is the execution plan, not a claim that the planned screens or assets already exist.
-- Once the plan is approved for implementation, the specific packages may proceed autonomously within the confirmed scope; consult the user for unresolved design choices, visual production, and new scope.
+- Packages 1–9 have been implemented; the remaining refinement checkpoint is the user's manual review of the current integrated build. See [`../TASKS.md`](../TASKS.md) for the outstanding items.
+- Consult the user when review uncovers a design choice or scope change.
 - Do not advance to external playtesting merely because it is next in the backlog.
 - Preserve user-led testing and the existing commit-after-approval/push-on-request workflow.
-- The user approved implementation. The next checkpoint is manual review of the functional flow and a separate user decision to switch execution model and approve the visual direction before producing replacement menu/button or celebration assets.
+- After the user completes review and approves the refinement task, commit the approved work. Push only after an explicit request.

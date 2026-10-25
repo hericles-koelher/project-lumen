@@ -20,4 +20,4 @@ These are first-pass sampled/estimated colors based on the concept illustrations
 
 ## Typography
 
-Use Nunito for the title, buttons, labels, clues, and messages. Prefer regular or medium weights for body text and semibold or bold for headings and numbered clues. Avoid small thin text.
+Use Nunito for interface headings, buttons, labels, clues, and messages. Prefer regular or medium weights for body text and semibold or bold for headings and numbered clues. Avoid small thin text. The main-menu title uses the separate transparent hand-lettered wordmark with its hanging bulb, restored from the user-approved concept.

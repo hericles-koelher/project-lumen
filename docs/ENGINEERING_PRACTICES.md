@@ -76,6 +76,7 @@ This document defines the default standards for code, assets, documentation, and
 - For deterministic generation, verify that identical configuration and seed reproduce the same board, and that every accepted generated board has at least one valid solution.
 - Keep tests focused on observable behavior. Avoid tests that only mirror implementation details or make refactoring unnecessarily difficult.
 - Run relevant project checks after changes when the required tools are available. Report exactly what ran and any limitations.
+- When implementing an approved visual prototype, capture the actual Godot screen and compare it with the reference at the same resolution and screen state before presenting the result. Check spacing, typography, proportions, icons, surfaces, and overflow; passing behavior checks alone does not establish visual fidelity.
 - Do not add broad test frameworks or tooling until the project has a concrete need and a documented setup.
 
 ## 7. Documentation and decisions

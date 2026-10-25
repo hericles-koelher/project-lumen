@@ -1,8 +1,8 @@
 # Prototype Asset Inventory
 
-Status: initial asset set approved and integrated on 2026-10-24. Menu/button redesign, tutorial-specific artwork, and a victory celebration await the user-approved production checkpoint; see [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
+Status: the initial asset set, generated Quiet Ink (B) artwork, native menu/control resources, tutorial diagrams, and warm victory sparkles are integrated. The final appearance is pending the user’s playthrough; see [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md) and [`UI_STYLE_GUIDE.md`](UI_STYLE_GUIDE.md).
 
-For the next menu/button redesign, tutorial UI, and victory celebration, see [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md). That brief records planned requirements and production proposals; the original inventory below describes the prototype baseline.
+The brief records the chosen production direction, while [`UI_STYLE_GUIDE.md`](UI_STYLE_GUIDE.md) describes the current integrated candidate. The inventory below remains the complete asset baseline and component checklist.
 
 This inventory covers the approved prototype. An asset may be a reusable Godot theme, drawn shape, text element, or imported file; each visual state does not require a separate image. The user prefers generated images in a consistent style and describes the desired presentation as simple, elegant, and cute.
 

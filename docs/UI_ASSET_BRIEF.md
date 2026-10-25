@@ -1,29 +1,29 @@
 # Project Lumen — UI and Celebration Asset Brief
 
-Status: on 2026-10-24 the user selected B — Quiet Ink and warm sparkles for the victory animation. The visual-direction checkpoint is complete; produce and integrate the matching reusable assets, then review the delivered result with the user.
+Status: the user selected B — Quiet Ink and warm sparkles; the generated art and reusable native Godot components are integrated. This document preserves the production brief and decisions. The final visual review of the delivered game remains open; see [`UI_STYLE_GUIDE.md`](UI_STYLE_GUIDE.md).
 
-Concept review: [`Soft Sage / Quiet Ink comparison`](concepts/ui_direction_comparison_v1.png) proposes two menu/button directions and small celebration alternatives. Generated with `image_gen.imagegen` on 2026-10-24; the tool did not expose its rendering model or effort. The user selected its Quiet Ink button/menu direction and Sparkles motif. This sheet is a mockup, not production exports. Decorative additions in the mockup are proposals, not new requirements; keep the established bulb, books, plants, and evening-light theme without introducing unrelated characters.
+Concept review: [`Soft Sage / Quiet Ink comparison`](concepts/ui_direction_comparison_v1.png) proposes two menu/button directions and small celebration alternatives. Generated with `image_gen.imagegen` on 2026-10-24; the tool did not expose its rendering model or effort. The user selected its Quiet Ink button/menu direction and Sparkles motif. This sheet is a mockup, not production exports. Decorative additions in the mockup are proposals, not new requirements; retain the approved sleeping cat, illustrated wordmark with hanging bulb, books, plants, and warm indoor lighting. The user explicitly requested restoring those details after the first integration review.
 
 ## Handoff to the producing model
 
-Create a coordinated interface asset set for a small PC Akari puzzle game in Godot. The intended mood is simple, elegant, cute, calm, and welcoming. The user dislikes the current prominent white menu card and the current button treatment. Propose a better menu composition and a new reusable button design before producing the complete set.
+Create a coordinated interface asset set for a small PC Akari puzzle game in Godot. The intended mood is simple, elegant, cute, calm, and welcoming. The user dislikes the current prominent white menu card and the current button treatment. Use the selected Quiet Ink composition and reusable button family.
 
-The user has approved Quiet Ink and sparkles and authorized continuation. Keep the selected ink/navy surfaces, warm cream text, restrained amber outlines, freestanding menu composition, and finite light celebration. Keep game rules and board symbols unchanged.
+The user approved Quiet Ink and sparkles and authorized implementation. The selected ink/navy surfaces, warm cream text, amber outline, freestanding composition, and finite light celebration are now implemented. Later requests refined the halo, circular mute button, and selected screen controls; their current appearance is documented in [`UI_STYLE_GUIDE.md`](UI_STYLE_GUIDE.md). Game rules and board symbols remain independent.
 
-Start with concept mockups and a component/state sheet. After the user approves a direction, deliver the reusable assets and integration specifications. Keep text and interactive elements separate from background illustrations.
+The concept and state comparison have been reviewed. Deliver the selected reusable assets and integration specifications. Keep the decorative wordmark and interactive text separate from background illustrations. The implemented candidate is described in [`UI_STYLE_GUIDE.md`](UI_STYLE_GUIDE.md).
 
-## Confirmed direction and open visual choices
+## Approved direction and implementation
 
-| Confirmed | Still to be chosen with the user |
+| Approved choice | Implemented candidate |
 |---|---|
-| Replace the prominent white-card menu presentation. | New composition, surfaces, decorative motifs, and degree of departure from the current palette. |
-| Redesign the buttons as a coordinated family. | Button shape, texture, edges, depth, and state treatments. |
-| Keep the experience simple, elegant, cute, and readable. | Exact typography changes, icon treatment, and final spacing system. |
-| Use simple transitions between menus and other ordinary screens. | Exact transition duration and easing. |
-| Make victory celebratory with simple confetti or fireworks. | Confetti versus fireworks, appearance, placement, density, and duration. |
-| Show a centered victory panel over the completed, slightly dimmed board. | Panel styling, decorative frame, and reveal animation. |
+| B — Quiet Ink; no prominent white menu card | Freestanding controls over a warm illustrated room with sleeping cat; illustrated title and hanging bulb |
+| Rounded dark buttons with restrained warm outlines | Native scalable surfaces with 40-pixel side padding, translucent dark fill, editable cream labels, warm ivory edges and soft amber hover/focus glow |
+| Simple, elegant, cute, readable | Nunito retained; cream/amber interface colors over ink/navy; existing board palette retained |
+| Simple ordinary transitions | 0.14-second page fade |
+| Warm sparkles for victory | One 1.6-second textured burst, behind the panel and outside its readable action area |
+| Centered victory panel over the solved board | Navy/amber surface, light dimmer, 0.22-second reveal; actions immediately available |
 
-Do not treat a new palette, font, full art overhaul, new soundtrack, or both celebration alternatives as already approved requirements.
+The integrated result still needs user visual and audio review. Confetti, a new soundtrack, remapping, and changes to board symbols are outside this selected direction.
 
 ## Screen coverage
 
@@ -34,7 +34,7 @@ Do not treat a new palette, font, full art overhaul, new soundtrack, or both cel
 | Numbered levels | Level 1 through Level 10 for the chosen difficulty; Back. Use reusable tiles and separate text, rather than ten images with baked numbers. No locked/completed badges are required by the current scope. |
 | Settings | Music volume control; windowed/fullscreen choice; Controls tab; Back. There is no separate effects-volume control and no remapping interface. |
 | Controls reference | Clearly separated Keyboard / Mouse and Gamepad sections, with readable action labels and matching input glyphs. |
-| Tutorial | Short pages with miniature illustrated boards, explanatory text, previous/next navigation, page position, and Skip. Exact page count and final-page label can be settled during composition review. |
+| Tutorial | Short pages with miniature illustrated boards and explanatory text inside one fixed-size card. Show page position, Next/Done, and Skip; omit Previous because the tutorial can be reopened from the main menu. |
 | Gameplay | Preserve board readability at 5×5, 7×7, and 9×9; space for level/difficulty identity and action buttons. Remove the informational text beneath the board, leaving action buttons in that area. Random mode also needs New Random Level. |
 | Numbered victory | Centered “Puzzle solved!” panel; Next Level, Restart, Exit to Menu. At the end of a difficulty, Next Level leads to the first level of the next registered difficulty; omit it only after the final level of the final difficulty. |
 | Random victory | Same celebration family; New Random Level, Restart, and Exit to Menu. |
@@ -87,11 +87,11 @@ The tutorial appears automatically on the first launch, is marked as seen when o
 
 Ordinary screen changes use simple transitions. Victory uses a finite warm sparkle animation, keeping the solved board and panel readable. Confetti is not selected.
 
-### Proposed production constraints — review with the user
+### Production constraints and tuning
 
-- Use a short native Godot fade or gentle movement for ordinary screens; approximately 150–250 ms is a starting recommendation, not a locked tuning value. Separate animation frames are unnecessary for a fade.
-- Give victory a brief panel reveal and one finite celebration burst. A roughly 1–2 second particle effect is a starting point; avoid a continuous loop, flashing screen, camera shake, or effects that cover action labels.
-- Prefer reusable particle pieces: small rounded paper rectangles/strips for confetti, or small sparkle/streak shapes for simple fireworks. Keep their scale and palette coherent with the chosen interface direction.
+- Use the short native Godot page fade; its current duration is 0.14 seconds. Separate animation frames are unnecessary.
+- Victory currently uses a 0.22-second panel reveal and one 1.6-second sparkle burst. Avoid a continuous loop, flashing screen, camera shake, or effects that cover action labels. Tune after user review.
+- Reuse the generated transparent four-point light texture at varied sizes and tints. Keep scale and palette coherent with Quiet Ink.
 - If textures are supplied, use transparent PNGs with generous transparent padding, approximately 64–128 px per particle. An optional assembled burst sprite sheet may be provided if it improves the chosen effect; state frame size, order, frame rate, anchor, and duration.
 - Native Godot particles/tweens can animate the delivered pieces. Supply an animation reference or timing notes so integration does not have to guess the intended result.
 - Keep celebration rendering behind the panel actions or outside their readable area. It must not intercept input or delay button availability.
@@ -136,4 +136,4 @@ Board symbols, rules, generated puzzles, the recently corrected shared cell sele
 
 ## Copyable request for another model
 
-> Use this document as the UI/asset production brief for Project Lumen, a small Godot Akari game. Begin by reviewing the existing reference assets and proposing a new menu composition and button family that replace the prominent white menu card and the current button style. Include a simple victory celebration concept using confetti or fireworks. Respect the confirmed screen flow and component inventory, keep labels separate from artwork, and distinguish your visual proposals from already approved requirements. Present concepts for review before producing the final consistent asset set. Do not change game rules or implement unrelated features.
+> Use this document as the UI/asset production brief for Project Lumen, a small Godot Akari game. Use the approved B — Quiet Ink composition and button family, replacing the prominent white menu card. Use warm sparkles for the victory celebration. Respect the confirmed screen flow and component inventory, keep labels separate from artwork, and distinguish your visual proposals from already approved requirements. Use the selected concept and current implementation guide as references; consult the user before introducing a new direction. Do not change game rules or implement unrelated features.

@@ -7,6 +7,8 @@ const Keyboard = preload("res://src/input/input_bindings.gd")
 const Navigation = preload("res://src/input/board_navigation.gd")
 ## Factory for the manually authored board fixture.
 const FixedLevel = preload("res://src/levels/easy_fixed.gd")
+## Board-definition type used to create a fixture with walls in navigation paths.
+const Board = preload("res://src/core/board_definition.gd")
 ## Game-state type used to confirm that actions remain device-independent.
 const State = preload("res://src/core/game_state.gd")
 
@@ -21,6 +23,7 @@ func _init() -> void:
 	_test_bindings()
 	for size in [5, 7, 9]:
 		_test_navigation(size)
+	_test_wall_navigation()
 	_test_wall_actions()
 	print("Input checks: %d passed, %d failed" % [_checks - _failures, _failures])
 	quit(0 if _failures == 0 else 1)
@@ -101,14 +104,49 @@ func _test_navigation(size: int) -> void:
 	_expect(navigation.selected_cell == 1, "Movement must advance exactly one cell.")
 
 
-## Checks that wall cells reject bulb and annotation actions.
+## Checks that navigation treats every cell, including consecutive walls, as a focus target.
+func _test_wall_navigation() -> void:
+	var board := Board.new(PackedStringArray(["###.", "#...", "#...", "...."]))
+	var navigation := Navigation.new(4, 4, 3)
+	_expect(board.is_wall(0) and navigation.selected_cell == 0, "Selection must start at a top-left wall.")
+	navigation.move(Vector2i.RIGHT)
+	_expect(navigation.selected_cell == 1 and board.is_wall(navigation.selected_cell), "Horizontal movement must advance one cell onto a wall.")
+	navigation.move(Vector2i.RIGHT)
+	_expect(navigation.selected_cell == 2 and board.is_wall(navigation.selected_cell), "Horizontal movement must advance one cell across consecutive walls.")
+	navigation.select_cell(0)
+	navigation.move(Vector2i.DOWN)
+	_expect(navigation.selected_cell == 4 and board.is_wall(navigation.selected_cell), "Vertical movement must advance one cell onto a wall.")
+	navigation.move(Vector2i.DOWN)
+	_expect(navigation.selected_cell == 8 and board.is_wall(navigation.selected_cell), "Vertical movement must cross consecutive walls one cell at a time.")
+	navigation.move(Vector2i.DOWN)
+	_expect(navigation.selected_cell == 12 and not board.is_wall(navigation.selected_cell), "Vertical movement must continue one cell beyond the wall run.")
+	navigation.select_cell(2)
+	_expect(navigation.selected_cell == 2 and board.is_wall(2), "Direct selection must accept a wall cell.")
+	navigation.select_cell(-1)
+	_expect(navigation.selected_cell == 0, "Direct selection must clamp below the board to cell zero.")
+	navigation.select_cell(99)
+	_expect(navigation.selected_cell == 15, "Direct selection must clamp above the board to its last cell.")
+	navigation.select_button(2)
+	navigation.set_button_count(2)
+	_expect(navigation.selected_button == 1, "Shrinking the action row must clamp its focused button.")
+	navigation.set_button_count(3)
+	navigation.move(Vector2i.RIGHT)
+	_expect(navigation.selected_button == 2, "Growing the action row must make its new button reachable.")
+
+
+## Checks that wall cells reject bulb and annotation actions without changing state.
 func _test_wall_actions() -> void:
 	var state := State.new(FixedLevel.create_board())
 	var navigation := Navigation.new(5, 5, 3)
+	navigation.select_cell(6)
+	_expect(state.board.is_wall(navigation.selected_cell), "The selected fixture position must be a wall.")
+	var bulbs_before := state.bulbs.duplicate()
+	var annotations_before := state.annotations.duplicate()
+	_expect(not state.toggle_bulb(navigation.selected_cell), "The shared bulb action must ignore the selected wall.")
+	_expect(not state.toggle_annotation(navigation.selected_cell), "The shared annotation action must ignore the selected wall.")
+	_expect(state.bulbs == bulbs_before and state.annotations == annotations_before, "Rejected wall actions must leave bulbs and annotations unchanged.")
 	navigation.select_cell(5)
 	navigation.move(Vector2i.RIGHT)
-	_expect(navigation.selected_cell == 6 and state.board.is_wall(6), "Selection must be allowed on a wall.")
-	_expect(not state.toggle_bulb(navigation.selected_cell), "The shared bulb action must ignore selected walls.")
-	_expect(not state.toggle_annotation(navigation.selected_cell), "The shared annotation action must ignore selected walls.")
+	_expect(navigation.selected_cell == 6, "Directional navigation must land on a wall one cell away.")
 	navigation.move(Vector2i.RIGHT)
-	_expect(navigation.selected_cell == 7, "Selection must continue past a wall without skipping cells.")
+	_expect(navigation.selected_cell == 7, "Directional navigation must move one cell past a wall.")

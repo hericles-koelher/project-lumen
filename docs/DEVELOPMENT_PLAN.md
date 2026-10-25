@@ -6,9 +6,9 @@ The prototype now includes repository conventions, Godot setup, provisional art/
 
 ## Current planning milestone
 
-The two active parent tasks are overall appearance/gameplay refinement and menu/level-selection refinement. Their agreed behavior, work packages, dependency order, approval checkpoints, and completion criteria are consolidated in [`REFINEMENT_PLAN.md`](REFINEMENT_PLAN.md). The planned interface asset handoff is [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
+The two refinement tasks are implemented and awaiting the user's final playthrough and approval. Their behavior, package history, remaining review checkpoints, and criteria are consolidated in [`REFINEMENT_PLAN.md`](REFINEMENT_PLAN.md). The completed visual-asset handoff remains documented in [`UI_ASSET_BRIEF.md`](UI_ASSET_BRIEF.md).
 
-The functional flows are implemented and are ready for user review. Final art integration remains gated so the user can switch models and approve the visual direction before production. New menus/buttons and celebration assets require user review before production.
+The current integrated flow includes the fixed Settings shell with a shared scroll viewport, edge-aligned arrow assets and controller hints, active-tab/tutorial focus behavior, circular audio shortcut, stronger amber halo, and automatic mouse-pointer hiding. Automated verification previously passed 731 checks; the latest Settings layout has not been run through the game yet. Current UI screenshots are in the README; manual user review remains before task approval.
 
 ## Following milestone
 

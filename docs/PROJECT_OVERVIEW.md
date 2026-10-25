@@ -6,7 +6,7 @@ Project Lumen is a 2D logic game based on Akari, also known as Light Up. The pla
 
 ## First-version goal
 
-Build a small, playable prototype with a readable board, basic interaction, verifiable rules, and reproducibly generated levels. The initial presentation may use simple shapes and colors; themed art comes after the core game is sound.
+Build a small, playable prototype with a readable board, basic interaction, verifiable rules, and reproducibly generated levels. The core is implemented; the current themed interface and remaining user review are summarized in [`../TASKS.md`](../TASKS.md).
 
 ## Initial scope
 
@@ -18,11 +18,11 @@ Build a small, playable prototype with a readable board, basic interaction, veri
 - Resolve generation parameters from predefined difficulty presets, either selected by the player or assigned to a level. The approved presets and entry flow are recorded in [`PROTOTYPE_DEFINITION.md`](PROTOTYPE_DEFINITION.md).
 - Allow multiple solutions in the first version.
 
-## Out of scope for the first version
+## Deliberately deferred
 
-- Guaranteeing a unique solution.
-- An advanced solver or difficulty optimization.
-- Progression, rankings, online publishing, and final art.
+- Guaranteeing a unique solution, an advanced solver, or automatic difficulty optimization.
+- Saved level completion/progress, rankings, accounts, and online publishing.
+- Export and distribution for the separate external-playtest milestone.
 
 ## Vocabulary
 

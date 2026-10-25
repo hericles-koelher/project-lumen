@@ -1,80 +1,70 @@
 # Project Tasks
 
-This is the project-level task list. Keep entries actionable, ordered by priority, and update their status as work progresses.
-
-Tasks are intentionally broad at this stage. Break them into smaller steps when work begins and adjust their order as the prototype evolves.
-
-See [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md) for execution order, confirmed behavior, dependencies, review checkpoints, and completion criteria. Asset production is specified in [`docs/UI_ASSET_BRIEF.md`](docs/UI_ASSET_BRIEF.md).
-
-## To do
-
-- [ ] Refine the overall appearance and gameplay details.
-  - [ ] Review the current game together and define the refinement scope and priorities.
-  - [ ] Redesign menu presentation and button visuals, replacing the current prominent white-card treatment.
-  - [ ] Consult the user before creating or reworking interface and celebration assets so they can switch the execution model; follow [`docs/UI_ASSET_BRIEF.md`](docs/UI_ASSET_BRIEF.md) and approve the visual direction before production.
-  - [ ] Refine visual consistency, typography, colors, spacing, and screen layouts after the menu direction is approved.
-  - [ ] Fix maximized-window and fullscreen layouts so the background expands to fill the available screen area.
-  - [ ] Improve board readability, cell states, cursor behavior, and interaction feedback.
-  - [ ] Show a centered victory panel with "Puzzle solved!" over the completed, slightly dimmed board.
-  - [ ] Offer Next Level, Restart, and Exit to Menu after a numbered-level victory; advance from the last level of a difficulty to the first level of the next registered difficulty, hiding Next Level only after the final level of the final difficulty.
-  - [ ] Offer New Random Level, Restart, and Exit to Menu after a random-level victory.
-  - [ ] Remove the informational text below the board, leaving only the action buttons in that area.
-  - [ ] Develop a short paginated tutorial with small illustrated boards covering the goal, illumination, numbered walls, conflicts, bulb placement/removal, and X annotations.
-  - [ ] Show the tutorial automatically on the first game launch and provide a Tutorial entry in the main menu for later review.
-  - [ ] Mark the tutorial as seen as soon as it opens and persist that flag locally alongside player preferences, even if the player skips it or closes the game.
-  - [ ] Add a Skip button to leave the tutorial and return to the main menu.
-  - [ ] Use simple screen transitions and add a victory celebration with confetti or simple fireworks after visual approval; refine interface animation and existing audio balance.
-  - [ ] Adjust agreed gameplay and navigation details based on playtesting feedback.
-  - [ ] Validate the refinements together and update the documentation.
-- [ ] Refine the menu structure and level-selection flow.
-  - [ ] Create a main menu with Start Game, Settings, Tutorial, and Quit options.
-  - [ ] Add a separate mute/unmute shortcut in a corner of the main menu that silences all audio and restores the previous volumes when unmuted.
-  - [ ] Make Start Game open a selection screen with Easy, Medium, Hard, and Random Level.
-  - [ ] After difficulty selection, open a level-selection screen with Level 1 through Level 10.
-  - [ ] Define ten reproducible levels per difficulty, each with its own stable ID and explicit seed.
-  - [ ] Make Random Level choose uniformly from all registered difficulty presets and generate a new puzzle using the chosen preset; new difficulties must join the draw without changing selection logic.
-  - [ ] Keep the current difficulty, seed, and board when restarting a random level, clearing only player moves.
-  - [ ] Add a New Random Level button only in random mode that draws a new difficulty and generates a new board.
-  - [ ] Keep the random seed hidden and only in memory for the active level session; discard it when leaving or replacing the level, without saving a seed history.
-  - [ ] Add a music volume setting without a separate sound-effects volume control.
-  - [ ] Add a windowed/fullscreen setting and save the chosen mode between sessions.
-  - [ ] Add a Controls tab in Settings listing keyboard/mouse and gamepad commands without remapping.
-  - [ ] Automatically save and restore music volume, global mute, and display mode between sessions.
-  - [ ] Use Exit to Menu during gameplay and victory; the button, Escape, and gamepad B return to the main menu and discard all player moves and the temporary random seed, with no session resume.
-  - [ ] Provide clear Back navigation and support the approved input methods throughout the menu flow.
-  - [ ] Validate menu navigation, numbered levels, random generation, and mute/unmute behavior.
-- [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address.
+This is the project-level backlog. Keep entries actionable, ordered by priority, and aligned with [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md).
 
 ## In progress
 
-- [ ] Refine the overall appearance and gameplay details.
-  - [x] Add the responsive screen flow, local preferences, tutorial, numbered/random session behavior, victory actions, and simple screen fades.
-  - [ ] User-review the implemented behavior and visuals; replace the current menu/button treatment and add the approved victory celebration after the visual-asset checkpoint.
-  - [ ] Complete the remaining visual refinement, playtest feedback, documentation review, and approval.
-- [ ] Refine the menu structure and level-selection flow.
-  - [x] Add main menu, difficulty and numbered-level selection, Settings/Controls, first-launch tutorial, uniform random-level selection, and session discard/restart behavior.
-  - [ ] User-test navigation, preferences, and progression; adjust issues and approve the finished task.
+None.
+
+## To do
+
+- [ ] Plan, prototype, and implement animations for the background, game title, and board bulbs. Preserve the calm visual style and interface readability; review the proposed implementation and visual results with the user before final integration.
+  - [ ] Identify which parts of the existing artwork need separate layers or additional assets for animation, and define their placement and timing.
+  - [ ] Add a gentle variation in the decorative lamp's light, keeping the effect subtle and comfortable to watch.
+  - [ ] Give the sleeping cat subtle breathing and an occasional ear twitch. Keep the ear movement intermittent rather than continuously looping.
+  - [ ] Add occasional gentle swaying to the leaves outside the house, with pauses between movements.
+  - [ ] Animate the game title when the application opens: briefly flicker a few times, then remain steadily illuminated. Do not replay this startup sequence whenever the player returns to the main menu.
+  - [ ] Prototype alternative animations for placing and removing a board bulb. Let the user test and choose the options before adopting the final behavior; keep puzzle feedback and input responsive.
+  - [ ] Review the combined motion with the user, tune intensity and timing, and update asset provenance and relevant documentation after approval.
+
+- [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address. See the later milestone in [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md).
 
 ## Done
 
-- [x] Adapt the approved keyboard interaction to gamepad, add the B/Esc Back shortcut, and support replacing a bulb with X across input methods. Completed on 2026-10-24.
+- [x] Refine the overall appearance and gameplay details. Completed 2026-10-25.
+  - [x] Define the refinement scope and select Quiet Ink (B) with warm victory sparkles; see [`docs/UI_ASSET_BRIEF.md`](docs/UI_ASSET_BRIEF.md).
+  - [x] Replace the prominent white-card menus with the selected full-screen illustrated layout, restored wordmark, sleeping cat, warm room light, typography, and spacing.
+  - [x] Make the background cover windowed, maximized, fullscreen, widescreen, and ultrawide layouts.
+  - [x] Establish reusable dark translucent buttons with the amber illuminated outline; fit text buttons to their labels and retain 40 px horizontal padding.
+  - [x] Refine the circular mute shortcut, center its audio icons, and omit text-button padding.
+  - [x] Keep one shared cell selector for mouse and keyboard/gamepad; let navigation select walls while rejecting bulb and X actions there.
+  - [x] Show a modal “Puzzle solved!” panel over the dimmed board, with a finite warm sparkle effect and correct next-level actions for numbered and random levels.
+  - [x] Remove instructional/status text from below the board, leaving its action buttons.
+  - [x] Add a five-page tutorial with board diagrams, first-launch display, persistent seen state, revisiting, Skip, and Next/Done focus.
+  - [x] Keep one fixed-size tutorial card across all steps, remove Previous, and focus Next/Done after advancing.
+  - [x] Focus the active Settings tab when opening Audio & Display or Controls.
+  - [x] Hide the free mouse pointer after three seconds of inactivity or immediately on keyboard/controller use; restore it on mouse activity, focus changes, or game exit. Ignore neutral stick drift and preserve cell-selection handoff.
+  - [x] Add a shared dark translucent card around the tutorial, Settings, and full gameplay layout; align the victory panel with the same card family and keep gameplay's horizontal padding compact.
+  - [x] Keep the Settings title, tabs, fixed scroll viewport, and Back footer in place; use edge-aligned SVG arrows with LB/RB hints below for tab navigation.
+  - [x] Match Settings to the approved prototype with larger typography, separated keycaps, gamepad symbols, device/row rules, fixed geometry, and scrolling only when needed; see [`docs/UI_STYLE_GUIDE.md`](docs/UI_STYLE_GUIDE.md).
+  - [x] Inset the tab arrows within the inner Settings card and preserve focus/scroll when changing display mode.
+  - [x] Keep the Settings shell instantiated during tab changes and make Back/Escape/B exit directly to the main menu from either tab.
+  - [x] Shorten the music-volume slider and separate Back from the other menu choices with the agreed vertical spacing.
+  - [x] Harden preferences, stable difficulty IDs, wall selection without interaction, modal victory focus, and integration checks.
+  - [x] Run the relevant isolated checks; 731 assertions pass. See [`tests/README.md`](tests/README.md).
+  - [x] Update behavior, setup, architecture, asset, and visual-style documentation; add current UI screenshots to the README.
+  - [x] Finish the user-led visual/gameplay review of the current build and address the agreed remaining feedback, including the final gameplay card sizing and padding. Completed 2026-10-25.
+- [x] Refine the menu structure and level-selection flow. Completed 2026-10-25.
+  - [x] Add Start Game, Settings, Tutorial, Quit, and a separate global mute shortcut to the main menu.
+  - [x] Offer each registered difficulty and Random Level at the same selection step, then Level 1 through Level 10 for a chosen difficulty.
+  - [x] Define ten reproducible, explicitly seeded levels per difficulty with stable IDs.
+  - [x] Choose random difficulty uniformly from the registered catalog; retain the active puzzle on Restart and discard its temporary seed on exit/replacement.
+  - [x] Offer New Random Level only in random mode; provide the right Next Level behavior at difficulty boundaries and the final registered level.
+  - [x] Add local music-volume, global-mute, display-mode, and tutorial-seen preferences; keep effects on the same global mute and provide no remapping or separate effects-volume control.
+  - [x] Add a read-only Keyboard/Mouse and Gamepad Controls tab; support mouse, keyboard, and standardized controller focus/navigation.
+  - [x] Use Exit to Menu, Escape, and gamepad B to leave gameplay or victory and discard the current session.
+  - [x] Set focus to the active Settings tab and to Next/Done on each tutorial page.
+  - [x] Verify menu/session behavior with the isolated flow checks; see [`tests/README.md`](tests/README.md).
+  - [x] Complete the user-led pass through menu navigation, numbered levels, random generation, and mute/unmute on the current build. Completed 2026-10-25.
 
-- [x] Implement and validate keyboard navigation and gameplay actions. Completed on 2026-10-24.
-
-- [x] Fix issues found during testing and confirm the prototype meets its completion criteria. Completed on 2026-10-24.
-
-- [x] Define and prioritize improvements based on testing and play feedback. Completed on 2026-10-24.
-
-- [x] Test the prototype, covering game rules, generation, controls, and visual clarity. Completed on 2026-10-24.
-
-- [x] Implement deterministic procedural generation that guarantees at least one valid solution. Completed on 2026-10-24.
-
-- [x] Implement a playable prototype with a small fixed board and the core Akari rules, integrating the approved assets and mouse hover/cursor states. Completed on 2026-10-24.
-
-- [x] Prepare the prototype visual and audio assets, including board symbols, mouse cursors, hover indicator, typography, music, and sound effects. The user approved the visual direction and selected the music. See [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) and [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md). In-game integration remains part of prototype implementation. Completed on 2026-10-24.
-
-- [x] Set up the Godot project and document the chosen engine version and how to run it. Godot 4.7.2 and MCP Toolkit 1.0.4; main scene launched successfully through the plugin. See [`docs/DEVELOPMENT_SETUP.md`](docs/DEVELOPMENT_SETUP.md). Completed on 2026-10-24.
-
-- [x] Define the prototype details: scope, target platform, controls, game flow, difficulty presets, seed policy, and completion criteria. See [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md). Completed on 2026-10-24.
-
-- [x] Improve the project definition and refine `AGENTS.md` so the project goals, scope, working conventions, and repository map are clear and consistent. Completed on 2026-10-23.
+- [x] Adapt the approved keyboard interaction to gamepad, add the B/Escape Back shortcut, and support replacing a bulb with X across input methods. Completed 2026-10-24.
+- [x] Implement and validate keyboard navigation and gameplay actions. Completed 2026-10-24.
+- [x] Fix issues found during prototype testing and confirm the prototype completion criteria. Completed 2026-10-24.
+- [x] Define and prioritize improvements based on testing and play feedback. Completed 2026-10-24.
+- [x] Test the prototype's rules, generation, controls, and visual clarity. Completed 2026-10-24.
+- [x] Implement deterministic procedural generation that guarantees at least one valid solution. Completed 2026-10-24.
+- [x] Implement a playable prototype with the core Akari rules, mouse hover, and custom cursors. Completed 2026-10-24.
+- [x] Prepare and integrate the initial prototype visuals and audio, including board symbols, cursors, typography, music, and sound effects. See [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) and [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md). Completed 2026-10-24.
+- [x] Set up Godot 4.7.2 and document how to run the project. See [`docs/DEVELOPMENT_SETUP.md`](docs/DEVELOPMENT_SETUP.md). Completed 2026-10-24.
+- [x] Define the prototype scope, controls, game flow, difficulty presets, seed policy, and completion criteria. See [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md). Completed 2026-10-24.
+- [x] Improve the project definition, working agreements, and repository map in `AGENTS.md`. Completed 2026-10-23.

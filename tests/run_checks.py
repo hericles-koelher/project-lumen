@@ -1,6 +1,7 @@
 """Run domain checks without starting the development project's MCP autoload."""
 
 import argparse
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -20,16 +21,40 @@ def main() -> int:
     (work / ".gdignore").touch()
     with tempfile.TemporaryDirectory(prefix="isolated-checks-", dir=work) as directory:
         project = Path(directory)
+        display_settings = (
+            (repository / "project.godot").read_text(encoding="utf-8")
+            .split("[display]\n", 1)[1].split("\n[", 1)[0]
+        )
         (project / "project.godot").write_text(
-            'config_version=5\n[application]\nconfig/name="Lumen isolated checks"\n',
+            'config_version=5\n[application]\nconfig/name="Lumen isolated checks"\n'
+            + "[display]\n" + display_settings
+            + '\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n',
             encoding="utf-8",
         )
         for folder in ("src", "tests", "assets"):
             (project / folder).symlink_to(repository / folder, target_is_directory=True)
-        for script in ("run_core.gd", "run_generation.gd", "run_input.gd", "run_gamepad.gd"):
+        environment = os.environ.copy()
+        environment["XDG_DATA_HOME"] = str(project / "user-data")
+        imported = subprocess.run(
+            [args.godot, "--headless", "--path", str(project), "--editor", "--import", "--quit"],
+            check=False,
+            env=environment,
+        )
+        if imported.returncode:
+            return imported.returncode
+        for script in (
+            "run_core.gd",
+            "run_generation.gd",
+            "run_input.gd",
+            "run_gamepad.gd",
+            "run_action_guard.gd",
+            "run_preferences.gd",
+            "run_flow.gd",
+        ):
             result = subprocess.run(
                 [args.godot, "--headless", "--path", str(project), "--script", f"res://tests/{script}"],
                 check=False,
+                env=environment,
             )
             if result.returncode:
                 return result.returncode
