@@ -34,7 +34,8 @@ Selection pages leave a deliberate gap before Back: one button height on the dif
 
 | Resource | Source size | Use |
 |---|---|---|
-| `assets/backgrounds/quiet_ink_room_cozy.png` | 1586 × 992 RGB | Warm room background with sleeping cat, restored from the approved concept. Preserve aspect ratio and cover the full viewport; allow cropping at outer edges. |
+| `assets/backgrounds/quiet_ink_room_cozy.png` | 1586 × 992 RGB | Preserved approved source composition. |
+| `assets/backgrounds/quiet_ink_room_animation_clean.png` | 1586 × 992 RGB | Runtime clean plate beneath the separate cat and outdoor foliage. Every layer shares the same cover crop, preserving aspect ratio. |
 | `assets/branding/project_lumen_wordmark.png` | 1774 × 887 RGBA | Hand-lettered two-line title with hanging light bulb; preserve alpha and aspect ratio. |
 | `assets/fx/victory_sparkle.png` | 1254 × 1254 RGBA | One four-point warm light sprite with transparent padding and real alpha. Preserve the alpha and scale down in Godot. |
 
@@ -43,6 +44,8 @@ These images were rendered by `image_gen.imagegen` for this project. The image s
 The project uses `canvas_items` scaling with `window/stretch/aspect="expand"` and a base viewport of 1152 × 800. The logical drawing area expands with the window ratio, while the background uses aspect-preserving cover. This avoids pillarboxing at widescreen and ultrawide ratios. The earlier cooler `quiet_ink_room.png` remains as a superseded source candidate.
 
 ## Motion and input
+
+The room now uses the approved lamp-glow cycle, torso breathing at 75%, ear-only twitch at 150%, and five independently scheduled outdoor branches at 100%. The title flickers three times with 150 ms gaps only on its first menu appearance in each application run, then keeps its 270% lamp halo. Board bulbs use Soft pop plus Quick wave. Keep the central interface area clear and the outdoor layers behind the window and indoor silhouettes. See [`ANIMATION_IMPLEMENTATION.md`](ANIMATION_IMPLEMENTATION.md) for layer coordinates, timing, and Inspector tuning.
 
 Ordinary page changes use a short 0.14-second fade. Victory reveals its panel over 0.22 seconds and creates one 1.6-second burst of 18 warm sparkles. The textured pieces scale, fade, and drift around the panel, behind its controls. No looping celebration, full-screen flash, or input delay is used.
 

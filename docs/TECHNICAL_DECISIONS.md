@@ -81,3 +81,9 @@ This file records decisions that affect architecture, persisted data, or observa
 - **Context:** changing tutorial steps should not resize or reconstruct the card, and a Previous button is unnecessary because the player can reopen Tutorial from the main menu.
 - **Choice:** size one persistent card to fit the current step with the most content, including the largest miniature board. Replace only the page text and diagram when advancing. Provide Next/Done and Skip; omit Previous. Reopening Tutorial starts at the first step.
 - **Consequence:** all tutorial steps keep the same layout and Next/Done receives focus after every step change. When tutorial content changes, update the fixed height to continue fitting the largest step. See [`INPUT_CONTROLS.md`](INPUT_CONTROLS.md).
+
+## TD-014 — Reveal board illumination as a quick outward wave
+
+- **Context:** placing or removing a bulb changes several cell-light states at once, and the user selected a synchronized visual response.
+- **Choice:** pop the bulb in or shrink it away, then reveal newly lit cells outward along all four rays with 30 ms between cell distances and a 120 ms color fade. Withdraw light from the farthest changed cells inward on removal. Walls stop rays; cells that remain lit by another bulb do not transition.
+- **Consequence:** evaluation and input remain immediate. Presentation animation stays inside the board-cell controls and uses editor-adjustable tuning values. See [`the board bulb animation candidate`](concepts/animations/board-bulb-candidate-02.md).

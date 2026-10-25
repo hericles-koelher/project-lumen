@@ -4,28 +4,32 @@ This is the project-level backlog. Keep entries actionable, ordered by priority,
 
 ## In progress
 
-- [ ] Plan, prototype, and implement animations for the background, game title, and board bulbs. Preserve the calm visual style and interface readability; review the proposed implementation and visual results with the user before final integration.
-  - [ ] Identify which parts of the existing artwork need separate layers or additional assets for animation, and define their placement and timing.
-  - [x] Prototype and approve the decorative lamp's gentle light variation. Candidate 01 was approved by the user on 2026-10-25; see [`lamp-light-candidate-01.md`](docs/concepts/animations/lamp-light-candidate-01.md).
-  - [ ] Integrate the approved lamp light candidate into Godot, preserving its alignment under background cover/crop and resizing.
-  - [x] Prototype and approve the sleeping cat's subtle breathing. Candidate 01 was approved on 2026-10-25 at 75% intensity with a 4.8-second cycle; see [`cat-breathing-candidate-01.md`](docs/concepts/animations/cat-breathing-candidate-01.md).
-  - [ ] Prepare the clean background layer and integrate the approved cat breathing into Godot at 75% intensity, preserving the head/paw positions and alignment under resizing.
-  - [x] Prototype and approve an occasional ear-only twitch for the sleeping cat. The corrected candidate was approved on 2026-10-25 at 150% ear intensity, retaining 75% breathing and 8–15-second rests; see [`cat-ear-candidate-01.md`](docs/concepts/animations/cat-ear-candidate-01.md).
-  - [ ] Integrate the approved ear-only twitch into Godot without deforming the body, preserving its 150% intensity preset and intermittent timing.
-  - [x] Prepare editor-adjustable intensity presets with GDScript `@export` properties: lamp 100%, cat breathing 75%, and cat ear 150%. See `assets/animations/animation_tuning.tres`.
-  - [ ] Wire integrated animation controllers to the exported intensity presets so changes made in the Inspector affect their motion; expose the intensities of subsequent animations in the same way.
-  - [x] Prototype and approve occasional outdoor leaf swaying. Candidate 01 was approved on 2026-10-25 at 100% intensity, with four-second breezes and 10–18-second rests; see [`outdoor-leaves-candidate-01.md`](docs/concepts/animations/outdoor-leaves-candidate-01.md).
-  - [ ] Integrate the approved foliage behind the window frame and indoor objects so every branch reads as outside the house. Identify all visible outdoor branches in the final background and animate each of them with independent timing, preserving the approved 100% intensity and intermittent motion. Verify placement and occlusion at different window sizes and aspect ratios.
-  - [x] Prototype and approve the illuminated game-title startup: three initial flickers with 150 ms gaps, followed immediately by the steady lamp halo at 270% intensity. Play once per application launch, not when returning to the menu. Adjustable values are exported through `@export`; see [`title-startup-candidate-01.md`](docs/concepts/animations/title-startup-candidate-01.md). Approved 2026-10-25.
-  - [ ] Integrate the approved title startup into Godot, including first-visible-title timing when the first-launch tutorial appears, and prevent replay on menu returns.
-  - [ ] Prototype alternative animations for placing and removing a board bulb. Let the user test and choose the options before adopting the final behavior; keep puzzle feedback and input responsive.
-  - [ ] Review the combined motion with the user, tune intensity and timing, and update asset provenance and relevant documentation after approval.
+None.
 
 ## To do
 
 - [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address. See the later milestone in [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md).
 
 ## Done
+
+- [x] Plan, prototype, and implement animations for the background, game title, and board bulbs. Completed and approved by the user on 2026-10-25; preserves the calm visual style and interface readability.
+  - [x] Identify which parts of the existing artwork need separate layers or additional assets for animation, and define their placement and timing. See [`docs/ANIMATION_IMPLEMENTATION.md`](docs/ANIMATION_IMPLEMENTATION.md).
+  - [x] Prototype and approve the decorative lamp's gentle light variation. Candidate 01 was approved by the user on 2026-10-25; see [`lamp-light-candidate-01.md`](docs/concepts/animations/lamp-light-candidate-01.md).
+  - [x] Integrate the approved lamp light candidate into Godot, preserving its alignment under background cover/crop and resizing.
+  - [x] Prototype and approve the sleeping cat's subtle breathing. Candidate 01 was approved on 2026-10-25 at 75% intensity with a 4.8-second cycle; see [`cat-breathing-candidate-01.md`](docs/concepts/animations/cat-breathing-candidate-01.md).
+  - [x] Prepare the clean background layer and integrate the approved cat breathing into Godot at 75% intensity, preserving the head/paw positions and alignment under resizing.
+  - [x] Prototype and approve an occasional ear-only twitch for the sleeping cat. The corrected candidate was approved on 2026-10-25 at 150% ear intensity, retaining 75% breathing and 8–15-second rests; see [`cat-ear-candidate-01.md`](docs/concepts/animations/cat-ear-candidate-01.md).
+  - [x] Integrate the approved ear-only twitch into Godot without deforming the body, preserving its 150% intensity preset and intermittent timing.
+  - [x] Prepare editor-adjustable intensity presets with GDScript `@export` properties: lamp 100%, cat breathing 75%, and cat ear 150%. See `assets/animations/animation_tuning.tres`.
+  - [x] Wire integrated animation controllers to the exported intensity presets so changes made in the Inspector affect their motion; expose the intensities of subsequent animations in the same way.
+  - [x] Prototype and approve occasional outdoor leaf swaying. Candidate 01 was approved on 2026-10-25 at 100% reference intensity, with four-second breezes and a subsequently selected fixed four-second rest; see [`outdoor-leaves-candidate-01.md`](docs/concepts/animations/outdoor-leaves-candidate-01.md).
+  - [x] Integrate the approved foliage behind the window frame and indoor objects so every branch reads as outside the house. Identify all visible outdoor branches in the final background and animate each of them with independent timing, preserving the approved 100% intensity and intermittent motion. Verify placement and occlusion at different window sizes and aspect ratios.
+  - [x] Prototype and approve the illuminated game-title startup: three initial flickers with 150 ms gaps, followed immediately by the steady lamp halo at 270% intensity. Play once per application launch, not when returning to the menu. Adjustable values are exported through `@export`; see [`title-startup-candidate-01.md`](docs/concepts/animations/title-startup-candidate-01.md). Approved 2026-10-25.
+  - [x] Integrate the approved title startup into Godot, including first-visible-title timing when the first-launch tutorial appears, and prevent replay on menu returns.
+  - [x] Prototype and approve board bulb placement/removal: Soft pop plus a quick outward light wave, with walls blocking rays and input remaining immediate. See [`board-bulb-candidate-02.md`](docs/concepts/animations/board-bulb-candidate-02.md). Approved 2026-10-25.
+  - [x] Implement the approved bulb pop and light wave in Godot. Animate only newly lit or newly unlit cells, and keep cells illuminated by other bulbs steady.
+  - [x] Complete the user's in-game review of bulb placement/removal, the light wave, overlapping illumination, rapid inputs, and bulb-to-X replacement.
+  - [x] Review the combined motion with the user, tune intensity and timing if needed, and complete final approval.
 
 - [x] Refine the overall appearance and gameplay details. Completed 2026-10-25.
   - [x] Define the refinement scope and select Quiet Ink (B) with warm victory sparkles; see [`docs/UI_ASSET_BRIEF.md`](docs/UI_ASSET_BRIEF.md).

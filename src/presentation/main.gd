@@ -21,14 +21,17 @@ const DirectionRepeat = preload("res://src/input/direction_repeat.gd")
 const CellActionGuard = preload("res://src/input/cell_action_guard.gd")
 ## Control that draws one Akari board cell.
 const CellView = preload("res://src/presentation/board_cell.gd")
+## Inspector-adjustable presets used by the board's placement and light animations.
+const AnimationTuning = preload("res://assets/animations/animation_tuning.tres")
+## Persistent layered room and one-time wordmark light controllers.
+const AmbientBackground = preload("res://src/presentation/ambient_background.gd")
+const TitleStartupMotion = preload("res://src/presentation/title_startup.gd")
 ## Persistent local player preferences.
 const Preferences = preload("res://src/presentation/player_preferences.gd")
 ## Shared colors, typography, and style-box factory.
 const Visuals = preload("res://src/presentation/lumen_theme.gd")
 ## Finite light celebration shown behind the victory panel.
 const Sparkles = preload("res://src/presentation/victory_sparkles.gd")
-## Quiet Ink background derived from the user's selected visual concept.
-const BACKGROUND = preload("res://assets/backgrounds/quiet_ink_room_cozy.png")
 ## Hand-lettered project title and hanging bulb restored from the approved concept.
 const WORDMARK = preload("res://assets/branding/project_lumen_wordmark.png")
 ## Transparent light particle rendered by the image-generation tool.
@@ -151,6 +154,8 @@ var _pointer_hidden := false
 var _mouse_navigation_active := false
 ## Random generator used only to choose temporary random sessions.
 var _session_random := RandomNumberGenerator.new()
+## Remembers the first visible title within this application run, including tutorial-first launches.
+var _title_startup_played := false
 
 ## Loads preferences and builds the root audio, background, screen, and first page.
 func _ready() -> void:
@@ -215,9 +220,9 @@ func _create_audio() -> void:
 
 ## Adds a scalable full-window background behind the active screen.
 func _create_backdrop() -> void:
-	var backdrop := TextureRect.new()
+	var backdrop := AmbientBackground.new()
 	backdrop.name = "Backdrop"
-	backdrop.texture = BACKGROUND
+	backdrop.configure(AnimationTuning)
 	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -361,6 +366,12 @@ func _show_menu() -> void:
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	title.accessibility_name = "Project Lumen"
 	content.add_child(title)
+	var title_motion := TitleStartupMotion.new()
+	title_motion.name = "StartupLight"
+	title.add_child(title_motion)
+	var play_title_startup := not _title_startup_played
+	_title_startup_played = true
+	title_motion.configure(AnimationTuning, play_title_startup, 0.14)
 	var tagline := _label(content, "A little light, a little logic.", 17)
 	tagline.add_theme_color_override("font_color", Visuals.UI_MUTED)
 	var start := _button(content, "StartGame", "Start Game", _show_difficulty)
@@ -501,7 +512,7 @@ func _open_configuration(configuration, random_mode: bool) -> void:
 		_game_buttons.append(_button(actions, "NewRandomLevel", "New Random Level", _start_random_level))
 	_game_buttons.append(_button(actions, "ExitToMenu", "Exit to Menu", _show_menu))
 	_navigation.set_button_count(_game_buttons.size())
-	_refresh_board()
+	_refresh_board(-1, false, true)
 	_focus_if_current.call_deferred(_board_focus)
 
 
@@ -1036,6 +1047,7 @@ func _add_tutorial_diagram(parent: Node, page: Dictionary) -> void:
 		cell.illuminated = bool(evaluation.illuminated[index])
 		cell.conflict = bool(evaluation.conflicts[index])
 		cell.interaction_enabled = false
+		cell.settle_visual_state()
 		grid.add_child(cell)
 
 
@@ -1433,7 +1445,7 @@ func _on_primary_click(index: int) -> void:
 	var previous_violations := _violation_count()
 	if _state.toggle_bulb(index):
 		_play(_action_audio, REMOVE_SOUND if removing else PLACE_SOUND)
-		_refresh_board()
+		_refresh_board(index, not removing)
 		_play_rule_feedback(previous_violations)
 
 
@@ -1441,29 +1453,61 @@ func _on_primary_click(index: int) -> void:
 func _on_secondary_click(index: int) -> void:
 	if _evaluation.get("solved", false):
 		return
+	var removing_bulb := bool(_state.bulbs[index])
 	var previous_violations := _violation_count()
 	if _state.toggle_annotation(index):
 		_play(_action_audio, MARK_SOUND)
-		_refresh_board()
+		if removing_bulb:
+			_refresh_board(index, false)
+		else:
+			_refresh_board()
 		_play_rule_feedback(previous_violations)
 
 
 ## Refreshes cell states and opens the victory panel once when the puzzle is solved.
-func _refresh_board() -> void:
+func _refresh_board(animated_bulb_index: int = -1, placing_bulb: bool = false, settle_visuals: bool = false) -> void:
 	var was_solved: bool = _evaluation.get("solved", false)
+	var previous_illumination: PackedByteArray = _evaluation.get("illuminated", PackedByteArray())
 	_evaluation = _state.evaluate()
+	var changed_lights: Array[Dictionary] = []
+	var farthest_changed_distance := 0
+	if animated_bulb_index >= 0 and previous_illumination.size() == _cells.size():
+		var board_width: int = _state.board.width
+		var origin_row := floori(float(animated_bulb_index) / float(board_width))
+		var origin_column := animated_bulb_index % board_width
+		for index in range(_cells.size()):
+			if bool(previous_illumination[index]) == bool(_evaluation.illuminated[index]):
+				continue
+			var row := floori(float(index) / float(board_width))
+			var column := index % board_width
+			var distance := absi(row - origin_row) + absi(column - origin_column)
+			changed_lights.append({"index": index, "distance": distance, "lit": bool(_evaluation.illuminated[index])})
+			farthest_changed_distance = maxi(farthest_changed_distance, distance)
 	if _evaluation.solved and not was_solved:
 		_gamepad.reset()
 		_direction_repeat.reset()
 	for index in range(_cells.size()):
-		var cell = _cells[index]
+		var cell := _cells[index] as CellView
 		cell.bulb = bool(_state.bulbs[index])
 		cell.marked = bool(_state.annotations[index])
 		cell.illuminated = bool(_evaluation.illuminated[index])
 		cell.conflict = bool(_evaluation.conflicts[index])
 		cell.exceeded = cell.wall and cell.clue >= 0 and _evaluation.clue_counts.get(index, 0) > cell.clue
 		cell.interaction_enabled = not _evaluation.solved
+		if settle_visuals:
+			cell.settle_visual_state()
+		elif index == animated_bulb_index:
+			cell.animate_bulb(placing_bulb, AnimationTuning.bulb_pop_intensity_percent)
 		cell.refresh()
+	if animated_bulb_index >= 0:
+		var wave_step := AnimationTuning.illumination_wave_step_ms / 1000.0
+		var fade_duration := AnimationTuning.illumination_cell_fade_ms / 1000.0
+		for change in changed_lights:
+			var distance: int = change.distance
+			var delay_steps := maxi(0, distance - 1) if placing_bulb else farthest_changed_distance - distance
+			var delay_seconds := float(delay_steps) * wave_step
+			var cell := _cells[change.index] as CellView
+			cell.animate_illumination(change.lit, delay_seconds, fade_duration, AnimationTuning.illumination_wave_intensity_percent)
 	if _status != null:
 		_status.text = "%d / %d cells lit" % [_evaluation.lit_count, _evaluation.playable_count]
 	if _evaluation.solved and not was_solved:
@@ -1568,7 +1612,7 @@ func _restart() -> void:
 	if not _victory_buttons.is_empty():
 		_clear_victory()
 	_evaluation = {}
-	_refresh_board()
+	_refresh_board(-1, false, true)
 	_navigation.select_cell(_navigation.selected_cell)
 	_navigation.set_button_count(_game_buttons.size())
 	_board_focus.grab_focus()

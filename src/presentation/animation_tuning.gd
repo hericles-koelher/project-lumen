@@ -1,6 +1,6 @@
 extends Resource
-## Stores editor-adjustable intensity presets for animation candidates.
-## Pending animation controllers must read this resource when integrated into Godot.
+## Stores the approved editor-adjustable animation presets.
+## Room, title, and board controllers read these values without changing puzzle rules.
 
 @export_group("Decorative Lamp")
 ## Percentage multiplier for the approved six-second light variation; 100 preserves it.
@@ -21,6 +21,14 @@ var cat_ear_intensity_percent: float = 150.0
 @export_range(0.0, 200.0, 1.0, "suffix:%")
 var outdoor_leaves_intensity_percent: float = 100.0
 
+## Seconds of movement in each independently scheduled outdoor breeze.
+@export_range(0.1, 30.0, 0.1, "suffix:s")
+var outdoor_leaves_breeze_duration_seconds: float = 4.0
+
+## Fixed seconds of rest after each breeze; branches keep their separate start offsets.
+@export_range(0.0, 60.0, 0.1, "suffix:s")
+var outdoor_leaves_rest_seconds: float = 4.0
+
 @export_group("Game Title")
 ## Percentage of the title startup's brightness variation; 100 is the approved startup flicker intensity.
 @export_range(0.0, 200.0, 1.0, "suffix:%")
@@ -37,4 +45,21 @@ var title_initial_blink_count: int = 3
 ## Milliseconds of rest between the end of an initial flicker and the next one.
 @export_range(20.0, 2000.0, 5.0, "suffix:ms")
 var title_initial_blink_interval_ms: float = 150.0
+
+@export_group("Board Bulbs")
+## Scale intensity of the approved bulb pop; 100 preserves the selected soft bounce.
+@export_range(0.0, 200.0, 1.0, "suffix:%")
+var bulb_pop_intensity_percent: float = 100.0
+
+## Scale the short warm accent drawn while cells reveal or withdraw their light.
+@export_range(0.0, 200.0, 1.0, "suffix:%")
+var illumination_wave_intensity_percent: float = 100.0
+
+## Milliseconds between successive distances in the four-direction light wave.
+@export_range(0.0, 100.0, 5.0, "suffix:ms")
+var illumination_wave_step_ms: float = 30.0
+
+## Milliseconds for each newly lit or unlit cell to transition its background color.
+@export_range(20.0, 300.0, 5.0, "suffix:ms")
+var illumination_cell_fade_ms: float = 120.0
 

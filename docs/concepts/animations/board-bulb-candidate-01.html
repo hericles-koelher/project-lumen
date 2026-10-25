@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Lumen · Board bulb animation candidates</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,sans-serif;background:#101a2a;color:#f6efdf;--cream:#f6efdf;--wall:#31445d;--sun:#f5c85b;--coral:#e98268;--amber:#ffc04b}
+*{box-sizing:border-box}body{margin:0;padding:28px;max-width:1260px;margin-inline:auto}h1{font-size:25px;font-weight:550;margin:0 0 8px}p{color:#c6c0b3;line-height:1.55;margin:0 0 20px}.notice{border-left:3px solid var(--amber);padding:10px 14px;background:#1a293d;border-radius:0 10px 10px 0;margin-bottom:20px}.candidates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.candidate{border:1px solid #d2ad8b;border-radius:18px;padding:20px;background:#142238;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:365px}.candidate h2{font-size:18px;font-weight:600;margin:0 0 6px}.candidate p{font-size:14px;min-height:66px;margin:0 0 16px}.stage{width:156px;height:156px;display:grid;place-items:center;position:relative;margin:2px 0 14px}.neighbor{position:absolute;width:58px;height:58px;background:var(--cream);border-radius:9px;opacity:.92}.neighbor.n1{left:14px;top:14px}.neighbor.n2{right:14px;top:14px}.neighbor.n3{left:14px;bottom:14px}.neighbor.n4{right:14px;bottom:14px}.neighbor.wall{background:var(--wall)}.cell{width:86px;height:86px;border-radius:11px;background:var(--cream);position:relative;z-index:1;display:grid;place-items:center;box-shadow:0 0 0 2px #243751;overflow:visible;transition:background-color .2s ease}.cell.lit{background:var(--sun)}.bulb{width:57px;height:57px;position:relative;z-index:2;opacity:0;transform:scale(.35);pointer-events:none}.cell.lit .bulb{opacity:1;transform:scale(1)}.halo{position:absolute;width:122px;height:122px;border-radius:50%;background:radial-gradient(circle,rgba(255,192,75,.65) 0%,rgba(255,192,75,.22) 39%,rgba(255,192,75,0) 72%);opacity:0;transform:scale(.45);pointer-events:none;z-index:1}.cell.lit .halo{opacity:.5;transform:scale(.8)}.action{margin-top:auto;border:1px solid #d2ad8b;border-radius:24px;padding:10px 24px;background:#1c2a3d;color:#fff0d6;font:inherit;cursor:pointer}.action:hover{border-color:var(--amber);box-shadow:0 0 14px #ffc04b55}.action:focus-visible{outline:2px solid var(--amber);outline-offset:3px}.state{font-size:12px;color:#c6c0b3;margin-top:8px;min-height:18px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0}.toolbar button{border:1px solid #667080;border-radius:18px;padding:8px 16px;background:transparent;color:#f6efdf;font:inherit;cursor:pointer}.toolbar small{color:#c6c0b3}.fine{font-size:13px;margin-top:16px}.star{position:absolute;width:9px;height:9px;background:var(--amber);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;z-index:3;pointer-events:none}
+@media(max-width:900px){.candidates{grid-template-columns:1fr}.candidate{min-height:320px}.candidate p{min-height:0}}
+</style>
+</head>
+<body>
+<h1>Board bulb animation · Candidate 01</h1>
+<p>Try placing and removing the bulb in each cell. Each candidate keeps the same board art and action speed; only the motion style changes.</p>
+<div class="notice">The puzzle state updates immediately. These visual effects are temporary and should never delay mouse, keyboard, or controller input.</div>
+<div class="toolbar"><small>Each sample can be toggled independently. Use Reset samples to compare from the same starting state.</small><button id="reset">Reset samples</button></div>
+<main class="candidates">
+  <section class="candidate" data-style="pop">
+    <h2>A · Soft pop</h2><p>The bulb appears with a small scale bounce; removing it shrinks it away. Cell light changes with the bulb.</p>
+    <div class="stage"><i class="neighbor n1"></i><i class="neighbor n2 wall"></i><i class="neighbor n3"></i><i class="neighbor n4"></i><button class="cell" aria-label="Empty example cell"><span class="halo"></span><img class="bulb" src="../../../assets/icons/bulb.svg" alt=""></button></div>
+    <button class="action">Place bulb</button><div class="state" aria-live="polite">Empty cell</div>
+  </section>
+  <section class="candidate" data-style="bloom">
+    <h2>B · Warm bloom</h2><p>A soft halo expands around the bulb as the cell lights. Removing it lets the glow recede quickly.</p>
+    <div class="stage"><i class="neighbor n1"></i><i class="neighbor n2 wall"></i><i class="neighbor n3"></i><i class="neighbor n4"></i><button class="cell" aria-label="Empty example cell"><span class="halo"></span><img class="bulb" src="../../../assets/icons/bulb.svg" alt=""></button></div>
+    <button class="action">Place bulb</button><div class="state" aria-live="polite">Empty cell</div>
+  </section>
+  <section class="candidate" data-style="spark">
+    <h2>C · Tiny spark</h2><p>A quick, restrained sparkle accents the bulb appearing; removal uses a brief fade and contraction.</p>
+    <div class="stage"><i class="neighbor n1"></i><i class="neighbor n2 wall"></i><i class="neighbor n3"></i><i class="neighbor n4"></i><button class="cell" aria-label="Empty example cell"><span class="halo"></span><img class="bulb" src="../../../assets/icons/bulb.svg" alt=""><i class="star"></i><i class="star"></i><i class="star"></i></button></div>
+    <button class="action">Place bulb</button><div class="state" aria-live="polite">Empty cell</div>
+  </section>
+</main>
+<p class="fine">The preview uses the game's existing bulb SVG and palette. No new visual asset or audio change is part of this candidate.</p>
+<script>
+const colors = {cream:'#f6efdf', sunlight:'#f5c85b'};
+function animate(sample, placed) {
+  const style = sample.dataset.style;
+  const cell = sample.querySelector('.cell');
+  const bulb = sample.querySelector('.bulb');
+  const halo = sample.querySelector('.halo');
+  const stars = [...sample.querySelectorAll('.star')];
+  const duration = style === 'bloom' ? 300 : style === 'spark' ? 260 : 210;
+  cell.classList.toggle('lit', placed);
+  cell.setAttribute('aria-label', placed ? 'Bulb in example cell' : 'Empty example cell');
+  sample.querySelector('.action').textContent = placed ? 'Remove bulb' : 'Place bulb';
+  sample.querySelector('.state').textContent = placed ? 'Bulb placed · cell lit' : 'Bulb removed · cell clear';
+
+  if (style === 'pop') {
+    bulb.animate(placed
+      ? [{opacity:0,transform:'scale(.35)'},{opacity:1,transform:'scale(1.12)',offset:.72},{opacity:1,transform:'scale(1)'}]
+      : [{opacity:1,transform:'scale(1)'},{opacity:.45,transform:'scale(.72)',offset:.6},{opacity:0,transform:'scale(.35)'}],
+      {duration:placed?210:160,easing:'cubic-bezier(.2,.8,.25,1)'});
+    cell.animate(placed
+      ? [{backgroundColor:colors.cream},{backgroundColor:colors.sunlight}]
+      : [{backgroundColor:colors.sunlight},{backgroundColor:colors.cream}],
+      {duration:190,easing:'ease-out'});
+  } else if (style === 'bloom') {
+    bulb.animate(placed
+      ? [{opacity:0,transform:'scale(.72)'},{opacity:1,transform:'scale(1)'}]
+      : [{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.88)'}],
+      {duration:placed?190:140,easing:'ease-out'});
+    halo.animate(placed
+      ? [{opacity:0,transform:'scale(.42)'},{opacity:.66,transform:'scale(1.05)',offset:.65},{opacity:.5,transform:'scale(.8)'}]
+      : [{opacity:.5,transform:'scale(.8)'},{opacity:0,transform:'scale(.35)'}],
+      {duration,easing:'ease-out'});
+    cell.animate(placed
+      ? [{backgroundColor:colors.cream},{backgroundColor:colors.sunlight}]
+      : [{backgroundColor:colors.sunlight},{backgroundColor:colors.cream}],
+      {duration:260,easing:'ease-in-out'});
+  } else {
+    bulb.animate(placed
+      ? [{opacity:0,transform:'scale(.45)'},{opacity:1,transform:'scale(1)'}]
+      : [{opacity:1,transform:'scale(1)'},{opacity:.3,transform:'scale(.75)'},{opacity:0,transform:'scale(.5)'}],
+      {duration:placed?180:140,easing:'ease-out'});
+    cell.animate(placed
+      ? [{backgroundColor:colors.cream},{backgroundColor:colors.sunlight}]
+      : [{backgroundColor:colors.sunlight},{backgroundColor:colors.cream}],
+      {duration:190,easing:'ease-out'});
+    if (placed) stars.forEach((star,index)=>{
+      const positions=[[-29,-26], [29,-22], [28,27]];
+      const [x,y]=positions[index];
+      star.animate([{opacity:0,transform:'translate(0,0) scale(.2)'},{opacity:1,transform:`translate(${x}px,${y}px) scale(1)`,offset:.5},{opacity:0,transform:`translate(${x*1.25}px,${y*1.25}px) scale(.55)`}],{duration:duration+40,delay:index*18,easing:'ease-out'});
+    });
+  }
+}
+function toggleSample(sample) {
+  const placed = sample.dataset.placed !== 'true';
+  sample.dataset.placed = String(placed);
+  animate(sample, placed);
+}
+for (const sample of document.querySelectorAll('.candidate')) {
+  sample.dataset.placed = 'false';
+  sample.querySelector('.action').addEventListener('click',()=>toggleSample(sample));
+  sample.querySelector('.cell').addEventListener('click',()=>toggleSample(sample));
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  for(const sample of document.querySelectorAll('.candidate')){
+    for(const animation of sample.getAnimations()) animation.cancel();
+    sample.dataset.placed = 'false';
+    sample.querySelector('.cell').classList.remove('lit');
+    sample.querySelector('.cell').setAttribute('aria-label','Empty example cell');
+    sample.querySelector('.action').textContent='Place bulb';
+    sample.querySelector('.state').textContent='Empty cell';
+  }
+});
+</script>
+</body>
+</html>

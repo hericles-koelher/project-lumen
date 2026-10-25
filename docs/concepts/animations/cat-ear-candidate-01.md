@@ -1,6 +1,6 @@
 # Sleeping cat ear twitch — Candidate 01
 
-Status: corrected ear-only candidate approved by the user on 2026-10-25 at 150% intensity. Godot integration remains pending.
+Status: corrected ear-only candidate approved by the user on 2026-10-25 at 150% intensity; Godot integration complete. Combined in-game review was approved by the user on 2026-10-25.
 
 ## Artwork and motion
 
@@ -11,8 +11,8 @@ Status: corrected ear-only candidate approved by the user on 2026-10-25 at 150% 
 - Approved gesture: 0.62 seconds at 150% intensity, rotating the ear by approximately 9.45 degrees at peak, followed by a smaller return and settling motion. The reference amplitude at 100% is approximately 6.3 degrees.
 - Schedule a new gesture 8–15 seconds after the previous gesture ends. The preview shows its first gesture after 2.5 seconds so it is easy to discover. The ear is not continuously looping or synchronized with breathing.
 - The preview defaults to 150% ear intensity and provides Twitch now, pause/resume, a breathing toggle, and an ear-intensity slider. The breathing toggle isolates ear movement for inspection without changing the approved breathing preset.
-- Godot intensity presets are exported in `src/presentation/animation_tuning.gd` and saved in `assets/animations/animation_tuning.tres`. Open the resource in the Inspector to edit the percentages. This prepares editor tuning; the running game will consume these values when the animations are integrated. Divide percentage values by 100 when applying their amplitude multipliers.
-- Native WebGL vertex deformation animates the unchanged texture. A denser mesh than the breathing-only preview supports the smaller ear region. The final Godot mesh/shader and background layering remain pending.
+- Godot intensity presets are exported in `src/presentation/animation_tuning.gd` and saved in `assets/animations/animation_tuning.tres`. Open the resource in the Inspector to edit the percentages. The running shader reads the current value as an amplitude multiplier.
+- Native WebGL vertex deformation animates the unchanged texture. Godot uses a denser mesh and anatomical shader mask for the smaller ear region, separate from torso breathing.
 
 ## Files and provenance
 
@@ -22,4 +22,4 @@ Status: corrected ear-only candidate approved by the user on 2026-10-25 at 150% 
 
 ## Review
 
-The user approved the corrected ear-only deformation at 150% intensity. Preserve its appearance, quick return, and intermittent timing in Godot, with the same background alignment checks planned for breathing. Expose animation intensities through exported properties rather than hard-coded runtime constants.
+The user approved the corrected ear-only deformation at 150% intensity. Godot preserves its quick return and intermittent timing; the first gesture occurs after 2.5 seconds for discoverability and later gestures rest 8–15 seconds after each completed gesture. A GPU Compatibility render with breathing disabled confirmed motion stayed within the ear region. Combined in-game review was approved by the user on 2026-10-25. See [`ANIMATION_IMPLEMENTATION.md`](../../ANIMATION_IMPLEMENTATION.md).

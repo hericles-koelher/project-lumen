@@ -22,7 +22,8 @@ Difficulty preset and seed policy → resolved level configuration → generator
 
 ## Current implementation
 
-- Animation candidates have an editor-adjustable intensity resource: `src/presentation/animation_tuning.gd` exports percentage properties, and `assets/animations/animation_tuning.tres` stores the approved presets. The live game does not yet consume this resource; pending animation integration must read it instead of hard-coding amplitudes.
+- `src/presentation/ambient_background.gd` composes the clean room plate with the breathing cat, isolated ear gesture, room-lamp glow, and five independently scheduled outdoor branches. It keeps those layers in the background's 1586 × 992 source-image coordinates, applies the same centered cover transform to every layer, clips foliage to window panes, and restores indoor foreground silhouettes over the branches. `src/presentation/title_startup.gd` animates the existing menu wordmark once per application launch; the main controller owns that flag across rebuilt menus. Both controllers read the shared exported values in `assets/animations/animation_tuning.tres`.
+- The animation resource also drives the board-cell pop and illumination wave. Animation controllers only affect presentation and remain separate from puzzle rules and input. See [`ANIMATION_IMPLEMENTATION.md`](ANIMATION_IMPLEMENTATION.md) for layer geometry, schedules, tuning fields, and validation results.
 - `src/levels/prototype_levels.gd` is the ordered difficulty catalog used by the difficulty menu, uniform random selection, numbered-level selection, and cross-difficulty progression. Each current difficulty contains ten fixed seed entries.
 - `src/presentation/player_preferences.gd` loads and saves music volume, global mute, fullscreen mode, and tutorial-seen state under `user://player_settings.cfg`. It does not store puzzle state or random seeds.
 

@@ -5,7 +5,7 @@
 <h1>Outdoor leaves · Candidate 01</h1><p>A short, gentle breeze bends the leaves, followed by a quiet rest. The stem stays anchored; the scenery will remain still.</p>
 <div class="stage"><canvas id="leaves" width="1254" height="1254" role="img" aria-label="A dark nighttime branch with a gentle occasional breeze moving its leaves"></canvas><div class="status" id="status">Loading candidate…</div></div>
 <div class="controls"><button id="trigger">Breeze now</button><button id="pause" aria-pressed="false">Pause animation</button><button id="compare" aria-pressed="false">Show resting pose</button><label>Intensity <input id="intensity" type="range" min="0" max="200" value="100"><output id="value">100%</output></label></div>
-<small>Candidate for review · Four-second breezes and 10–18-second rests · Separate transparent foliage layer · Godot intensity is exported for Inspector tuning; integration pending.</small>
+<small>Candidate for review · Four-second breezes and four-second rests · Separate transparent foliage layer · Godot intensity is exported for Inspector tuning; integration pending.</small>
 <script>
 const canvas=document.getElementById('leaves'),gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,antialias:true});
 const status=document.getElementById('status');
@@ -25,7 +25,7 @@ function draw(time){
  if(last!==null&&!paused)elapsed+=Math.min((time-last)/1000,0.1);last=time;
  if(breezeStart===null&&elapsed>=nextBreeze)startBreeze();
  let envelope=0,sway=0,progress=0;
- if(breezeStart!==null){progress=(elapsed-breezeStart)/duration;if(progress>=1){breezeStart=null;nextBreeze=elapsed+10+Math.random()*8}else{envelope=Math.pow(Math.sin(Math.PI*progress),2);sway=envelope*Math.sin(progress*Math.PI*2)}}
+ if(breezeStart!==null){progress=(elapsed-breezeStart)/duration;if(progress>=1){breezeStart=null;nextBreeze=elapsed+4}else{envelope=Math.pow(Math.sin(Math.PI*progress),2);sway=envelope*Math.sin(progress*Math.PI*2)}}
  const gain=restingPose?0:intensity;
  gl.uniform1f(wind,0.012*gain*sway);gl.uniform1f(flutter,0.002*gain*envelope);gl.uniform1f(phase,progress*Math.PI*2);
  gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,uv.length/2);

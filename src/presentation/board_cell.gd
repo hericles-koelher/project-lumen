@@ -45,6 +45,20 @@ var keyboard_selected := false
 var pointer_selection_active := false
 ## Whether the pointer is currently over this cell.
 var _hovered := false
+## Current fraction of the cell's evaluated light color, used by the short reveal tween.
+var _illumination_progress := 0.0
+## Temporary brightness accent scaled by the Inspector tuning resource.
+var _illumination_flash := 0.0
+## Tween currently revealing or withdrawing this cell's light.
+var _illumination_tween: Tween
+## Whether the bulb texture remains visible while its removal animation finishes.
+var _bulb_visual_visible := false
+## Current scale applied to the bulb texture during its pop animation.
+var _bulb_visual_scale := 1.0
+## Current alpha applied to the bulb texture during its pop animation.
+var _bulb_visual_alpha := 1.0
+## Tween currently animating the bulb texture.
+var _bulb_tween: Tween
 ## Font variation used for clue numbers and warning badges.
 var _clue_font := FontVariation.new()
 
@@ -80,6 +94,93 @@ func refresh() -> void:
 	queue_redraw()
 
 
+## Stops visual transitions and immediately synchronizes this cell to the game state.
+func settle_visual_state() -> void:
+	_kill_tween(_illumination_tween)
+	_kill_tween(_bulb_tween)
+	_illumination_progress = 1.0 if illuminated else 0.0
+	_illumination_flash = 0.0
+	_bulb_visual_visible = bulb
+	_bulb_visual_scale = 1.0
+	_bulb_visual_alpha = 1.0 if bulb else 0.0
+	queue_redraw()
+
+
+## Pops a newly placed bulb in or scales and fades a removed bulb away.
+func animate_bulb(placing: bool, intensity_percent: float) -> void:
+	_kill_tween(_bulb_tween)
+	var intensity := clampf(intensity_percent / 100.0, 0.0, 2.0)
+	if placing:
+		_bulb_visual_visible = true
+		_bulb_visual_scale = 0.35
+		_bulb_visual_alpha = 0.0
+		var peak_scale := lerpf(1.0, 1.12, intensity)
+		_bulb_tween = create_tween()
+		_bulb_tween.tween_method(_set_bulb_scale, 0.35, peak_scale, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_bulb_tween.parallel().tween_method(_set_bulb_alpha, 0.0, 1.0, 0.14)
+		_bulb_tween.tween_method(_set_bulb_scale, peak_scale, 1.0, 0.07).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	else:
+		if not _bulb_visual_visible:
+			_bulb_visual_visible = true
+			_bulb_visual_scale = 1.0
+			_bulb_visual_alpha = 1.0
+		var target_scale := lerpf(1.0, 0.72, intensity)
+		_bulb_tween = create_tween()
+		_bulb_tween.tween_method(_set_bulb_scale, _bulb_visual_scale, target_scale, 0.16).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		_bulb_tween.parallel().tween_method(_set_bulb_alpha, _bulb_visual_alpha, 0.0, 0.16)
+		_bulb_tween.tween_callback(_finish_bulb_animation)
+
+
+## Reveals new light or withdraws it after a per-cell delay without delaying game state.
+func animate_illumination(is_illuminated: bool, delay_seconds: float, fade_seconds: float, intensity_percent: float) -> void:
+	_kill_tween(_illumination_tween)
+	var target := 1.0 if is_illuminated else 0.0
+	var starting_progress := _illumination_progress
+	if is_equal_approx(starting_progress, target):
+		_illumination_progress = target
+		_illumination_flash = 0.0
+		queue_redraw()
+		return
+	var flash_strength := 0.14 * clampf(intensity_percent / 100.0, 0.0, 2.0)
+	_illumination_tween = create_tween()
+	if delay_seconds > 0.0:
+		_illumination_tween.tween_interval(delay_seconds)
+	_illumination_tween.tween_method(_set_illumination_progress.bind(flash_strength), starting_progress, target, fade_seconds).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+
+## Updates the light reveal and its brief warm brightness accent.
+func _set_illumination_progress(value: float, flash_strength: float) -> void:
+	_illumination_progress = clampf(value, 0.0, 1.0)
+	_illumination_flash = sin(_illumination_progress * PI) * flash_strength
+	queue_redraw()
+
+
+## Updates bulb scale and redraws the cell.
+func _set_bulb_scale(value: float) -> void:
+	_bulb_visual_scale = value
+	queue_redraw()
+
+
+## Updates bulb opacity and redraws the cell.
+func _set_bulb_alpha(value: float) -> void:
+	_bulb_visual_alpha = clampf(value, 0.0, 1.0)
+	queue_redraw()
+
+
+## Hides the removed bulb after its visual tween completes.
+func _finish_bulb_animation() -> void:
+	_bulb_visual_visible = bulb
+	_bulb_visual_scale = 1.0
+	_bulb_visual_alpha = 1.0 if bulb else 0.0
+	queue_redraw()
+
+
+## Stops a still-running tween before starting a new visual transition.
+func _kill_tween(tween: Tween) -> void:
+	if tween != null and tween.is_running():
+		tween.kill()
+
+
 ## Emits the appropriate mouse action when a playable cell is clicked.
 func _gui_input(event: InputEvent) -> void:
 	if wall or not interaction_enabled or not event is InputEventMouseButton:
@@ -98,14 +199,20 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size)
 	var corner_radius := mini(11, roundi(size.x * 0.14))
-	var base := Visuals.WALL if wall else (Visuals.SUNLIGHT if illuminated else Visuals.CREAM)
+	var base := Visuals.WALL if wall else Visuals.CREAM.lerp(Visuals.SUNLIGHT, _illumination_progress)
 	draw_style_box(Visuals.box(base, corner_radius), rect)
+	if _illumination_flash > 0.0 and not wall:
+		draw_style_box(Visuals.box(Color(1.0, 0.89, 0.62, _illumination_flash), corner_radius), rect)
 	if wall and clue >= 0:
 		_draw_centered(str(clue), mini(30, roundi(size.x * 0.43)), Visuals.WARNING if exceeded else Visuals.CREAM)
 	elif not wall:
 		var inset := size * 0.18
-		if bulb:
-			draw_texture_rect(BULB, Rect2(inset, size - inset * 2), false)
+		if bulb or _bulb_visual_visible:
+			var icon_extent := size - inset * 2
+			var draw_extent := icon_extent * _bulb_visual_scale
+			var draw_position := (size - draw_extent) * 0.5
+			var alpha := _bulb_visual_alpha if _bulb_visual_visible else 1.0
+			draw_texture_rect(BULB, Rect2(draw_position, draw_extent), false, Color(1.0, 1.0, 1.0, alpha))
 		elif marked:
 			draw_texture_rect(MARK, Rect2(inset, size - inset * 2), false)
 	if (keyboard_selected or (_hovered and pointer_selection_active)) and interaction_enabled:

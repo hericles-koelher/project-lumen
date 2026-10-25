@@ -60,6 +60,7 @@ This repository contains a 2D Akari (Light Up) game developed with Godot. The in
 | Asset inventory | Current asset baseline, remaining interface art, and production status | [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) |
 | UI asset brief | Approved Quiet Ink direction, component inventory, and warm sparkle production scope | [`docs/UI_ASSET_BRIEF.md`](docs/UI_ASSET_BRIEF.md) |
 | UI implementation guide | Approved Quiet Ink surfaces, artwork scaling, editable controls, and finite sparkle animation | [`docs/UI_STYLE_GUIDE.md`](docs/UI_STYLE_GUIDE.md) |
+| Animation implementation | Integrated background, title, and board motion layers, tuning, and validation | [`docs/ANIMATION_IMPLEMENTATION.md`](docs/ANIMATION_IMPLEMENTATION.md) |
 | Asset provenance | Sources, licenses, and status of included assets | [`assets/ASSET_MANIFEST.md`](assets/ASSET_MANIFEST.md) |
 | Task list | Actionable project work, ordered by priority | [`TASKS.md`](TASKS.md) |
 | Prototype definition | Confirmed prototype decisions and open design questions | [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) |

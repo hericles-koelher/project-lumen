@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Lumen · Bulb and board lighting sync</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,sans-serif;background:#101a2a;color:#f6efdf;--cream:#f6efdf;--wall:#31445d;--sun:#f5c85b;--coral:#e98268;--amber:#ffc04b}
+*{box-sizing:border-box}body{margin:0;padding:28px;max-width:1050px;margin-inline:auto}h1{font-size:25px;font-weight:550;margin:0 0 8px}p{color:#c6c0b3;line-height:1.55;margin:0 0 18px}.notice{border-left:3px solid var(--amber);padding:10px 14px;background:#1a293d;border-radius:0 10px 10px 0;margin-bottom:20px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:24px;align-items:center}.board-wrap{display:grid;place-items:center;border:1px solid #d2ad8b;border-radius:20px;background:#142238;padding:22px;min-height:510px}.board{display:grid;grid-template-columns:repeat(9,44px);gap:4px;background:#192943;border-radius:16px;padding:10px}.cell{width:44px;height:44px;border:0;border-radius:7px;background:var(--cream);display:grid;place-items:center;position:relative;padding:0;color:var(--cream)}.cell.lit{background:var(--sun)}.cell.wall{background:var(--wall);font-size:19px;font-weight:600}.cell.empty{background:var(--cream)}.bulb{width:34px;height:34px;opacity:0;transform:scale(.35);pointer-events:none}.cell.has-bulb .bulb{opacity:1;transform:scale(1)}.side h2{font-size:17px;margin:0 0 10px}.mode{display:grid;gap:8px;margin-bottom:18px}.mode label{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #526178;border-radius:12px;background:#1b2a3d;cursor:pointer}.mode input{accent-color:var(--amber)}.action{border:1px solid #d2ad8b;border-radius:24px;padding:10px 18px;background:#1c2a3d;color:#fff0d6;font:inherit;cursor:pointer;width:100%}.action:hover{border-color:var(--amber);box-shadow:0 0 14px #ffc04b55}.action:focus-visible,.mode input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}.reset{margin-top:10px;background:transparent}.status{font-size:13px;color:#c6c0b3;min-height:42px;margin-top:12px;line-height:1.5}.legend{font-size:12px;color:#c6c0b3;margin-top:16px}.fine{font-size:13px;margin-top:18px}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 18px}.tag{border:1px solid #667080;color:#f6efdf;padding:6px 12px;border-radius:20px;font-size:13px}.cell.bulb-cell{border:2px solid var(--coral);cursor:pointer}.bulb-cell:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+@media(max-width:760px){body{padding:20px}.layout{grid-template-columns:1fr}.board-wrap{padding:12px;min-height:0;overflow:auto}.board{grid-template-columns:repeat(9,38px);gap:3px;padding:8px}.cell{width:38px;height:38px}.bulb{width:30px;height:30px}.side{max-width:420px;margin:auto;width:100%}}
+</style>
+</head>
+<body>
+<h1>Bulb placement · Candidate 02</h1>
+<p>The selected <strong>Soft pop</strong> places the bulb. Compare how the rest of its row and column light up.</p>
+<div class="toolbar"><span class="tag">Game state changes immediately</span><span class="tag">Walls block the light</span><span class="tag">Input never waits for the effect</span></div>
+<div class="notice">Click the center bulb cell to place or remove it. Choose whether the newly lit cells appear together or in a quick wave from the bulb.</div>
+<main class="layout">
+  <section class="board-wrap" aria-label="Akari board preview">
+    <div class="board" id="board" role="grid" aria-label="Nine by nine board preview"></div>
+  </section>
+  <aside class="side">
+    <h2>Light reveal</h2>
+    <div class="mode">
+      <label><input type="radio" name="reveal" value="wave" checked> Quick wave</label>
+      <label><input type="radio" name="reveal" value="together"> All together</label>
+    </div>
+    <button class="action" id="toggle">Place bulb</button>
+    <button class="action reset" id="reset">Reset preview</button>
+    <div class="status" id="status" aria-live="polite">The sample cell is empty.</div>
+    <div class="legend">Board walls stop the light, just like in the puzzle.</div>
+  </aside>
+</main>
+<p class="fine">The wave starts next to the bulb and moves outward along its row and column. Removing the bulb reverses the reveal; cell lighting and puzzle rules remain immediate.</p>
+<script>
+const bulbSource = '../../../assets/icons/bulb.svg';
+const board = document.getElementById('board');
+const status = document.getElementById('status');
+const toggle = document.getElementById('toggle');
+const reset = document.getElementById('reset');
+const size = 9, center = 4;
+const walls = new Set(['0,4','8,4','4,0','4,8','1,1','7,7']);
+const cells = new Map();
+const illuminated = [];
+let hasBulb = false;
+let farthestDistance = 0;
+for(let row=0;row<size;row++) for(let col=0;col<size;col++) {
+  const key=`${row},${col}`;
+  const wall=walls.has(key);
+  const cell=document.createElement(wall?'div':'button');
+  cell.className='cell '+(wall?'wall':'empty');
+  cell.setAttribute('role',wall?'gridcell':'gridcell');
+  cell.setAttribute('aria-label',wall?'Wall':'Unlit cell');
+  if(row===center&&col===center){
+    cell.classList.add('bulb-cell');
+    cell.setAttribute('aria-label','Empty bulb cell');
+    cell.innerHTML=`<img class="bulb" alt="" src="${bulbSource}">`;
+    cell.addEventListener('click',toggleBulb);
+  }
+  cells.set(key,cell);
+  board.appendChild(cell);
+}
+for(const [dr,dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+  for(let distance=1;distance<size;distance++) {
+    const row=center+dr*distance, col=center+dc*distance, key=`${row},${col}`;
+    if(row<0||row>=size||col<0||col>=size||walls.has(key)) break;
+    illuminated.push({cell:cells.get(key),distance});
+    farthestDistance = Math.max(farthestDistance, distance);
+  }
+}
+function selectedMode(){return document.querySelector('input[name="reveal"]:checked').value;}
+function animateCell(item,placing,mode){
+  const {cell,distance}=item;
+  cell.classList.toggle('lit',placing);
+  cell.setAttribute('aria-label',placing?'Lit by the bulb':'Unlit cell');
+  const delay=mode==='wave'?(placing?(distance-1)*30:(farthestDistance-distance)*30):0;
+  const from=placing?'#f6efdf':'#f5c85b';
+  const to=placing?'#f5c85b':'#f6efdf';
+  cell.animate([{backgroundColor:from,filter:placing?'brightness(1)':'brightness(1)'},{backgroundColor:to,filter:placing?'brightness(1.14)':'brightness(.98)',offset:.72},{backgroundColor:to,filter:'brightness(1)'}],{duration:120,delay,easing:'ease-out',fill:'both'});
+}
+function toggleBulb(){
+  hasBulb=!hasBulb;
+  const bulbCell=cells.get(`${center},${center}`);
+  bulbCell.classList.toggle('has-bulb',hasBulb);
+  bulbCell.setAttribute('aria-label',hasBulb?'Bulb placed':'Empty bulb cell');
+  toggle.textContent=hasBulb?'Remove bulb':'Place bulb';
+  const mode=selectedMode();
+  for(const item of illuminated) animateCell(item,hasBulb,mode);
+  const label=mode==='wave'?'quick wave':'all at once';
+  status.textContent=hasBulb?`Bulb placed. The ${label} lights ${illuminated.length} cells.`:`Bulb removed. The ${label} clears ${illuminated.length} cells.`;
+  const bulbIcon=bulbCell.querySelector('.bulb');
+  bulbIcon.animate(hasBulb
+    ?[{opacity:0,transform:'scale(.35)'},{opacity:1,transform:'scale(1.12)',offset:.72},{opacity:1,transform:'scale(1)'}]
+    :[{opacity:1,transform:'scale(1)'},{opacity:.45,transform:'scale(.72)',offset:.6},{opacity:0,transform:'scale(.35)'}],
+    {duration:hasBulb?210:160,easing:'cubic-bezier(.2,.8,.25,1)'});
+}
+function resetBoard(){
+  hasBulb=false;
+  const bulbCell=cells.get(`${center},${center}`);
+  for(const cell of cells.values()){
+    for(const animation of cell.getAnimations()) animation.cancel();
+    cell.classList.remove('lit','has-bulb');
+  }
+  for(const item of illuminated) item.cell.setAttribute('aria-label','Unlit cell');
+  bulbCell.setAttribute('aria-label','Empty bulb cell');
+  toggle.textContent='Place bulb';
+  status.textContent='The sample cell is empty.';
+}
+toggle.addEventListener('click',toggleBulb);
+reset.addEventListener('click',resetBoard);
+</script>
+</body>
+</html>

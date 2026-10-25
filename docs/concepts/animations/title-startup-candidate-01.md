@@ -1,6 +1,6 @@
 # Illuminated title startup — Candidate 01
 
-Status: approved by the user on 2026-10-25; Godot integration pending.
+Status: approved by the user on 2026-10-25; Godot integration complete. Combined in-game review was approved by the user on 2026-10-25.
 
 ## Artwork and motion
 
@@ -21,6 +21,7 @@ Status: approved by the user on 2026-10-25; Godot integration pending.
 - Finish with steady title illumination and a halo around its lamp. Do not delay button input or menu navigation; if the player leaves early, returning to the menu shows the settled title and halo.
 - The full title participates, including its lamp; no global scene flicker, moving lettering, or unrelated decorative animation.
 - Match the approved preview timing and intensity using the exported Resource. Keep gameplay and input logic independent from visual animation.
+- The main controller retains the once-per-launch flag outside the rebuilt menu controls. A 140 ms startup delay allows the menu's existing entrance fade to finish; if the first-launch tutorial is shown first, the flag is not consumed until the title menu is opened.
 
 ## Files and provenance
 
@@ -31,4 +32,4 @@ Status: approved by the user on 2026-10-25; Godot integration pending.
 
 ## Review
 
-The user approved the flicker count, 150 ms rhythm, transition into steady illumination, and 270% lamp halo on 2026-10-25. All previously approved motion presets remain unchanged.
+The user approved the flicker count, 150 ms rhythm, transition into steady illumination, and 270% lamp halo on 2026-10-25. Godot uses the existing wordmark and halo textures, starts only on the first menu appearance in an application run, and displays the settled title on later menu returns. The title overlay reads live intensity values from the shared Resource. Actual renders were checked at 1152 × 800, 1920 × 1080, and 2560 × 1080; input remains available during the animation. Combined in-game review remains pending; see [`ANIMATION_IMPLEMENTATION.md`](../../ANIMATION_IMPLEMENTATION.md).

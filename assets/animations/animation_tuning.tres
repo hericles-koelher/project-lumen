@@ -1,14 +1,9 @@
-[gd_resource type="Resource" load_steps=2 format=3]
+[gd_resource type="Resource" format=3 uid="uid://bbw6ttorcxdtq"]
 
-[ext_resource type="Script" path="res://src/presentation/animation_tuning.gd" id="1_tuning"]
+[ext_resource type="Script" uid="uid://c14t8mmv502un" path="res://src/presentation/animation_tuning.gd" id="1_tuning"]
 
 [resource]
 script = ExtResource("1_tuning")
-lamp_light_intensity_percent = 100.0
-cat_breathing_intensity_percent = 75.0
-cat_ear_intensity_percent = 150.0
-outdoor_leaves_intensity_percent = 100.0
-title_startup_intensity_percent = 100.0
-title_lamp_halo_intensity_percent = 270.0
-title_initial_blink_count = 3
-title_initial_blink_interval_ms = 150.0
+outdoor_leaves_intensity_percent = 160.0
+outdoor_leaves_breeze_duration_seconds = 4.0
+outdoor_leaves_rest_seconds = 4.0
