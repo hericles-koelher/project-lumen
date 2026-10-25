@@ -4,13 +4,16 @@ This is the project-level backlog. Keep entries actionable, ordered by priority,
 
 ## In progress
 
-None.
+- [ ] Refine the game-title startup: fade the wordmark in over 0.4 seconds, hold for 0.3 seconds, then run the approved flickers and lamp halo. Implemented with Inspector controls; awaiting the user's review before completion.
 
 ## To do
 
 - [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address. See the later milestone in [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md).
+  - [x] Prepare a Windows x86_64 release ZIP with the executable, game data, and tester controls guide. See [`tools/README.md`](tools/README.md).
 
 ## Done
+
+- [x] Refresh the README gallery after animation approval and review every screen for visual balance. Captured 40 native Godot frames at three sizes on 2026-10-25; findings and proposed follow-ups are recorded in [`docs/VISUAL_REVIEW.md`](docs/VISUAL_REVIEW.md), without implementing further UI changes.
 
 - [x] Plan, prototype, and implement animations for the background, game title, and board bulbs. Completed and approved by the user on 2026-10-25; preserves the calm visual style and interface readability.
   - [x] Identify which parts of the existing artwork need separate layers or additional assets for animation, and define their placement and timing. See [`docs/ANIMATION_IMPLEMENTATION.md`](docs/ANIMATION_IMPLEMENTATION.md).

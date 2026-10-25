@@ -1,18 +1,18 @@
 # Illuminated title startup — Candidate 01
 
-Status: approved by the user on 2026-10-25; Godot integration complete. Combined in-game review was approved by the user on 2026-10-25.
+Status: original startup approved by the user on 2026-10-25 and integrated. The requested fade-in refinement is implemented and awaiting user review.
 
 ## Artwork and motion
 
 - Reuse the existing transparent `assets/branding/project_lumen_wordmark.png` unchanged, preserving its lettering, decorative marks, hanging bulb, and baked glow. No new rendered artwork is needed.
 - Present the title against the unchanged current room background. Change only the title's light intensity; do not flash or deform the background.
-- Approved sequence: three initial flickers with 150 ms intervals, followed immediately by a strong warm halo around the title lamp. The title and lamp stay steadily illuminated afterward; there is no middle pause or final blink group.
+- Current sequence: fade the wordmark in over 0.4 seconds, hold it visibly for 0.3 seconds, then play three initial flickers with 150 ms intervals, followed immediately by a strong warm halo around the title lamp. The title and lamp stay steadily illuminated afterward; there is no additional blink group.
 - Each flicker lasts 80 ms; the interval means the rest after a flicker ends and before the next begins. Initial flickers briefly brighten the dim title. Keep the silhouette visible, with an initial dim brightness of 22% at 100% intensity.
-- The sequence is variable-driven rather than fixed keyframes. Three flickers, their 150 ms gaps, and the 60 ms settle bring the title to full brightness at 0.64 s. The halo fades in smoothly over 0.25 s, reaching full strength at 0.89 s.
+- The sequence is variable-driven rather than fixed keyframes. The 0.4 s fade and 0.3 s pause precede the original flickers. Three flickers, their 150 ms gaps, and the 60 ms settle bring the title to full brightness at 1.34 s. The halo fades in smoothly over 0.25 s, reaching full strength at 1.59 s. Including the existing 140 ms menu entrance delay, the full sequence lasts about 1.73 s from menu appearance.
 - Flicker intensity scales the depth of the light variation, not timing or final brightness. Zero gives a steady title; the final steady appearance always matches the existing artwork. The preview supports a 0–200% range with a brightness floor of 8%.
 - After the last flicker, grow and fade in the strong halo over the wordmark's lamp; keep it steady afterward. Reuse `assets/fx/candidates/lamp_glow_candidate_01.png`, centered at 78.5% / 43% within the wordmark and displayed at 32% of its width. The halo opacity is capped at 100%; at the approved 270% setting, its 20% base opacity reaches 54%. Scale the halo from 90% to 100% while revealing it. Do not animate the background or apply the added glow to the entire title.
 - The preview provides Replay startup, pause/resume, original steady-title comparison, intensity sliders for flicker and halo, and numeric controls for initial blink count and gap. Timing changes replay automatically. Preview controls do not save edits into the Godot Resource; approved values are recorded there separately.
-- `assets/animations/animation_tuning.tres` exports `title_startup_intensity_percent`, `title_lamp_halo_intensity_percent`, `title_initial_blink_count`, and `title_initial_blink_interval_ms`. Approved values: flicker 100%, halo 270% (0–300% range), initial count 3, initial interval 150 ms.
+- `assets/animations/animation_tuning.tres` exposes `title_fade_in_duration_seconds`, `title_reveal_pause_seconds`, `title_startup_intensity_percent`, `title_lamp_halo_intensity_percent`, `title_initial_blink_count`, and `title_initial_blink_interval_ms` through Inspector exports. Current values: fade 0.4 s, pause 0.3 s, flicker 100%, halo 270% (0–300% range), initial count 3, initial interval 150 ms.
 
 ## Godot integration requirements
 
@@ -32,4 +32,4 @@ Status: approved by the user on 2026-10-25; Godot integration complete. Combined
 
 ## Review
 
-The user approved the flicker count, 150 ms rhythm, transition into steady illumination, and 270% lamp halo on 2026-10-25. Godot uses the existing wordmark and halo textures, starts only on the first menu appearance in an application run, and displays the settled title on later menu returns. The title overlay reads live intensity values from the shared Resource. Actual renders were checked at 1152 × 800, 1920 × 1080, and 2560 × 1080; input remains available during the animation. Combined in-game review remains pending; see [`ANIMATION_IMPLEMENTATION.md`](../../ANIMATION_IMPLEMENTATION.md).
+The user approved the flicker count, 150 ms rhythm, transition into steady illumination, and 270% lamp halo on 2026-10-25. The user later requested a 0.4-second fade-in and a 0.3-second visible pause before this sequence; those values are adjustable in the Inspector. Godot uses the existing wordmark and halo textures, starts only on the first menu appearance in an application run, and displays the settled title on later menu returns. The title overlay reads live values from the shared Resource. The fade-in implementation is awaiting the user's review; see [`ANIMATION_IMPLEMENTATION.md`](../../ANIMATION_IMPLEMENTATION.md).

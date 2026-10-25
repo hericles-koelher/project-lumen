@@ -5,5 +5,4 @@
 [resource]
 script = ExtResource("1_tuning")
 outdoor_leaves_intensity_percent = 160.0
-outdoor_leaves_breeze_duration_seconds = 4.0
-outdoor_leaves_rest_seconds = 4.0
+title_initial_blink_count = 2

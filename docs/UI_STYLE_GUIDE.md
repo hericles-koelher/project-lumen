@@ -1,6 +1,6 @@
 # Quiet Ink Interface
 
-The user selected concept B — Quiet Ink and warm victory sparkles on 2026-10-24. This is the implementation reference for the resulting interface. Manual visual review of the delivered game remains pending.
+The user selected concept B — Quiet Ink and warm victory sparkles on 2026-10-24. This is the implementation reference for the resulting interface. The menu refinements and original animation set have completed user approval. The title startup now includes an additional requested fade-in adjustment awaiting review. The [2026-10-25 visual review](VISUAL_REVIEW.md) contains a later screen-by-screen assessment and proposed follow-ups.
 
 ## Composition and text
 
@@ -45,7 +45,7 @@ The project uses `canvas_items` scaling with `window/stretch/aspect="expand"` an
 
 ## Motion and input
 
-The room now uses the approved lamp-glow cycle, torso breathing at 75%, ear-only twitch at 150%, and five independently scheduled outdoor branches at 100%. The title flickers three times with 150 ms gaps only on its first menu appearance in each application run, then keeps its 270% lamp halo. Board bulbs use Soft pop plus Quick wave. Keep the central interface area clear and the outdoor layers behind the window and indoor silhouettes. See [`ANIMATION_IMPLEMENTATION.md`](ANIMATION_IMPLEMENTATION.md) for layer coordinates, timing, and Inspector tuning.
+The room now uses the approved lamp-glow cycle, torso breathing at 75%, ear-only twitch at 150%, and five independently scheduled outdoor branches with a 100% approved reference and a current user-tuned 160% intensity. Each breeze lasts four seconds, followed by a fixed four-second rest. The title now fades in over 0.4 seconds, holds for 0.3 seconds, then flickers three times with 150 ms gaps on its first menu appearance in each application run before keeping its 270% lamp halo. The fade and hold are Inspector-adjustable. Board bulbs use Soft pop plus Quick wave. Keep the central interface area clear and the outdoor layers behind the window and indoor silhouettes. See [`ANIMATION_IMPLEMENTATION.md`](ANIMATION_IMPLEMENTATION.md) for layer coordinates, timing, and Inspector tuning.
 
 Ordinary page changes use a short 0.14-second fade. Victory reveals its panel over 0.22 seconds and creates one 1.6-second burst of 18 warm sparkles. The textured pieces scale, fade, and drift around the panel, behind its controls. No looping celebration, full-screen flash, or input delay is used.
 
@@ -57,4 +57,4 @@ The free mouse pointer hides after three seconds of mouse inactivity or immediat
 
 Check the complete flow at the default 1152 × 800 viewport, maximized, and fullscreen: headings, all button states, slider/keycaps, tutorial text and diagrams, every board size, and victory controls. Pay particular attention to readable focus and quiet background detail. Physical Xbox and visual/audio feedback remain user-led checks.
 
-Compare actual Godot renders against an approved mockup at the same resolution and tab state before presenting a visual implementation. On 2026-10-25, both Settings tabs were rendered at 1152 × 800, 1672 × 941 (the mockup's size), 1920 × 1080, and 1152 × 640. The updated Controls screenshot is in [`screenshots/settings-controls.png`](screenshots/settings-controls.png). The isolated flow runner also checks fixed geometry, arrow alignment, and actual overflow scrolling. User visual approval remains pending.
+Compare actual Godot renders against an approved mockup at the same resolution and tab state before presenting a visual implementation. On 2026-10-25, both Settings tabs were rendered at 1152 × 800, 1672 × 941 (the mockup's size), 1920 × 1080, and 1152 × 640. The updated Controls screenshot is in [`screenshots/settings-controls.png`](screenshots/settings-controls.png). The isolated flow runner also checks fixed geometry, arrow alignment, and actual overflow scrolling. These refinements have since completed user approval. The [latest visual review](VISUAL_REVIEW.md) adds 40 captures of every base-size screen and representative 1920 × 1080 and 1152 × 640 layouts, including both Settings tabs. It distinguishes concrete defects from optional refinements; its proposed follow-ups have not been implemented.

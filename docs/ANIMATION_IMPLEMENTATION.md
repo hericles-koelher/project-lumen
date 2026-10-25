@@ -34,7 +34,7 @@ The room lamp remains visible while its halo follows the approved six-second opa
 
 ## Title startup and menu lifetime
 
-`src/presentation/title_startup.gd` is a Control child of the existing centered, keep-aspect wordmark. It dims only the wordmark and draws the existing halo texture using the fitted image bounds. The first menu title starts after a 140 ms delay for the existing menu entrance fade, then uses three 80 ms flickers separated by 150 ms rests, a 60 ms settle, and a 250 ms halo reveal. At approved tuning values the title reaches full brightness at 0.64 seconds and the halo finishes at 0.89 seconds after the sequence starts.
+`src/presentation/title_startup.gd` is a Control child of the existing centered, keep-aspect wordmark. It dims only the wordmark and draws the existing halo texture using the fitted image bounds. The title first fades in over 0.4 seconds, holds visibly for 0.3 seconds, then plays the existing three 80 ms flickers separated by 150 ms rests, a 60 ms settle, and a 250 ms halo reveal. At current tuning values the title reaches full brightness 1.34 seconds after the sequence starts and the halo finishes at 1.59 seconds. Including the existing 140 ms menu entrance delay, the full sequence takes about 1.73 seconds from the menu appearing. Input remains available throughout.
 
 `src/presentation/main.gd` owns `_title_startup_played` outside the rebuilt menu controls. The initial tutorial does not consume the flag: startup runs the first time the title menu appears. Later returns from Settings, Tutorial, or gameplay create a settled title and halo without replaying. Input remains available during the effect.
 
@@ -52,6 +52,8 @@ The room lamp remains visible while its halo follows the approved six-second opa
 | `outdoor_leaves_rest_seconds` | 4 s | Fixed pause after each breeze |
 | `title_startup_intensity_percent` | 100% | Title brightness variation |
 | `title_lamp_halo_intensity_percent` | 270% | Title halo alpha; the 20% base reaches 54% |
+| `title_fade_in_duration_seconds` | 0.4 s | Wordmark opacity reveal before the startup flickers |
+| `title_reveal_pause_seconds` | 0.3 s | Hold after the wordmark appears and before the flickers |
 | `title_initial_blink_count` | 3 | Initial title flickers |
 | `title_initial_blink_interval_ms` | 150 ms | Rest between title flickers |
 | `bulb_pop_intensity_percent` | 100% | Board-cell bulb pop |
@@ -63,8 +65,8 @@ The Resource remains editable in the Godot Inspector. The exported ranges and de
 
 ## Validation and review
 
-The isolated animation integration suite passed 56 checks with zero failures. It covers first-visible-title timing after the first-launch tutorial, once-per-run behavior, settled menu returns, title tuning changes, approved ambient amplitudes and schedules, all five branch controllers, source cover transforms, and the fitted title image bounds. The updated isolated menu-flow suite passed 177 checks with zero failures.
+The isolated animation integration suite previously passed 56 checks with zero failures. Its title timing expectations now include the added fade and pause, but the updated suite has not been rerun. It covers first-visible-title timing after the first-launch tutorial, once-per-run behavior, settled menu returns, title tuning changes, approved ambient amplitudes and schedules, all five branch controllers, source cover transforms, and the fitted title image bounds. The updated isolated menu-flow suite passed 177 checks with zero failures.
 
 GPU Compatibility renders showed nonzero breathing and ear motion; the ear-only check changed pixels only in the ear region. Foliage motion stayed inside the windowpane masks and behind indoor polygon occluders: there were no changed pixels inside the polygons beyond a one-pixel raster-edge tolerance, with only 11 changed pixels on those edges. Room-lamp changes stayed localized around the globe. Menu captures were inspected at 1152 × 800, 1920 × 1080, and 2560 × 1080. The clean plate was also inspected at its 1586 × 992 source extent to confirm the original cat and outdoor branches were removed while the indoor composition remained.
 
-The user approved the completed animation work on 2026-10-25 after in-game review. The user approved the combined in-game presentation on 2026-10-25. See the individual [lamp](concepts/animations/lamp-light-candidate-01.md), [cat breathing](concepts/animations/cat-breathing-candidate-01.md), [ear](concepts/animations/cat-ear-candidate-01.md), [foliage](concepts/animations/outdoor-leaves-candidate-01.md), [title](concepts/animations/title-startup-candidate-01.md), and [board bulb](concepts/animations/board-bulb-candidate-02.md) records, along with the [asset manifest](../assets/ASSET_MANIFEST.md) and [automated check notes](../tests/README.md).
+The user approved the completed animation work on 2026-10-25 after in-game review, then requested a 0.4-second title fade-in and 0.3-second visible pause before the approved flicker sequence. The implementation is pending the user's review. See the individual [lamp](concepts/animations/lamp-light-candidate-01.md), [cat breathing](concepts/animations/cat-breathing-candidate-01.md), [ear](concepts/animations/cat-ear-candidate-01.md), [foliage](concepts/animations/outdoor-leaves-candidate-01.md), [title](concepts/animations/title-startup-candidate-01.md), and [board bulb](concepts/animations/board-bulb-candidate-02.md) records, along with the [asset manifest](../assets/ASSET_MANIFEST.md) and [automated check notes](../tests/README.md).

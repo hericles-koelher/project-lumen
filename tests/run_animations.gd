@@ -35,9 +35,9 @@ func _run() -> void:
 	await process_frame
 	var title: Control = game.get_node("Screen/Menu/Content/Wordmark/StartupLight")
 	_expect(not title.get("is_settled"), "The first visible title must play its startup sequence.")
-	_expect(is_equal_approx(float(title.get("_settled_at")), 0.64), "Three approved blinks must settle the title at 640 ms.")
-	_expect(is_equal_approx(float(title.get("_duration")), 0.89), "The halo fade must end at 890 ms after the startup delay.")
-	await create_timer(1.2).timeout
+	_expect(is_equal_approx(float(title.get("_settled_at")), 1.34), "The 0.4-second title fade, 0.3-second pause, and approved blinks must settle the title at 1.34 seconds.")
+	_expect(is_equal_approx(float(title.get("_duration")), 1.59), "The halo fade must end at 1.59 seconds after the title fade begins.")
+	await create_timer(2.0).timeout
 	_expect(title.get("is_settled"), "The title startup must finish automatically.")
 	_expect(is_equal_approx(float(title.get("current_halo_opacity")), 0.54), "The approved 270% halo must use 54% final alpha.")
 	game.call("_show_settings")

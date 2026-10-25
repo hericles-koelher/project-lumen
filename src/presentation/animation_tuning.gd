@@ -30,6 +30,14 @@ var outdoor_leaves_breeze_duration_seconds: float = 4.0
 var outdoor_leaves_rest_seconds: float = 4.0
 
 @export_group("Game Title")
+## Seconds for the wordmark to fade in before the startup flickers.
+@export_range(0.0, 3.0, 0.05, "suffix:s")
+var title_fade_in_duration_seconds: float = 0.4
+
+## Seconds the revealed title remains steady before the startup flickers.
+@export_range(0.0, 3.0, 0.05, "suffix:s")
+var title_reveal_pause_seconds: float = 0.3
+
 ## Percentage of the title startup's brightness variation; 100 is the approved startup flicker intensity.
 @export_range(0.0, 200.0, 1.0, "suffix:%")
 var title_startup_intensity_percent: float = 100.0

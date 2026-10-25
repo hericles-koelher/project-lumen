@@ -1,0 +1,527 @@
+{
+  "captures": [
+    {
+      "file": "1152x800/main-menu.png",
+      "focus": "StartGame",
+      "height": 800,
+      "id": "main-menu",
+      "label": "Main menu",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Menu",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/difficulty-selection.png",
+      "focus": "Difficulty_easy",
+      "height": 800,
+      "id": "difficulty-selection",
+      "label": "Difficulty and random selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Difficulty",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/levels-easy.png",
+      "focus": "Level_01",
+      "height": 800,
+      "id": "levels-easy",
+      "label": "Easy level selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "LevelSelect",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/levels-medium.png",
+      "focus": "Level_01",
+      "height": 800,
+      "id": "levels-medium",
+      "label": "Medium level selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "LevelSelect",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/levels-hard.png",
+      "focus": "Level_01",
+      "height": 800,
+      "id": "levels-hard",
+      "label": "Hard level selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "LevelSelect",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/settings-audio.png",
+      "focus": "AudioDisplayTab",
+      "height": 800,
+      "id": "settings-audio",
+      "label": "Settings: Audio & Display",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Settings",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/settings-controls.png",
+      "focus": "ControlsTab",
+      "height": 800,
+      "id": "settings-controls",
+      "label": "Settings: Controls, top",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Settings",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/settings-controls-bottom.png",
+      "focus": "ControlsTab",
+      "height": 800,
+      "id": "settings-controls-bottom",
+      "label": "Settings: Controls, bottom",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Settings",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/tutorial-1.png",
+      "focus": "NextPage",
+      "height": 800,
+      "id": "tutorial-1",
+      "label": "Tutorial step 1",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/tutorial-2.png",
+      "focus": "NextPage",
+      "height": 800,
+      "id": "tutorial-2",
+      "label": "Tutorial step 2",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/tutorial-3.png",
+      "focus": "NextPage",
+      "height": 800,
+      "id": "tutorial-3",
+      "label": "Tutorial step 3",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/tutorial-4.png",
+      "focus": "NextPage",
+      "height": 800,
+      "id": "tutorial-4",
+      "label": "Tutorial step 4",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/tutorial-5.png",
+      "focus": "NextPage",
+      "height": 800,
+      "id": "tutorial-5",
+      "label": "Tutorial step 5",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-easy.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-easy",
+      "label": "Easy gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-medium.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-medium",
+      "label": "Medium gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-hard.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-hard",
+      "label": "Hard gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-progress.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-progress",
+      "label": "Gameplay: valid partial illumination",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-feedback.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-feedback",
+      "label": "Gameplay: light, X, and conflicts",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-clue-warning.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-clue-warning",
+      "label": "Gameplay: exceeded numbered clue",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/victory-numbered.png",
+      "focus": "NextLevel",
+      "height": 800,
+      "id": "victory-numbered",
+      "label": "Numbered victory with Next Level",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/victory-final.png",
+      "focus": "Restart",
+      "height": 800,
+      "id": "victory-final",
+      "label": "Final registered level victory",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/gameplay-random.png",
+      "focus": "BoardFrame",
+      "height": 800,
+      "id": "gameplay-random",
+      "label": "Random gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/victory-random.png",
+      "focus": "NewRandomLevel",
+      "height": 800,
+      "id": "victory-random",
+      "label": "Random victory",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x800/load-error.png",
+      "focus": "BackToMenu",
+      "height": 800,
+      "id": "load-error",
+      "label": "Load-error fallback (invalid fixture)",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1152.0
+      },
+      "page": "LoadError",
+      "width": 1152
+    },
+    {
+      "file": "1920x1080/main-menu.png",
+      "focus": "StartGame",
+      "height": 1080,
+      "id": "main-menu",
+      "label": "Main menu",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Menu",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/difficulty-selection.png",
+      "focus": "Difficulty_easy",
+      "height": 1080,
+      "id": "difficulty-selection",
+      "label": "Difficulty selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Difficulty",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/levels-hard.png",
+      "focus": "Level_01",
+      "height": 1080,
+      "id": "levels-hard",
+      "label": "Hard level selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "LevelSelect",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/settings-audio.png",
+      "focus": "AudioDisplayTab",
+      "height": 1080,
+      "id": "settings-audio",
+      "label": "Settings: Audio & Display",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Settings",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/settings-controls.png",
+      "focus": "ControlsTab",
+      "height": 1080,
+      "id": "settings-controls",
+      "label": "Settings: Controls",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Settings",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/tutorial-4.png",
+      "focus": "NextPage",
+      "height": 1080,
+      "id": "tutorial-4",
+      "label": "Tutorial: longest text",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Tutorial",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/gameplay-hard.png",
+      "focus": "BoardFrame",
+      "height": 1080,
+      "id": "gameplay-hard",
+      "label": "Hard gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Game",
+      "width": 1920
+    },
+    {
+      "file": "1920x1080/victory-numbered.png",
+      "focus": "NextLevel",
+      "height": 1080,
+      "id": "victory-numbered",
+      "label": "Numbered victory",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1422.0
+      },
+      "page": "Game",
+      "width": 1920
+    },
+    {
+      "file": "1152x640/main-menu.png",
+      "focus": "StartGame",
+      "height": 640,
+      "id": "main-menu",
+      "label": "Main menu",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Menu",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/difficulty-selection.png",
+      "focus": "Difficulty_easy",
+      "height": 640,
+      "id": "difficulty-selection",
+      "label": "Difficulty selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Difficulty",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/levels-hard.png",
+      "focus": "Level_01",
+      "height": 640,
+      "id": "levels-hard",
+      "label": "Hard level selection",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "LevelSelect",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/settings-audio.png",
+      "focus": "AudioDisplayTab",
+      "height": 640,
+      "id": "settings-audio",
+      "label": "Settings: Audio & Display",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Settings",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/settings-controls.png",
+      "focus": "ControlsTab",
+      "height": 640,
+      "id": "settings-controls",
+      "label": "Settings: Controls",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Settings",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/tutorial-4.png",
+      "focus": "NextPage",
+      "height": 640,
+      "id": "tutorial-4",
+      "label": "Tutorial: longest text",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Tutorial",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/gameplay-hard.png",
+      "focus": "BoardFrame",
+      "height": 640,
+      "id": "gameplay-hard",
+      "label": "Hard gameplay",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Game",
+      "width": 1152
+    },
+    {
+      "file": "1152x640/victory-numbered.png",
+      "focus": "NextLevel",
+      "height": 640,
+      "id": "victory-numbered",
+      "label": "Numbered victory",
+      "logical_viewport": {
+        "height": 800.0,
+        "width": 1440.0
+      },
+      "page": "Game",
+      "width": 1152
+    }
+  ],
+  "notes": "Isolated real Godot renders; ambient pose frozen; gamepad hints follow connected hardware; fallback logs one expected configuration error.",
+  "captured_at": "2026-10-25T14:22:28.779526-03:00",
+  "game_revision": "495fcf8633b50ae07dc4f034fe051607029c3345"
+}

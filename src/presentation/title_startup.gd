@@ -140,8 +140,15 @@ func _build_timeline() -> void:
 	var count := int(round(_read_tuning_value("title_initial_blink_count", 3.0)))
 	count = clampi(count, 0, 8)
 	var gap := clampf(_read_tuning_value("title_initial_blink_interval_ms", 150.0), 20.0, 2000.0) / 1000.0
-	var time := LEAD_IN_DURATION if count > 0 else 0.0
-	_timeline.append(Vector2(0.0, DIM_LEVEL if count > 0 else 1.0))
+	var fade_duration := maxf(0.0, _read_tuning_value("title_fade_in_duration_seconds", 0.4))
+	var prelude := fade_duration
+	prelude += maxf(0.0, _read_tuning_value("title_reveal_pause_seconds", 0.3))
+	var time := prelude
+	_timeline.append(Vector2(0.0, 1.0))
+	if count > 0:
+		_timeline.append(Vector2(fade_duration, 1.0))
+		_timeline.append(Vector2(prelude, DIM_LEVEL))
+		time += LEAD_IN_DURATION
 	for index in range(count):
 		var peak := 0.78 if index % 2 == 1 else 0.96
 		_timeline.append(Vector2(time, DIM_LEVEL))
@@ -164,12 +171,19 @@ func _build_timeline() -> void:
 func _update_visual_state() -> void:
 	var waiting_for_start := not _is_settled and _start_delay_remaining > 0.0
 	var level := 1.0 if waiting_for_start else _brightness_level(_elapsed)
+	var fade_duration := maxf(0.0, _read_tuning_value("title_fade_in_duration_seconds", 0.4))
+	var fade_progress := 1.0
+	if waiting_for_start:
+		fade_progress = 0.0
+	elif fade_duration > 0.0:
+		fade_progress = clampf(_elapsed / fade_duration, 0.0, 1.0)
+	var title_opacity := _smoothstep(fade_progress)
 	var intensity := clampf(_read_tuning_value("title_startup_intensity_percent", 100.0) / 100.0, 0.0, 2.0)
 	_brightness = clampf(1.0 - (1.0 - level) * intensity, MIN_BRIGHTNESS, 1.0)
 	if is_instance_valid(_wordmark):
-		_wordmark.modulate = Color(_brightness, _brightness, _brightness, 1.0)
-	var fade_progress := clampf((_elapsed - _settled_at) / HALO_FADE_DURATION, 0.0, 1.0)
-	var eased_fade := _smoothstep(fade_progress)
+		_wordmark.modulate = Color(_brightness, _brightness, _brightness, title_opacity)
+	var halo_fade_progress := clampf((_elapsed - _settled_at) / HALO_FADE_DURATION, 0.0, 1.0)
+	var eased_fade := _smoothstep(halo_fade_progress)
 	var halo_intensity := clampf(_read_tuning_value("title_lamp_halo_intensity_percent", 270.0) / 100.0, 0.0, 3.0)
 	_halo_opacity = minf(1.0, HALO_BASE_OPACITY * halo_intensity * eased_fade)
 	_halo_scale = 0.90 + 0.10 * eased_fade
