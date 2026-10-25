@@ -1,6 +1,6 @@
 # Project Lumen
 
-Project Lumen is a 2D Akari (Light Up) puzzle game built with Godot 4.7.2. The prototype separates puzzle rules from presentation and uses seeded procedural generation to create boards with at least one valid solution.
+Project Lumen is a 2D Akari (Light Up) puzzle game built with Godot 4.7.2. It separates puzzle rules from presentation and uses seeded procedural generation to create boards with at least one valid solution.
 
 ## Current status
 
@@ -40,7 +40,7 @@ Restart clears player moves and keeps the current board. Exit to Menu discards t
 
 - [`AGENTS.md`](AGENTS.md) — working conventions and repository index.
 - [`TASKS.md`](TASKS.md) — completed work and the external-playtest task.
-- [`docs/PROJECT_OVERVIEW.md`](docs/PROJECT_OVERVIEW.md) and [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) — project scope and agreed prototype behavior.
+- [`docs/PROJECT_OVERVIEW.md`](docs/PROJECT_OVERVIEW.md) and [`docs/PROTOTYPE_DEFINITION.md`](docs/PROTOTYPE_DEFINITION.md) — project scope and agreed game behavior.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — code responsibilities and data flow.
 - [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md) — implementation status, work packages, review checkpoints, and later playtest milestone.
 - [`docs/PROCEDURAL_GENERATION.md`](docs/PROCEDURAL_GENERATION.md) — difficulty presets, seeds, validity, and reproducibility.
