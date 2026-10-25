@@ -4,18 +4,24 @@ This is the project-level backlog. Keep entries actionable, ordered by priority,
 
 ## In progress
 
-None.
-
-## To do
-
 - [ ] Plan, prototype, and implement animations for the background, game title, and board bulbs. Preserve the calm visual style and interface readability; review the proposed implementation and visual results with the user before final integration.
   - [ ] Identify which parts of the existing artwork need separate layers or additional assets for animation, and define their placement and timing.
-  - [ ] Add a gentle variation in the decorative lamp's light, keeping the effect subtle and comfortable to watch.
-  - [ ] Give the sleeping cat subtle breathing and an occasional ear twitch. Keep the ear movement intermittent rather than continuously looping.
-  - [ ] Add occasional gentle swaying to the leaves outside the house, with pauses between movements.
-  - [ ] Animate the game title when the application opens: briefly flicker a few times, then remain steadily illuminated. Do not replay this startup sequence whenever the player returns to the main menu.
+  - [x] Prototype and approve the decorative lamp's gentle light variation. Candidate 01 was approved by the user on 2026-10-25; see [`lamp-light-candidate-01.md`](docs/concepts/animations/lamp-light-candidate-01.md).
+  - [ ] Integrate the approved lamp light candidate into Godot, preserving its alignment under background cover/crop and resizing.
+  - [x] Prototype and approve the sleeping cat's subtle breathing. Candidate 01 was approved on 2026-10-25 at 75% intensity with a 4.8-second cycle; see [`cat-breathing-candidate-01.md`](docs/concepts/animations/cat-breathing-candidate-01.md).
+  - [ ] Prepare the clean background layer and integrate the approved cat breathing into Godot at 75% intensity, preserving the head/paw positions and alignment under resizing.
+  - [x] Prototype and approve an occasional ear-only twitch for the sleeping cat. The corrected candidate was approved on 2026-10-25 at 150% ear intensity, retaining 75% breathing and 8–15-second rests; see [`cat-ear-candidate-01.md`](docs/concepts/animations/cat-ear-candidate-01.md).
+  - [ ] Integrate the approved ear-only twitch into Godot without deforming the body, preserving its 150% intensity preset and intermittent timing.
+  - [x] Prepare editor-adjustable intensity presets with GDScript `@export` properties: lamp 100%, cat breathing 75%, and cat ear 150%. See `assets/animations/animation_tuning.tres`.
+  - [ ] Wire integrated animation controllers to the exported intensity presets so changes made in the Inspector affect their motion; expose the intensities of subsequent animations in the same way.
+  - [x] Prototype and approve occasional outdoor leaf swaying. Candidate 01 was approved on 2026-10-25 at 100% intensity, with four-second breezes and 10–18-second rests; see [`outdoor-leaves-candidate-01.md`](docs/concepts/animations/outdoor-leaves-candidate-01.md).
+  - [ ] Integrate the approved foliage behind the window frame and indoor objects so every branch reads as outside the house. Identify all visible outdoor branches in the final background and animate each of them with independent timing, preserving the approved 100% intensity and intermittent motion. Verify placement and occlusion at different window sizes and aspect ratios.
+  - [x] Prototype and approve the illuminated game-title startup: three initial flickers with 150 ms gaps, followed immediately by the steady lamp halo at 270% intensity. Play once per application launch, not when returning to the menu. Adjustable values are exported through `@export`; see [`title-startup-candidate-01.md`](docs/concepts/animations/title-startup-candidate-01.md). Approved 2026-10-25.
+  - [ ] Integrate the approved title startup into Godot, including first-visible-title timing when the first-launch tutorial appears, and prevent replay on menu returns.
   - [ ] Prototype alternative animations for placing and removing a board bulb. Let the user test and choose the options before adopting the final behavior; keep puzzle feedback and input responsive.
   - [ ] Review the combined motion with the user, tune intensity and timing, and update asset provenance and relevant documentation after approval.
+
+## To do
 
 - [ ] Share a playable build with an external tester, collect their feedback, and decide which suggestions to address. See the later milestone in [`docs/REFINEMENT_PLAN.md`](docs/REFINEMENT_PLAN.md).
 

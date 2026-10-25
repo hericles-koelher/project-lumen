@@ -22,6 +22,7 @@ Difficulty preset and seed policy → resolved level configuration → generator
 
 ## Current implementation
 
+- Animation candidates have an editor-adjustable intensity resource: `src/presentation/animation_tuning.gd` exports percentage properties, and `assets/animations/animation_tuning.tres` stores the approved presets. The live game does not yet consume this resource; pending animation integration must read it instead of hard-coding amplitudes.
 - `src/levels/prototype_levels.gd` is the ordered difficulty catalog used by the difficulty menu, uniform random selection, numbered-level selection, and cross-difficulty progression. Each current difficulty contains ten fixed seed entries.
 - `src/presentation/player_preferences.gd` loads and saves music volume, global mute, fullscreen mode, and tutorial-seen state under `user://player_settings.cfg`. It does not store puzzle state or random seeds.
 

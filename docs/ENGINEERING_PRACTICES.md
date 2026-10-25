@@ -49,6 +49,7 @@ This document defines the default standards for code, assets, documentation, and
 - Use constants or named enums for domain values instead of scattering unexplained numeric or string literals.
 - Group files by responsibility and follow the directory map in `AGENTS.md`. Keep scenes, scripts, and assets near the feature that owns them as the project grows.
 - Do not introduce a dependency when a small, understandable implementation using Godot's built-in features will meet the need.
+- Expose animation intensities through typed GDScript `@export` properties with meaningful Inspector ranges and units. Keep approved presets in a native Resource when shared; animation controllers must read those values so visual tuning does not require code edits.
 
 ## 4. Game-specific design constraints
 
